@@ -1,0 +1,13 @@
+package vnl.gui;
+
+object ReplayGUI extends Object {
+	
+	String dst_host;
+	int dst_port;
+	
+	vnl.Topic target;
+	
+	void handle(vnl.Topic topic);
+	void handle(vnl.info.PlayerStatus status);
+	
+}
