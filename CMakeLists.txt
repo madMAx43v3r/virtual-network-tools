@@ -1,7 +1,9 @@
+cmake_minimum_required(VERSION 2.4)
 
-include_directories(include/)
+set(CMAKE_CXX_FLAGS "-std=c++11 -g -O0 -pthread -Wfatal-errors")
 
-find_package(FLTK)
+include_directories(include/ generated/include/ lib/virtual-network-layers-cpp/include/)
 
-add_executable(ReplayGUI src/ReplayGUI.cpp)
-target_link_libraries(ReplayGUI vnl vni ${FLTK_LIBRARIES})
+add_subdirectory(generated)
+add_subdirectory(lib/virtual-network-layers-cpp)
+

@@ -31,3 +31,7 @@
 .project
 .cproject
 
+/build-*
+/build
+/generated
+
