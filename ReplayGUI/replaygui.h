@@ -253,7 +253,6 @@ private slots:
 		float pos = slider->sliderPosition()/1000.;
 		log(INFO).out << "Seeking to " << pos << "% ..." << vnl::endl;
 		player.seek_rel(pos);
-		std::cout << "FINISHED" << std::endl;
 	}
 	
 	void set_autoloop(int state) {
