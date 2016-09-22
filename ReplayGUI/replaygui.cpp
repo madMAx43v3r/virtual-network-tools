@@ -19,6 +19,8 @@ int main(int argc, char** argv) {
 	vnl::tools::ReplayGUI* module = new vnl::tools::ReplayGUI(vnl::local_domain_name, &pipe, &app);
 	vnl::run(module);
 	
+	layer.shutdown();
+	pipe.close();
 	layer.close();
 	
 	return 0;

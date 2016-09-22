@@ -298,9 +298,9 @@ private:
 		if(!client.get_address().is_null()) {
 			client.exit();
 		}
+		pipe->close();
 		vnl::TcpClient* module = new vnl::TcpClient(target_host, target_port);
-		module->attach(pipe);
-		client = vnl::spawn(module);
+		client = vnl::spawn(module, pipe);
 	}
 	
 private:
