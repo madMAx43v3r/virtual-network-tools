@@ -31,7 +31,7 @@
 .project
 .cproject
 
-/build-*
-/build
+/tmp*
+/installs
 /generated
 

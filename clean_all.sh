@@ -1,5 +1,6 @@
 #!/bin/bash
 
-rm -rf build
-rm -rf build-ReplayGUI
+rm -r tmp
+rm -r tmp-ReplayGUI
+rm -r installs
 
