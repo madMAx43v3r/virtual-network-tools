@@ -299,7 +299,7 @@ private:
 			client.exit();
 		}
 		pipe->close();
-		vnl::TcpClient* module = new vnl::TcpClient(target_host, target_port);
+		vnl::TcpClient* module = new vnl::TcpClient("Uplink", target_host, target_port);
 		client = vnl::spawn(module, pipe);
 	}
 	

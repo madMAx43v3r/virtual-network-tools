@@ -35,3 +35,5 @@
 /installs
 /generated
 
+*.dat
+
