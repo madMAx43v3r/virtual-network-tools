@@ -11,3 +11,6 @@ include_directories(include/ generated/include/ lib/virtual-network-layers-cpp/i
 add_subdirectory(generated)
 add_subdirectory(lib/virtual-network-layers-cpp)
 
+add_executable(crc64 src/crc64)
+target_link_libraries(crc64 vnl vni)
+
