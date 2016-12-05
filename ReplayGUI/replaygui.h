@@ -29,10 +29,9 @@ namespace tools {
 class ReplayGUI : public QWidget, public ReplayGUIBase {
 	Q_OBJECT
 public:
-	ReplayGUI(vnl::String domain, vnl::Pipe* pipe, QApplication* app)
+	ReplayGUI(vnl::String domain, QApplication* app)
 		:	ReplayGUIBase(domain, "ReplayGUI"),
-			application(app), pipe(pipe),
-			slider(0), do_hold(false), ico_status(0)
+			application(app), slider(0), do_hold(false)
 	{
 	}
 	
@@ -51,15 +50,11 @@ protected:
 		
 		subscribe(vnl::local_domain_name, "PlayerStatus");
 		
+		setWindowTitle(QCoreApplication::applicationName());
 		{
 			QTimer* timer = new QTimer(this);
 			connect(timer, SIGNAL(timeout()), this, SLOT(process()));
 			timer->start(100);
-		}
-		{
-			QTimer* timer = new QTimer(this);
-			connect(timer, SIGNAL(timeout()), this, SLOT(update()));
-			timer->start(1000);
 		}
 		
 		QVBoxLayout* vbox = new QVBoxLayout();
@@ -78,30 +73,6 @@ protected:
 			btn_open->setIcon(QIcon::fromTheme("document-open"));
 			connect(btn_open, SIGNAL(clicked(bool)), this, SLOT(open()));
 			hbox->addWidget(btn_open);
-			
-			widget->setLayout(hbox);
-			vbox->addWidget(widget);
-		}
-		{
-			QWidget* widget = new QWidget();
-			QHBoxLayout* hbox = new QHBoxLayout();
-			
-			hbox->addWidget(new QLabel("Target: "));
-			QLineEdit* txt_target = new QLineEdit();
-			txt_target->setText(QString::fromStdString(target_host.to_string()));
-			connect(txt_target, SIGNAL(textEdited(const QString&)), this, SLOT(new_target(const QString&)));
-			hbox->addWidget(txt_target);
-			
-			hbox->addWidget(new QLabel("Port: "));
-			QLineEdit* txt_target_port = new QLineEdit();
-			txt_target_port->setText(QString::number(target_port));
-			txt_target_port->setMaximumWidth(80);
-			connect(txt_target_port, SIGNAL(textEdited(const QString&)), this, SLOT(new_target_port(const QString&)));
-			hbox->addWidget(txt_target_port);
-			
-			hbox->addWidget(new QLabel("Status: "));
-			ico_status = new QLabel();
-			hbox->addWidget(ico_status);
 			
 			widget->setLayout(hbox);
 			vbox->addWidget(widget);
@@ -187,8 +158,6 @@ protected:
 			vbox->addWidget(widget);
 		}
 		
-		setup_client();
-		
 		resize(800, 100);
 		setLayout(vbox);
 		show();
@@ -217,16 +186,6 @@ private slots:
 		if(file_name.size()) {
 			player.open(file_name.toStdString());
 		}
-	}
-	
-	void new_target(const QString& target) {
-		target_host = target.toStdString();
-		setup_client();
-	}
-	
-	void new_target_port(const QString& port) {
-		target_port = port.toInt();
-		setup_client();
 	}
 	
 	void scan() {
@@ -267,21 +226,10 @@ private slots:
 		do_hold = false;
 	}
 	
-	void set_client_status(const QString& name) {
-		ico_status->setPixmap(QPixmap(QIcon::fromTheme(name).pixmap(32, 32)));
-	}
-	
 	void process() {
 		poll(0);
-	}
-	
-	void update() {
-		bool online = false;
-		client.get_are_connected(online);
-		if(online) {
-			set_client_status("user-available");
-		} else {
-			set_client_status("user-offline");
+		if(!vnl_dorun) {
+			this->QWidget::close();
 		}
 	}
 	
@@ -293,24 +241,12 @@ private:
 		return QString().sprintf("%.3u:%.2u.%.3u", time/min, (time/sec) % 60, (time/1000) % 1000);
 	}
 	
-	void setup_client() {
-		set_client_status("user-offline");
-		if(!client.get_address().is_null()) {
-			client.exit();
-		}
-		pipe->close();
-		vnl::TcpClient* module = new vnl::TcpClient("Uplink", target_host, target_port);
-		client = vnl::spawn(module, pipe);
-	}
-	
 private:
 	QApplication* application;
 	vnl::info::PlayerStatus last_status;
 	PlayerClient player;
 	vnl::TcpClientClient client;
-	vnl::Pipe* pipe;
 	
-	QLabel* ico_status;
 	QSlider* slider;
 	bool do_hold;
 	
