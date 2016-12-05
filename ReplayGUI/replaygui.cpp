@@ -2,6 +2,7 @@
 #include <vnl/TcpServer.h>
 #include <vnl/Terminal.h>
 
+#include <signal.h>
 #include "replaygui.h"
 
 
@@ -27,8 +28,7 @@ int main(int argc, char** argv) {
 	vnl::tools::ReplayGUI* module = new vnl::tools::ReplayGUI(vnl::local_domain_name, &app);
 	vnl::run(module);
 	
-	const char* cmd = "\nq\n";
-	::write(STDIN_FILENO, cmd, sizeof(cmd));
+	::kill(0, SIGINT);
 	
 	return 0;
 }
