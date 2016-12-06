@@ -1,4 +1,4 @@
 #!/bin/bash
 
-vnicppcodegen lib/virtual-network-layers-cpp/interface interface/
+./installs/bin/vnicppcodegen lib/virtual-network-layers-cpp/interface interface/
 
