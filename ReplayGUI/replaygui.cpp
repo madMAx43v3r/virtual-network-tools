@@ -20,7 +20,8 @@ int main(int argc, char** argv) {
 		vnl::spawn(module);
 	}
 	{
-		vnl::TcpServer* module = new vnl::TcpServer("TcpServer", 4444);
+		vnl::TcpServer* module = new vnl::TcpServer(vnl::local_domain_name, "TcpServer");
+		module->port = 4444;
 		vnl::spawn(module);
 	}
 	
