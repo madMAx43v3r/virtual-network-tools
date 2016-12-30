@@ -238,7 +238,7 @@ private:
 		time -= epoch;
 		int64_t sec = 1000*1000;
 		int64_t min = 60 * sec;
-		return QString().sprintf("%.3u:%.2u.%.3u", time/min, (time/sec) % 60, (time/1000) % 1000);
+		return QString().sprintf("%.3ld:%.2ld.%.3ld", time/min, (time/sec) % 60, (time/1000) % 1000);
 	}
 	
 private:
