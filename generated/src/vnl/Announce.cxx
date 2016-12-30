@@ -19,7 +19,7 @@ Announce* Announce::clone() const {
 
 void Announce::destroy() {
 	this->Announce::~Announce();
-	return vnl::global_pool->push_back(this, sizeof(Announce));
+	return vnl::internal::global_pool_->push_back(this, sizeof(Announce));
 }
 
 void Announce::serialize(vnl::io::TypeOutput& _out) const {
@@ -39,14 +39,14 @@ void Announce::deserialize(vnl::io::TypeInput& _in, int _size) {
 	}
 }
 
-int Announce::field_index(vnl::Hash32 _hash) const {
+int Announce::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		case 0xfb4f2b4: return 0;
 		default: return -1;
 	}
 }
 
-const char* Announce::field_name(int _index) const {
+const char* Announce::get_field_name(int _index) const {
 	switch(_index) {
 		case 0: return "instance";
 		default: return 0;
@@ -56,7 +56,6 @@ const char* Announce::field_name(int _index) const {
 void Announce::get_field(int _index, vnl::String& _str) const {
 	switch(_index) {
 		case 0: vnl::to_string(_str, instance); break;
-		default: _str << "{}";
 	}
 }
 

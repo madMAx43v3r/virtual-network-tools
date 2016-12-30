@@ -9,7 +9,7 @@ namespace vnl {
 const uint32_t TcpClientBase::VNI_HASH;
 const uint32_t TcpClientBase::NUM_FIELDS;
 
-int TcpClientBase::field_index(vnl::Hash32 _hash) const {
+int TcpClientBase::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		case 0x482df535: return 0;
 		case 0xc30f0945: return 1;
@@ -27,7 +27,7 @@ int TcpClientBase::field_index(vnl::Hash32 _hash) const {
 	}
 }
 
-const char* TcpClientBase::field_name(int _index) const {
+const char* TcpClientBase::get_field_name(int _index) const {
 	switch(_index) {
 		case 0: return "vnl_log_level";
 		case 1: return "vnl_max_num_pending";
@@ -59,7 +59,6 @@ void TcpClientBase::get_field(int _index, vnl::String& _str) const {
 		case 9: vnl::to_string(_str, tcp_nodelay); break;
 		case 10: vnl::to_string(_str, send_buffer_size); break;
 		case 11: vnl::to_string(_str, receive_buffer_size); break;
-		default: _str << "{}";
 	}
 }
 
@@ -200,9 +199,15 @@ bool TcpClientBase::vni_const_call(vnl::io::TypeInput& _in, uint32_t _hash, int 
 }
 
 bool TcpClientBase::handle_switch(vnl::Value* _sample, vnl::Packet* _packet) {
-	switch(_sample->vni_hash()) {
+	switch(_sample->get_vni_hash()) {
 	}
 	return Super::handle_switch(_sample, _packet);
+}
+
+bool TcpClientBase::handle_switch(vnl::Value* _sample, vnl::Basic* _input) {
+	switch(_sample->get_vni_hash()) {
+	}
+	return Super::handle_switch(_sample, _input);
 }
 
 

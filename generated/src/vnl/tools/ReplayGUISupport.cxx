@@ -10,7 +10,7 @@ namespace tools {
 const uint32_t ReplayGUIBase::VNI_HASH;
 const uint32_t ReplayGUIBase::NUM_FIELDS;
 
-int ReplayGUIBase::field_index(vnl::Hash32 _hash) const {
+int ReplayGUIBase::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		case 0x482df535: return 0;
 		case 0xc30f0945: return 1;
@@ -20,7 +20,7 @@ int ReplayGUIBase::field_index(vnl::Hash32 _hash) const {
 	}
 }
 
-const char* ReplayGUIBase::field_name(int _index) const {
+const char* ReplayGUIBase::get_field_name(int _index) const {
 	switch(_index) {
 		case 0: return "vnl_log_level";
 		case 1: return "vnl_max_num_pending";
@@ -36,7 +36,6 @@ void ReplayGUIBase::get_field(int _index, vnl::String& _str) const {
 		case 1: vnl::to_string(_str, vnl_max_num_pending); break;
 		case 2: vnl::to_string(_str, target_host); break;
 		case 3: vnl::to_string(_str, target_port); break;
-		default: _str << "{}";
 	}
 }
 
@@ -105,11 +104,19 @@ bool ReplayGUIBase::vni_const_call(vnl::io::TypeInput& _in, uint32_t _hash, int 
 }
 
 bool ReplayGUIBase::handle_switch(vnl::Value* _sample, vnl::Packet* _packet) {
-	switch(_sample->vni_hash()) {
+	switch(_sample->get_vni_hash()) {
 	case 0xddc3d187: handle(*((vnl::Topic*)_sample), *_packet); return true;
 	case 0xf9baa92e: handle(*((vnl::info::PlayerStatus*)_sample), *_packet); return true;
 	}
 	return Super::handle_switch(_sample, _packet);
+}
+
+bool ReplayGUIBase::handle_switch(vnl::Value* _sample, vnl::Basic* _input) {
+	switch(_sample->get_vni_hash()) {
+	case 0xddc3d187: handle(*((vnl::Topic*)_sample), _input); return true;
+	case 0xf9baa92e: handle(*((vnl::info::PlayerStatus*)_sample), _input); return true;
+	}
+	return Super::handle_switch(_sample, _input);
 }
 
 

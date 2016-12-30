@@ -30,12 +30,12 @@ public:
 	{
 	}
 	
-	virtual uint32_t vni_hash() const { return VNI_HASH; }
-	virtual const char* type_name() const { return "vnl.Table"; }
+	virtual uint32_t get_vni_hash() const { return VNI_HASH; }
+	virtual const char* get_type_name() const { return "vnl.Table"; }
 	
-	virtual int num_fields() const { return NUM_FIELDS; }
-	virtual int field_index(vnl::Hash32 _hash) const;
-	virtual const char* field_name(int _index) const;
+	virtual int get_num_fields() const { return NUM_FIELDS; }
+	virtual int get_field_index(vnl::Hash32 _hash) const;
+	virtual const char* get_field_name(int _index) const;
 	virtual void get_field(int _index, vnl::String& _str) const;
 	virtual void set_field(int _index, const vnl::String& _str);
 	virtual void get_field(int _index, vnl::io::TypeOutput& _out) const;
@@ -51,6 +51,7 @@ protected:
 	virtual bool vni_call(vnl::io::TypeInput& _in, uint32_t _hash, int _num_args);
 	virtual bool vni_const_call(vnl::io::TypeInput& _in, uint32_t _hash, int _num_args, vnl::io::TypeOutput& _out);
 	virtual bool handle_switch(vnl::Value* _sample, vnl::Packet* _packet);
+	virtual bool handle_switch(vnl::Value* _sample, vnl::Basic* _input);
 	
 	template<class W>
 	void write_fields(W& _writer) const {
@@ -68,7 +69,7 @@ template<class T>
 const uint32_t TableBase<T>::NUM_FIELDS;
 
 template<class T>
-int TableBase<T>::field_index(vnl::Hash32 _hash) const {
+int TableBase<T>::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		case 0x482df535: return 0;
 		case 0xc30f0945: return 1;
@@ -79,7 +80,7 @@ int TableBase<T>::field_index(vnl::Hash32 _hash) const {
 }
 
 template<class T>
-const char* TableBase<T>::field_name(int _index) const {
+const char* TableBase<T>::get_field_name(int _index) const {
 	switch(_index) {
 		case 0: return "vnl_log_level";
 		case 1: return "vnl_max_num_pending";
@@ -96,7 +97,6 @@ void TableBase<T>::get_field(int _index, vnl::String& _str) const {
 		case 1: vnl::to_string(_str, vnl_max_num_pending); break;
 		case 2: vnl::to_string(_str, filename); break;
 		case 3: vnl::to_string(_str, ignore_errors); break;
-		default: _str << "{}";
 	}
 }
 
@@ -218,9 +218,16 @@ bool TableBase<T>::vni_const_call(vnl::io::TypeInput& _in, uint32_t _hash, int _
 
 template<class T>
 bool TableBase<T>::handle_switch(vnl::Value* _sample, vnl::Packet* _packet) {
-	switch(_sample->vni_hash()) {
+	switch(_sample->get_vni_hash()) {
 	}
 	return Super::handle_switch(_sample, _packet);
+}
+
+template<class T>
+bool TableBase<T>::handle_switch(vnl::Value* _sample, vnl::Basic* _input) {
+	switch(_sample->get_vni_hash()) {
+	}
+	return Super::handle_switch(_sample, _input);
 }
 
 

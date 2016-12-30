@@ -7,10 +7,14 @@
 #include <vnl/Announce.hxx>
 #include <vnl/Array.h>
 #include <vnl/Exit.hxx>
+#include <vnl/Hash32.h>
 #include <vnl/Instance.hxx>
 #include <vnl/LogMsg.hxx>
+#include <vnl/Map.h>
 #include <vnl/Shutdown.hxx>
 #include <vnl/String.h>
+#include <vnl/info/TopicInfo.hxx>
+#include <vnl/info/Type.hxx>
 
 #include <vnl/ObjectClient.hxx>
 
@@ -39,6 +43,10 @@ public:
 			_out.putEntry(VNL_IO_CALL, 0);
 			_out.putHash(0xbb55be0c);
 		}
+		void get_type_info() {
+			_out.putEntry(VNL_IO_CONST_CALL, 0);
+			_out.putHash(0xf73490b7);
+		}
 		void shutdown() {
 			_out.putEntry(VNL_IO_CALL, 0);
 			_out.putHash(0x87e2d7f);
@@ -59,6 +67,10 @@ public:
 		void get_objects() {
 			_out.putEntry(VNL_IO_CONST_CALL, 0);
 			_out.putHash(0xbced8d0d);
+		}
+		void get_topic_info() {
+			_out.putEntry(VNL_IO_CONST_CALL, 0);
+			_out.putHash(0xd50fc0dd);
 		}
 		void set_name(const vnl::String& _value) {
 			_out.putEntry(VNL_IO_CALL, 1);
@@ -110,6 +122,23 @@ public:
 		} else {
 			throw vnl::IOException();
 		}
+	}
+	
+	vnl::Map<vnl::Hash32, vnl::info::Type > get_type_info() {
+		_buf.wrap(_data);
+		{
+			Writer _wr(_out);
+			_wr.get_type_info();
+		}
+		vnl::Packet* _pkt = _call(vnl::Frame::CONST_CALL);
+		vnl::Map<vnl::Hash32, vnl::info::Type > _result;
+		if(_pkt) {
+			vnl::read(_in, _result);
+			_pkt->ack();
+		} else {
+			throw vnl::IOException();
+		}
+		return _result;
 	}
 	
 	void shutdown() {
@@ -179,6 +208,23 @@ public:
 		}
 		vnl::Packet* _pkt = _call(vnl::Frame::CONST_CALL);
 		vnl::Array<vnl::Instance > _result;
+		if(_pkt) {
+			vnl::read(_in, _result);
+			_pkt->ack();
+		} else {
+			throw vnl::IOException();
+		}
+		return _result;
+	}
+	
+	vnl::Array<vnl::info::TopicInfo > get_topic_info() {
+		_buf.wrap(_data);
+		{
+			Writer _wr(_out);
+			_wr.get_topic_info();
+		}
+		vnl::Packet* _pkt = _call(vnl::Frame::CONST_CALL);
+		vnl::Array<vnl::info::TopicInfo > _result;
 		if(_pkt) {
 			vnl::read(_in, _result);
 			_pkt->ack();

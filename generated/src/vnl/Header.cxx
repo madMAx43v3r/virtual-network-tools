@@ -19,7 +19,7 @@ Header* Header::clone() const {
 
 void Header::destroy() {
 	this->Header::~Header();
-	return vnl::global_pool->push_back(this, sizeof(Header));
+	return vnl::internal::global_pool_->push_back(this, sizeof(Header));
 }
 
 void Header::serialize(vnl::io::TypeOutput& _out) const {
@@ -45,7 +45,7 @@ void Header::deserialize(vnl::io::TypeInput& _in, int _size) {
 	}
 }
 
-int Header::field_index(vnl::Hash32 _hash) const {
+int Header::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		case 0xd27ee4a0: return 0;
 		case 0xaaf981a0: return 1;
@@ -55,7 +55,7 @@ int Header::field_index(vnl::Hash32 _hash) const {
 	}
 }
 
-const char* Header::field_name(int _index) const {
+const char* Header::get_field_name(int _index) const {
 	switch(_index) {
 		case 0: return "src_topic";
 		case 1: return "dst_topic";
@@ -71,7 +71,6 @@ void Header::get_field(int _index, vnl::String& _str) const {
 		case 1: vnl::to_string(_str, dst_topic); break;
 		case 2: vnl::to_string(_str, src_mac); break;
 		case 3: vnl::to_string(_str, send_time); break;
-		default: _str << "{}";
 	}
 }
 

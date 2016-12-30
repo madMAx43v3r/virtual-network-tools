@@ -9,7 +9,7 @@ namespace vnl {
 const uint32_t PlayerBase::VNI_HASH;
 const uint32_t PlayerBase::NUM_FIELDS;
 
-int PlayerBase::field_index(vnl::Hash32 _hash) const {
+int PlayerBase::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		case 0x482df535: return 0;
 		case 0xc30f0945: return 1;
@@ -24,7 +24,7 @@ int PlayerBase::field_index(vnl::Hash32 _hash) const {
 	}
 }
 
-const char* PlayerBase::field_name(int _index) const {
+const char* PlayerBase::get_field_name(int _index) const {
 	switch(_index) {
 		case 0: return "vnl_log_level";
 		case 1: return "vnl_max_num_pending";
@@ -50,7 +50,6 @@ void PlayerBase::get_field(int _index, vnl::String& _str) const {
 		case 6: vnl::to_string(_str, autoloop); break;
 		case 7: vnl::to_string(_str, autoshutdown); break;
 		case 8: vnl::to_string(_str, interval); break;
-		default: _str << "{}";
 	}
 }
 
@@ -312,9 +311,15 @@ bool PlayerBase::vni_const_call(vnl::io::TypeInput& _in, uint32_t _hash, int _nu
 }
 
 bool PlayerBase::handle_switch(vnl::Value* _sample, vnl::Packet* _packet) {
-	switch(_sample->vni_hash()) {
+	switch(_sample->get_vni_hash()) {
 	}
 	return Super::handle_switch(_sample, _packet);
+}
+
+bool PlayerBase::handle_switch(vnl::Value* _sample, vnl::Basic* _input) {
+	switch(_sample->get_vni_hash()) {
+	}
+	return Super::handle_switch(_sample, _input);
 }
 
 

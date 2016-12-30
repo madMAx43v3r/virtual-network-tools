@@ -9,13 +9,13 @@ namespace vnl {
 const uint32_t UplinkBase::VNI_HASH;
 const uint32_t UplinkBase::NUM_FIELDS;
 
-int UplinkBase::field_index(vnl::Hash32 _hash) const {
+int UplinkBase::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		default: return -1;
 	}
 }
 
-const char* UplinkBase::field_name(int _index) const {
+const char* UplinkBase::get_field_name(int _index) const {
 	switch(_index) {
 		default: return 0;
 	}
@@ -23,7 +23,6 @@ const char* UplinkBase::field_name(int _index) const {
 
 void UplinkBase::get_field(int _index, vnl::String& _str) const {
 	switch(_index) {
-		default: _str << "{}";
 	}
 }
 

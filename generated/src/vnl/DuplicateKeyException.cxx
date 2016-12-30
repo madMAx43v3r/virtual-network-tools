@@ -19,7 +19,7 @@ DuplicateKeyException* DuplicateKeyException::clone() const {
 
 void DuplicateKeyException::destroy() {
 	this->DuplicateKeyException::~DuplicateKeyException();
-	return vnl::global_pool->push_back(this, sizeof(DuplicateKeyException));
+	return vnl::internal::global_pool_->push_back(this, sizeof(DuplicateKeyException));
 }
 
 void DuplicateKeyException::serialize(vnl::io::TypeOutput& _out) const {
@@ -37,13 +37,13 @@ void DuplicateKeyException::deserialize(vnl::io::TypeInput& _in, int _size) {
 	}
 }
 
-int DuplicateKeyException::field_index(vnl::Hash32 _hash) const {
+int DuplicateKeyException::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		default: return -1;
 	}
 }
 
-const char* DuplicateKeyException::field_name(int _index) const {
+const char* DuplicateKeyException::get_field_name(int _index) const {
 	switch(_index) {
 		default: return 0;
 	}
@@ -51,7 +51,6 @@ const char* DuplicateKeyException::field_name(int _index) const {
 
 void DuplicateKeyException::get_field(int _index, vnl::String& _str) const {
 	switch(_index) {
-		default: _str << "{}";
 	}
 }
 

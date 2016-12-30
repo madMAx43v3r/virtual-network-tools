@@ -35,12 +35,12 @@ public:
 		vnl::read_config(domain_, topic_, "target_port", target_port);
 	}
 	
-	virtual uint32_t vni_hash() const { return VNI_HASH; }
-	virtual const char* type_name() const { return "vnl.tools.ReplayGUI"; }
+	virtual uint32_t get_vni_hash() const { return VNI_HASH; }
+	virtual const char* get_type_name() const { return "vnl.tools.ReplayGUI"; }
 	
-	virtual int num_fields() const { return NUM_FIELDS; }
-	virtual int field_index(vnl::Hash32 _hash) const;
-	virtual const char* field_name(int _index) const;
+	virtual int get_num_fields() const { return NUM_FIELDS; }
+	virtual int get_field_index(vnl::Hash32 _hash) const;
+	virtual const char* get_field_name(int _index) const;
 	virtual void get_field(int _index, vnl::String& _str) const;
 	virtual void set_field(int _index, const vnl::String& _str);
 	virtual void get_field(int _index, vnl::io::TypeOutput& _out) const;
@@ -48,13 +48,16 @@ public:
 	
 protected:
 	virtual void handle(const vnl::Topic& topic, const vnl::Packet& packet) { handle(topic); }
+	virtual void handle(const vnl::Topic& topic, vnl::Basic* input) { handle(topic); }
 	virtual void handle(const vnl::Topic& topic) {}
 	virtual void handle(const vnl::info::PlayerStatus& status, const vnl::Packet& packet) { handle(status); }
+	virtual void handle(const vnl::info::PlayerStatus& status, vnl::Basic* input) { handle(status); }
 	virtual void handle(const vnl::info::PlayerStatus& status) {}
 	
 	virtual bool vni_call(vnl::io::TypeInput& _in, uint32_t _hash, int _num_args);
 	virtual bool vni_const_call(vnl::io::TypeInput& _in, uint32_t _hash, int _num_args, vnl::io::TypeOutput& _out);
 	virtual bool handle_switch(vnl::Value* _sample, vnl::Packet* _packet);
+	virtual bool handle_switch(vnl::Value* _sample, vnl::Basic* _input);
 	
 	template<class W>
 	void write_fields(W& _writer) const {

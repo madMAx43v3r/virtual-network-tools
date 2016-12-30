@@ -19,7 +19,7 @@ RecordHeader* RecordHeader::clone() const {
 
 void RecordHeader::destroy() {
 	this->RecordHeader::~RecordHeader();
-	return vnl::global_pool->push_back(this, sizeof(RecordHeader));
+	return vnl::internal::global_pool_->push_back(this, sizeof(RecordHeader));
 }
 
 void RecordHeader::serialize(vnl::io::TypeOutput& _out) const {
@@ -49,7 +49,7 @@ void RecordHeader::deserialize(vnl::io::TypeInput& _in, int _size) {
 	}
 }
 
-int RecordHeader::field_index(vnl::Hash32 _hash) const {
+int RecordHeader::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		case 0x55c30e99: return 0;
 		case 0xd7a7ecc4: return 1;
@@ -61,7 +61,7 @@ int RecordHeader::field_index(vnl::Hash32 _hash) const {
 	}
 }
 
-const char* RecordHeader::field_name(int _index) const {
+const char* RecordHeader::get_field_name(int _index) const {
 	switch(_index) {
 		case 0: return "version";
 		case 1: return "header_size";
@@ -81,7 +81,6 @@ void RecordHeader::get_field(int _index, vnl::String& _str) const {
 		case 3: vnl::to_string(_str, begin_time); break;
 		case 4: vnl::to_string(_str, end_time); break;
 		case 5: vnl::to_string(_str, topics); break;
-		default: _str << "{}";
 	}
 }
 

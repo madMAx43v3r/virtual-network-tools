@@ -7,11 +7,15 @@
 #include <vnl/Announce.hxx>
 #include <vnl/Array.h>
 #include <vnl/Exit.hxx>
+#include <vnl/Hash32.h>
 #include <vnl/Instance.hxx>
 #include <vnl/LogMsg.hxx>
+#include <vnl/Map.h>
 #include <vnl/Object.h>
 #include <vnl/Shutdown.hxx>
 #include <vnl/String.h>
+#include <vnl/info/TopicInfo.hxx>
+#include <vnl/info/Type.hxx>
 
 #include <vnl/Type.hxx>
 
@@ -37,12 +41,12 @@ public:
 		vnl::read_config(domain_, topic_, "do_print_stats", do_print_stats);
 	}
 	
-	virtual uint32_t vni_hash() const { return VNI_HASH; }
-	virtual const char* type_name() const { return "vnl.Process"; }
+	virtual uint32_t get_vni_hash() const { return VNI_HASH; }
+	virtual const char* get_type_name() const { return "vnl.Process"; }
 	
-	virtual int num_fields() const { return NUM_FIELDS; }
-	virtual int field_index(vnl::Hash32 _hash) const;
-	virtual const char* field_name(int _index) const;
+	virtual int get_num_fields() const { return NUM_FIELDS; }
+	virtual int get_field_index(vnl::Hash32 _hash) const;
+	virtual const char* get_field_name(int _index) const;
 	virtual void get_field(int _index, vnl::String& _str) const;
 	virtual void set_field(int _index, const vnl::String& _str);
 	virtual void get_field(int _index, vnl::io::TypeOutput& _out) const;
@@ -50,23 +54,30 @@ public:
 	
 protected:
 	virtual void handle(const vnl::Exit& event, const vnl::Packet& packet) { handle(event); }
+	virtual void handle(const vnl::Exit& event, vnl::Basic* input) { handle(event); }
 	virtual void handle(const vnl::Exit& event) {}
 	virtual void handle(const vnl::Announce& event, const vnl::Packet& packet) { handle(event); }
+	virtual void handle(const vnl::Announce& event, vnl::Basic* input) { handle(event); }
 	virtual void handle(const vnl::Announce& event) {}
 	virtual void pause_log() = 0;
+	virtual vnl::Map<vnl::Hash32, vnl::info::Type > get_type_info() const = 0;
 	virtual void shutdown() = 0;
 	virtual void handle(const vnl::Shutdown& event, const vnl::Packet& packet) { handle(event); }
+	virtual void handle(const vnl::Shutdown& event, vnl::Basic* input) { handle(event); }
 	virtual void handle(const vnl::Shutdown& event) {}
 	virtual vnl::Array<vnl::String > get_class_names() const = 0;
 	virtual void set_log_filter(const vnl::String& filter) = 0;
 	virtual void resume_log() = 0;
 	virtual vnl::Array<vnl::Instance > get_objects() const = 0;
 	virtual void handle(const vnl::LogMsg& event, const vnl::Packet& packet) { handle(event); }
+	virtual void handle(const vnl::LogMsg& event, vnl::Basic* input) { handle(event); }
 	virtual void handle(const vnl::LogMsg& event) {}
+	virtual vnl::Array<vnl::info::TopicInfo > get_topic_info() const = 0;
 	
 	virtual bool vni_call(vnl::io::TypeInput& _in, uint32_t _hash, int _num_args);
 	virtual bool vni_const_call(vnl::io::TypeInput& _in, uint32_t _hash, int _num_args, vnl::io::TypeOutput& _out);
 	virtual bool handle_switch(vnl::Value* _sample, vnl::Packet* _packet);
+	virtual bool handle_switch(vnl::Value* _sample, vnl::Basic* _input);
 	
 	template<class W>
 	void write_fields(W& _writer) const {

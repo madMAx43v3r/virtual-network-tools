@@ -19,7 +19,7 @@ RecordValue* RecordValue::clone() const {
 
 void RecordValue::destroy() {
 	this->RecordValue::~RecordValue();
-	return vnl::global_pool->push_back(this, sizeof(RecordValue));
+	return vnl::internal::global_pool_->push_back(this, sizeof(RecordValue));
 }
 
 void RecordValue::serialize(vnl::io::TypeOutput& _out) const {
@@ -47,7 +47,7 @@ void RecordValue::deserialize(vnl::io::TypeInput& _in, int _size) {
 	}
 }
 
-int RecordValue::field_index(vnl::Hash32 _hash) const {
+int RecordValue::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		case 0xaf3e4ff0: return 0;
 		case 0x5190a58c: return 1;
@@ -58,7 +58,7 @@ int RecordValue::field_index(vnl::Hash32 _hash) const {
 	}
 }
 
-const char* RecordValue::field_name(int _index) const {
+const char* RecordValue::get_field_name(int _index) const {
 	switch(_index) {
 		case 0: return "time";
 		case 1: return "domain";
@@ -76,7 +76,6 @@ void RecordValue::get_field(int _index, vnl::String& _str) const {
 		case 2: vnl::to_string(_str, topic); break;
 		case 3: vnl::to_string(_str, header); break;
 		case 4: vnl::to_string(_str, value); break;
-		default: _str << "{}";
 	}
 }
 

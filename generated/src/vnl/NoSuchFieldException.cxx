@@ -19,7 +19,7 @@ NoSuchFieldException* NoSuchFieldException::clone() const {
 
 void NoSuchFieldException::destroy() {
 	this->NoSuchFieldException::~NoSuchFieldException();
-	return vnl::global_pool->push_back(this, sizeof(NoSuchFieldException));
+	return vnl::internal::global_pool_->push_back(this, sizeof(NoSuchFieldException));
 }
 
 void NoSuchFieldException::serialize(vnl::io::TypeOutput& _out) const {
@@ -37,13 +37,13 @@ void NoSuchFieldException::deserialize(vnl::io::TypeInput& _in, int _size) {
 	}
 }
 
-int NoSuchFieldException::field_index(vnl::Hash32 _hash) const {
+int NoSuchFieldException::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		default: return -1;
 	}
 }
 
-const char* NoSuchFieldException::field_name(int _index) const {
+const char* NoSuchFieldException::get_field_name(int _index) const {
 	switch(_index) {
 		default: return 0;
 	}
@@ -51,7 +51,6 @@ const char* NoSuchFieldException::field_name(int _index) const {
 
 void NoSuchFieldException::get_field(int _index, vnl::String& _str) const {
 	switch(_index) {
-		default: _str << "{}";
 	}
 }
 

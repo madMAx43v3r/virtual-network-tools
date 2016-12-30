@@ -19,7 +19,7 @@ Exception* Exception::clone() const {
 
 void Exception::destroy() {
 	this->Exception::~Exception();
-	return vnl::global_pool->push_back(this, sizeof(Exception));
+	return vnl::internal::global_pool_->push_back(this, sizeof(Exception));
 }
 
 void Exception::serialize(vnl::io::TypeOutput& _out) const {
@@ -37,13 +37,13 @@ void Exception::deserialize(vnl::io::TypeInput& _in, int _size) {
 	}
 }
 
-int Exception::field_index(vnl::Hash32 _hash) const {
+int Exception::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		default: return -1;
 	}
 }
 
-const char* Exception::field_name(int _index) const {
+const char* Exception::get_field_name(int _index) const {
 	switch(_index) {
 		default: return 0;
 	}
@@ -51,7 +51,6 @@ const char* Exception::field_name(int _index) const {
 
 void Exception::get_field(int _index, vnl::String& _str) const {
 	switch(_index) {
-		default: _str << "{}";
 	}
 }
 

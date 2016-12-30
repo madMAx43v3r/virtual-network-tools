@@ -9,7 +9,7 @@ namespace vnl {
 const uint32_t ProcessBase::VNI_HASH;
 const uint32_t ProcessBase::NUM_FIELDS;
 
-int ProcessBase::field_index(vnl::Hash32 _hash) const {
+int ProcessBase::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		case 0x482df535: return 0;
 		case 0xc30f0945: return 1;
@@ -19,7 +19,7 @@ int ProcessBase::field_index(vnl::Hash32 _hash) const {
 	}
 }
 
-const char* ProcessBase::field_name(int _index) const {
+const char* ProcessBase::get_field_name(int _index) const {
 	switch(_index) {
 		case 0: return "vnl_log_level";
 		case 1: return "vnl_max_num_pending";
@@ -35,7 +35,6 @@ void ProcessBase::get_field(int _index, vnl::String& _str) const {
 		case 1: vnl::to_string(_str, vnl_max_num_pending); break;
 		case 2: vnl::to_string(_str, name); break;
 		case 3: vnl::to_string(_str, do_print_stats); break;
-		default: _str << "{}";
 	}
 }
 
@@ -169,18 +168,52 @@ bool ProcessBase::vni_const_call(vnl::io::TypeInput& _in, uint32_t _hash, int _n
 			break;
 		}
 		break;
+	case 0xd50fc0dd: 
+		switch(_num_args) {
+			case 0: {
+				if(!_in.error()) {
+					vnl::Array<vnl::info::TopicInfo > _res = get_topic_info();
+					vnl::write(_out, _res);
+					return true;
+				}
+			}
+			break;
+		}
+		break;
+	case 0xf73490b7: 
+		switch(_num_args) {
+			case 0: {
+				if(!_in.error()) {
+					vnl::Map<vnl::Hash32, vnl::info::Type > _res = get_type_info();
+					vnl::write(_out, _res);
+					return true;
+				}
+			}
+			break;
+		}
+		break;
 	}
 	return Super::vni_const_call(_in, _hash, _num_args, _out);
 }
 
 bool ProcessBase::handle_switch(vnl::Value* _sample, vnl::Packet* _packet) {
-	switch(_sample->vni_hash()) {
+	switch(_sample->get_vni_hash()) {
 	case 0x417d65c7: handle(*((vnl::Announce*)_sample), *_packet); return true;
 	case 0x3bd088b0: handle(*((vnl::Exit*)_sample), *_packet); return true;
 	case 0x9df3e6f5: handle(*((vnl::LogMsg*)_sample), *_packet); return true;
 	case 0xcdc22e1f: handle(*((vnl::Shutdown*)_sample), *_packet); return true;
 	}
 	return Super::handle_switch(_sample, _packet);
+}
+
+bool ProcessBase::handle_switch(vnl::Value* _sample, vnl::Basic* _input) {
+	switch(_sample->get_vni_hash()) {
+	case 0x417d65c7: handle(*((vnl::Announce*)_sample), _input); return true;
+	case 0x3bd088b0: handle(*((vnl::Exit*)_sample), _input); return true;
+	case 0x9df3e6f5: handle(*((vnl::LogMsg*)_sample), _input); return true;
+	case 0xcdc22e1f: handle(*((vnl::Shutdown*)_sample), _input); return true;
+	}
+	return Super::handle_switch(_sample, _input);
 }
 
 

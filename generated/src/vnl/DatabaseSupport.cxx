@@ -9,7 +9,7 @@ namespace vnl {
 const uint32_t DatabaseBase::VNI_HASH;
 const uint32_t DatabaseBase::NUM_FIELDS;
 
-int DatabaseBase::field_index(vnl::Hash32 _hash) const {
+int DatabaseBase::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		case 0x482df535: return 0;
 		case 0xc30f0945: return 1;
@@ -19,7 +19,7 @@ int DatabaseBase::field_index(vnl::Hash32 _hash) const {
 	}
 }
 
-const char* DatabaseBase::field_name(int _index) const {
+const char* DatabaseBase::get_field_name(int _index) const {
 	switch(_index) {
 		case 0: return "vnl_log_level";
 		case 1: return "vnl_max_num_pending";
@@ -35,7 +35,6 @@ void DatabaseBase::get_field(int _index, vnl::String& _str) const {
 		case 1: vnl::to_string(_str, vnl_max_num_pending); break;
 		case 2: vnl::to_string(_str, filename); break;
 		case 3: vnl::to_string(_str, ignore_errors); break;
-		default: _str << "{}";
 	}
 }
 
@@ -104,9 +103,15 @@ bool DatabaseBase::vni_const_call(vnl::io::TypeInput& _in, uint32_t _hash, int _
 }
 
 bool DatabaseBase::handle_switch(vnl::Value* _sample, vnl::Packet* _packet) {
-	switch(_sample->vni_hash()) {
+	switch(_sample->get_vni_hash()) {
 	}
 	return Super::handle_switch(_sample, _packet);
+}
+
+bool DatabaseBase::handle_switch(vnl::Value* _sample, vnl::Basic* _input) {
+	switch(_sample->get_vni_hash()) {
+	}
+	return Super::handle_switch(_sample, _input);
 }
 
 

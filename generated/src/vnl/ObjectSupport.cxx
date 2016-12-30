@@ -13,7 +13,7 @@ const int32_t ObjectBase::WARN;
 const int32_t ObjectBase::INFO;
 const int32_t ObjectBase::DEBUG;
 
-int ObjectBase::field_index(vnl::Hash32 _hash) const {
+int ObjectBase::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		case 0x482df535: return 0;
 		case 0xc30f0945: return 1;
@@ -21,7 +21,7 @@ int ObjectBase::field_index(vnl::Hash32 _hash) const {
 	}
 }
 
-const char* ObjectBase::field_name(int _index) const {
+const char* ObjectBase::get_field_name(int _index) const {
 	switch(_index) {
 		case 0: return "vnl_log_level";
 		case 1: return "vnl_max_num_pending";
@@ -33,7 +33,6 @@ void ObjectBase::get_field(int _index, vnl::String& _str) const {
 	switch(_index) {
 		case 0: vnl::to_string(_str, vnl_log_level); break;
 		case 1: vnl::to_string(_str, vnl_max_num_pending); break;
-		default: _str << "{}";
 	}
 }
 
@@ -73,6 +72,21 @@ bool ObjectBase::vni_call(vnl::io::TypeInput& _in, uint32_t _hash, int _num_args
 			return true;
 		}
 		break;
+	case 0x34266241: 
+		switch(_num_args) {
+			case 2: {
+				vnl::Hash32 name;
+				vnl::read(_in, name);
+				vnl::String value;
+				vnl::read(_in, value);
+				if(!_in.error()) {
+					set_config(name, value);
+					return true;
+				}
+			}
+			break;
+		}
+		break;
 	case 0xe8592f85: 
 		switch(_num_args) {
 			case 0: {
@@ -102,15 +116,60 @@ bool ObjectBase::vni_const_call(vnl::io::TypeInput& _in, uint32_t _hash, int _nu
 			return true;
 		}
 		break;
+	case 0x1b85d99: 
+		switch(_num_args) {
+			case 0: {
+				if(!_in.error()) {
+					vnl::Map<vnl::String, vnl::String > _res = get_config_map();
+					vnl::write(_out, _res);
+					return true;
+				}
+			}
+			break;
+		}
+		break;
+	case 0x77258735: 
+		switch(_num_args) {
+			case 0: {
+				if(!_in.error()) {
+					vnl::Array<vnl::Topic > _res = get_subscriptions();
+					vnl::write(_out, _res);
+					return true;
+				}
+			}
+			break;
+		}
+		break;
+	case 0x9abb388d: 
+		switch(_num_args) {
+			case 1: {
+				vnl::Hash32 name;
+				vnl::read(_in, name);
+				if(!_in.error()) {
+					vnl::String _res = get_config(name);
+					vnl::write(_out, _res);
+					return true;
+				}
+			}
+			break;
+		}
+		break;
 	}
 	return Super::vni_const_call(_in, _hash, _num_args, _out);
 }
 
 bool ObjectBase::handle_switch(vnl::Value* _sample, vnl::Packet* _packet) {
-	switch(_sample->vni_hash()) {
+	switch(_sample->get_vni_hash()) {
 	case 0xcdc22e1f: handle(*((vnl::Shutdown*)_sample), *_packet); return true;
 	}
 	return Super::handle_switch(_sample, _packet);
+}
+
+bool ObjectBase::handle_switch(vnl::Value* _sample, vnl::Basic* _input) {
+	switch(_sample->get_vni_hash()) {
+	case 0xcdc22e1f: handle(*((vnl::Shutdown*)_sample), _input); return true;
+	}
+	return Super::handle_switch(_sample, _input);
 }
 
 

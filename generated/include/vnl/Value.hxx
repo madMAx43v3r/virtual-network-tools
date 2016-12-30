@@ -28,13 +28,13 @@ public:
 	virtual void serialize(vnl::io::TypeOutput& _out) const;
 	virtual void deserialize(vnl::io::TypeInput& _in, int _size);
 	
-	virtual uint32_t vni_hash() const { return VNI_HASH; }
-	virtual const char* type_name() const { return "vnl.Value"; }
+	virtual uint32_t get_vni_hash() const { return VNI_HASH; }
+	virtual const char* get_type_name() const { return "vnl.Value"; }
 	
-	virtual int type_size() const { return sizeof(Value); }
-	virtual int num_fields() const { return NUM_FIELDS; }
-	virtual int field_index(vnl::Hash32 _hash) const;
-	virtual const char* field_name(int _index) const;
+	virtual int get_type_size() const { return sizeof(Value); }
+	virtual int get_num_fields() const { return NUM_FIELDS; }
+	virtual int get_field_index(vnl::Hash32 _hash) const;
+	virtual const char* get_field_name(int _index) const;
 	virtual void get_field(int _index, vnl::String& _str) const;
 	virtual void set_field(int _index, const vnl::String& _str);
 	virtual void get_field(int _index, vnl::io::TypeOutput& _out) const;
@@ -45,8 +45,20 @@ public:
 
 } // namespace
 
+namespace vnl { class Hash32; }
+namespace vnl { class Hash64; }
 
 namespace vnl {
+
+void read(vnl::io::TypeInput& in, vnl::Hash32& obj);
+void write(vnl::io::TypeOutput& out, const vnl::Hash32& obj);
+void from_string(const vnl::String& str, vnl::Hash32& obj);
+void to_string(vnl::String& str, const vnl::Hash32& obj);
+
+void read(vnl::io::TypeInput& in, vnl::Hash64& obj);
+void write(vnl::io::TypeOutput& out, const vnl::Hash64& obj);
+void from_string(const vnl::String& str, vnl::Hash64& obj);
+void to_string(vnl::String& str, const vnl::Hash64& obj);
 
 } // vnl
 

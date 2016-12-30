@@ -19,7 +19,7 @@ Exit* Exit::clone() const {
 
 void Exit::destroy() {
 	this->Exit::~Exit();
-	return vnl::global_pool->push_back(this, sizeof(Exit));
+	return vnl::internal::global_pool_->push_back(this, sizeof(Exit));
 }
 
 void Exit::serialize(vnl::io::TypeOutput& _out) const {
@@ -37,13 +37,13 @@ void Exit::deserialize(vnl::io::TypeInput& _in, int _size) {
 	}
 }
 
-int Exit::field_index(vnl::Hash32 _hash) const {
+int Exit::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		default: return -1;
 	}
 }
 
-const char* Exit::field_name(int _index) const {
+const char* Exit::get_field_name(int _index) const {
 	switch(_index) {
 		default: return 0;
 	}
@@ -51,7 +51,6 @@ const char* Exit::field_name(int _index) const {
 
 void Exit::get_field(int _index, vnl::String& _str) const {
 	switch(_index) {
-		default: _str << "{}";
 	}
 }
 

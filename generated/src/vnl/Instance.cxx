@@ -19,7 +19,7 @@ Instance* Instance::clone() const {
 
 void Instance::destroy() {
 	this->Instance::~Instance();
-	return vnl::global_pool->push_back(this, sizeof(Instance));
+	return vnl::internal::global_pool_->push_back(this, sizeof(Instance));
 }
 
 void Instance::serialize(vnl::io::TypeOutput& _out) const {
@@ -43,7 +43,7 @@ void Instance::deserialize(vnl::io::TypeInput& _in, int _size) {
 	}
 }
 
-int Instance::field_index(vnl::Hash32 _hash) const {
+int Instance::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		case 0x5fa779df: return 0;
 		case 0x5190a58c: return 1;
@@ -52,7 +52,7 @@ int Instance::field_index(vnl::Hash32 _hash) const {
 	}
 }
 
-const char* Instance::field_name(int _index) const {
+const char* Instance::get_field_name(int _index) const {
 	switch(_index) {
 		case 0: return "type";
 		case 1: return "domain";
@@ -66,7 +66,6 @@ void Instance::get_field(int _index, vnl::String& _str) const {
 		case 0: vnl::to_string(_str, type); break;
 		case 1: vnl::to_string(_str, domain); break;
 		case 2: vnl::to_string(_str, topic); break;
-		default: _str << "{}";
 	}
 }
 

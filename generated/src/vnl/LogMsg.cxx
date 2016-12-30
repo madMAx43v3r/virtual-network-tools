@@ -19,7 +19,7 @@ LogMsg* LogMsg::clone() const {
 
 void LogMsg::destroy() {
 	this->LogMsg::~LogMsg();
-	return vnl::global_pool->push_back(this, sizeof(LogMsg));
+	return vnl::internal::global_pool_->push_back(this, sizeof(LogMsg));
 }
 
 void LogMsg::serialize(vnl::io::TypeOutput& _out) const {
@@ -45,7 +45,7 @@ void LogMsg::deserialize(vnl::io::TypeInput& _in, int _size) {
 	}
 }
 
-int LogMsg::field_index(vnl::Hash32 _hash) const {
+int LogMsg::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		case 0x15364763: return 0;
 		case 0x5190a58c: return 1;
@@ -55,7 +55,7 @@ int LogMsg::field_index(vnl::Hash32 _hash) const {
 	}
 }
 
-const char* LogMsg::field_name(int _index) const {
+const char* LogMsg::get_field_name(int _index) const {
 	switch(_index) {
 		case 0: return "level";
 		case 1: return "domain";
@@ -71,7 +71,6 @@ void LogMsg::get_field(int _index, vnl::String& _str) const {
 		case 1: vnl::to_string(_str, domain); break;
 		case 2: vnl::to_string(_str, topic); break;
 		case 3: vnl::to_string(_str, msg); break;
-		default: _str << "{}";
 	}
 }
 

@@ -20,7 +20,7 @@ PlayerStatus* PlayerStatus::clone() const {
 
 void PlayerStatus::destroy() {
 	this->PlayerStatus::~PlayerStatus();
-	return vnl::global_pool->push_back(this, sizeof(PlayerStatus));
+	return vnl::internal::global_pool_->push_back(this, sizeof(PlayerStatus));
 }
 
 void PlayerStatus::serialize(vnl::io::TypeOutput& _out) const {
@@ -52,7 +52,7 @@ void PlayerStatus::deserialize(vnl::io::TypeInput& _in, int _size) {
 	}
 }
 
-int PlayerStatus::field_index(vnl::Hash32 _hash) const {
+int PlayerStatus::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		case 0xb60d3446: return 0;
 		case 0x2c364d4d: return 1;
@@ -65,7 +65,7 @@ int PlayerStatus::field_index(vnl::Hash32 _hash) const {
 	}
 }
 
-const char* PlayerStatus::field_name(int _index) const {
+const char* PlayerStatus::get_field_name(int _index) const {
 	switch(_index) {
 		case 0: return "filename";
 		case 1: return "playing";
@@ -87,7 +87,6 @@ void PlayerStatus::get_field(int _index, vnl::String& _str) const {
 		case 4: vnl::to_string(_str, end_time); break;
 		case 5: vnl::to_string(_str, current_time); break;
 		case 6: vnl::to_string(_str, time_offset); break;
-		default: _str << "{}";
 	}
 }
 
