@@ -1,0 +1,14 @@
+package vnl.tools;
+
+object AdminGUI {
+	
+	String target_host = "localhost";
+	int target_port = 8916;
+	
+	int interval = 2000;			// update interval in ms
+	
+	void handle(Value sample);
+	void handle(vnl.LogMsg sample);
+	void handle(vnl.info.RemoteInfo sample);
+	
+}
