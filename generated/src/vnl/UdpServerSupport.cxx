@@ -92,6 +92,17 @@ bool UdpServerBase::vni_call(vnl::io::TypeInput& _in, uint32_t _hash, int _num_a
 			return true;
 		}
 		break;
+	case 0x14ffa0f1: 
+		switch(_num_args) {
+			case 0: {
+				if(!_in.error()) {
+					unsubscribe_all();
+					return true;
+				}
+			}
+			break;
+		}
+		break;
 	case 0x3bb5d48f: 
 		switch(_num_args) {
 			case 2: {
@@ -122,26 +133,30 @@ bool UdpServerBase::vni_call(vnl::io::TypeInput& _in, uint32_t _hash, int _num_a
 			break;
 		}
 		break;
-	case 0x983c173d: 
+	case 0xc7428d8c: 
 		switch(_num_args) {
-			case 1: {
-				vnl::Topic topic;
+			case 2: {
+				vnl::String domain;
+				vnl::read(_in, domain);
+				vnl::String topic;
 				vnl::read(_in, topic);
 				if(!_in.error()) {
-					publish(topic);
+					unpublish(domain, topic);
 					return true;
 				}
 			}
 			break;
 		}
 		break;
-	case 0xdc322bca: 
+	case 0xed7dfb37: 
 		switch(_num_args) {
-			case 1: {
-				vnl::Topic topic;
+			case 2: {
+				vnl::String domain;
+				vnl::read(_in, domain);
+				vnl::String topic;
 				vnl::read(_in, topic);
 				if(!_in.error()) {
-					subscribe(topic);
+					unsubscribe(domain, topic);
 					return true;
 				}
 			}

@@ -16,9 +16,11 @@ include_directories(include/ generated/include/ lib/virtual-network-layers-cpp/i
 add_subdirectory(generated)
 add_subdirectory(lib/virtual-network-layers-cpp)
 
-add_executable(ReplayGUI ReplayGUI/replaygui.cpp)
-target_link_libraries(ReplayGUI vnl vni Qt4::QtGui)
-
 add_executable(crc64 src/crc64)
 target_link_libraries(crc64 vnl vni)
 
+add_executable(ReplayGUI ReplayGUI/replaygui.cpp)
+target_link_libraries(ReplayGUI vnl vni Qt4::QtGui)
+
+add_executable(AdminGUI AdminGUI/admingui.cpp)
+target_link_libraries(AdminGUI vnl vni Qt4::QtGui)

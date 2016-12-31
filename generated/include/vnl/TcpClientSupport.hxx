@@ -30,6 +30,7 @@ public:
 	TcpClientBase(const vnl::String& domain_, const vnl::String& topic_)
 		:	vnl::TcpUplink::TcpUplink(domain_, topic_)
 	{
+		endpoint = "localhost";
 		port = 8916;
 		autoclose = false;
 		tcp_nodelay = true;
@@ -55,6 +56,7 @@ public:
 	virtual void set_field(int _index, vnl::io::TypeInput& _in);
 	
 protected:
+	virtual void reconnect() = 0;
 	
 	virtual bool vni_call(vnl::io::TypeInput& _in, uint32_t _hash, int _num_args);
 	virtual bool vni_const_call(vnl::io::TypeInput& _in, uint32_t _hash, int _num_args, vnl::io::TypeOutput& _out);

@@ -27,6 +27,7 @@ ADD_LIBRARY(vni STATIC
 	src/vnl/TcpProxySupport.cxx
 	src/vnl/TcpServerSupport.cxx
 	src/vnl/TcpUplinkSupport.cxx
+	src/vnl/TimeoutException.cxx
 	src/vnl/Topic.cxx
 	src/vnl/UdpServerSupport.cxx
 	src/vnl/UplinkSupport.cxx
@@ -36,8 +37,10 @@ ADD_LIBRARY(vni STATIC
 	src/vnl/info/Method.cxx
 	src/vnl/info/Parameter.cxx
 	src/vnl/info/PlayerStatus.cxx
+	src/vnl/info/RemoteInfo.cxx
 	src/vnl/info/TopicInfo.cxx
 	src/vnl/info/Type.cxx
+	src/vnl/tools/AdminGUISupport.cxx
 	src/vnl/tools/ReplayGUISupport.cxx
 )
 

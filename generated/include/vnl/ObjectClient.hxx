@@ -33,6 +33,10 @@ public:
 				_out.putEntry(VNL_IO_INTERFACE, VNL_IO_END);
 			}
 		}
+		void get_private_domain() {
+			_out.putEntry(VNL_IO_CONST_CALL, 0);
+			_out.putHash(0xc5f1083a);
+		}
 		void set_config(const vnl::Hash32& name, const vnl::String& value) {
 			_out.putEntry(VNL_IO_CALL, 2);
 			_out.putHash(0x34266241);
@@ -92,6 +96,23 @@ public:
 	ObjectClient& operator=(const vnl::Address& addr) {
 		vnl::Client::set_address(addr);
 		return *this;
+	}
+	
+	vnl::String get_private_domain() {
+		_buf.wrap(_data);
+		{
+			Writer _wr(_out);
+			_wr.get_private_domain();
+		}
+		vnl::Packet* _pkt = _call(vnl::Frame::CONST_CALL);
+		vnl::String _result;
+		if(_pkt) {
+			vnl::read(_in, _result);
+			_pkt->ack();
+		} else {
+			throw vnl::IOException();
+		}
+		return _result;
 	}
 	
 	void set_config(const vnl::Hash32& name, const vnl::String& value) {

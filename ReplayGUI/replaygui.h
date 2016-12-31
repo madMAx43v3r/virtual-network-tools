@@ -1,5 +1,5 @@
-#ifndef REPLAYGUI_H
-#define REPLAYGUI_H
+#ifndef INCLUDE_REPLAYGUI_H
+#define INCLUDE_REPLAYGUI_H
 
 #include <vnl/tools/ReplayGUISupport.hxx>
 #include <vnl/TcpClient.h>
@@ -43,10 +43,6 @@ protected:
 		player.set_timeout(100);
 		player.set_address(vnl::local_domain_name, "Player");
 		player.connect(engine);
-		
-		client.set_fail(true);
-		client.set_timeout(100);
-		client.connect(engine);
 		
 		subscribe(vnl::local_domain_name, "PlayerStatus");
 		
@@ -245,7 +241,6 @@ private:
 	QApplication* application;
 	vnl::info::PlayerStatus last_status;
 	PlayerClient player;
-	vnl::TcpClientClient client;
 	
 	QSlider* slider;
 	bool do_hold;
@@ -256,4 +251,4 @@ private:
 }	// tools
 }	// vnl
 
-#endif // REPLAYGUI_H
+#endif // INCLUDE_REPLAYGUI_H

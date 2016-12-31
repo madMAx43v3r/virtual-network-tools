@@ -29,6 +29,10 @@ public:
 				_out.putEntry(VNL_IO_INTERFACE, VNL_IO_END);
 			}
 		}
+		void reconnect() {
+			_out.putEntry(VNL_IO_CALL, 0);
+			_out.putHash(0x20b6491);
+		}
 		void set_endpoint(const vnl::String& _value) {
 			_out.putEntry(VNL_IO_CALL, 1);
 			_out.putHash(0x2dc3f0d0);
@@ -101,6 +105,20 @@ public:
 	TcpClientClient& operator=(const vnl::Address& addr) {
 		vnl::Client::set_address(addr);
 		return *this;
+	}
+	
+	void reconnect() {
+		_buf.wrap(_data);
+		{
+			Writer _wr(_out);
+			_wr.reconnect();
+		}
+		vnl::Packet* _pkt = _call(vnl::Frame::CALL);
+		if(_pkt) {
+			_pkt->ack();
+		} else {
+			throw vnl::IOException();
+		}
 	}
 	
 	void set_endpoint(const vnl::String& endpoint) {

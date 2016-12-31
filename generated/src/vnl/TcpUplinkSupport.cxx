@@ -104,6 +104,17 @@ bool TcpUplinkBase::vni_call(vnl::io::TypeInput& _in, uint32_t _hash, int _num_a
 			return true;
 		}
 		break;
+	case 0x14ffa0f1: 
+		switch(_num_args) {
+			case 0: {
+				if(!_in.error()) {
+					unsubscribe_all();
+					return true;
+				}
+			}
+			break;
+		}
+		break;
 	case 0x3bb5d48f: 
 		switch(_num_args) {
 			case 2: {
@@ -134,26 +145,41 @@ bool TcpUplinkBase::vni_call(vnl::io::TypeInput& _in, uint32_t _hash, int _num_a
 			break;
 		}
 		break;
-	case 0x983c173d: 
+	case 0xbd19b5cb: 
 		switch(_num_args) {
-			case 1: {
-				vnl::Topic topic;
-				vnl::read(_in, topic);
+			case 0: {
 				if(!_in.error()) {
-					publish(topic);
+					reset();
 					return true;
 				}
 			}
 			break;
 		}
 		break;
-	case 0xdc322bca: 
+	case 0xc7428d8c: 
 		switch(_num_args) {
-			case 1: {
-				vnl::Topic topic;
+			case 2: {
+				vnl::String domain;
+				vnl::read(_in, domain);
+				vnl::String topic;
 				vnl::read(_in, topic);
 				if(!_in.error()) {
-					subscribe(topic);
+					unpublish(domain, topic);
+					return true;
+				}
+			}
+			break;
+		}
+		break;
+	case 0xed7dfb37: 
+		switch(_num_args) {
+			case 2: {
+				vnl::String domain;
+				vnl::read(_in, domain);
+				vnl::String topic;
+				vnl::read(_in, topic);
+				if(!_in.error()) {
+					unsubscribe(domain, topic);
 					return true;
 				}
 			}
@@ -190,18 +216,34 @@ bool TcpUplinkBase::vni_const_call(vnl::io::TypeInput& _in, uint32_t _hash, int 
 			return true;
 		}
 		break;
+	case 0x6ccccd5b: 
+		switch(_num_args) {
+			case 0: {
+				if(!_in.error()) {
+					vnl::info::RemoteInfo _res = get_remote_info();
+					vnl::write(_out, _res);
+					return true;
+				}
+			}
+			break;
+		}
+		break;
 	}
 	return Super::vni_const_call(_in, _hash, _num_args, _out);
 }
 
 bool TcpUplinkBase::handle_switch(vnl::Value* _sample, vnl::Packet* _packet) {
 	switch(_sample->get_vni_hash()) {
+	case 0xddc3d187: handle(*((vnl::Topic*)_sample), *_packet); return true;
+	case 0x7aa64297: handle(*((vnl::info::RemoteInfo*)_sample), *_packet); return true;
 	}
 	return Super::handle_switch(_sample, _packet);
 }
 
 bool TcpUplinkBase::handle_switch(vnl::Value* _sample, vnl::Basic* _input) {
 	switch(_sample->get_vni_hash()) {
+	case 0xddc3d187: handle(*((vnl::Topic*)_sample), _input); return true;
+	case 0x7aa64297: handle(*((vnl::info::RemoteInfo*)_sample), _input); return true;
 	}
 	return Super::handle_switch(_sample, _input);
 }

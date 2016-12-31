@@ -52,6 +52,7 @@ public:
 	virtual void set_field(int _index, vnl::io::TypeInput& _in);
 	
 protected:
+	virtual vnl::String get_private_domain() const = 0;
 	virtual void set_config(const vnl::Hash32& name, const vnl::String& value) = 0;
 	virtual void handle(const vnl::Shutdown& event, const vnl::Packet& packet) { handle(event); }
 	virtual void handle(const vnl::Shutdown& event, vnl::Basic* input) { handle(event); }

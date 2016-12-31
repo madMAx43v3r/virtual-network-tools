@@ -6,6 +6,7 @@
 
 #include <vnl/String.h>
 #include <vnl/Topic.hxx>
+#include <vnl/info/RemoteInfo.hxx>
 
 #include <vnl/ObjectClient.hxx>
 
@@ -30,15 +31,15 @@ public:
 				_out.putEntry(VNL_IO_INTERFACE, VNL_IO_END);
 			}
 		}
-		void publish(const vnl::Topic& topic) {
-			_out.putEntry(VNL_IO_CALL, 1);
-			_out.putHash(0x983c173d);
+		void unsubscribe(const vnl::String& domain, const vnl::String& topic) {
+			_out.putEntry(VNL_IO_CALL, 2);
+			_out.putHash(0xed7dfb37);
+			vnl::write(_out, domain);
 			vnl::write(_out, topic);
 		}
-		void subscribe(const vnl::Topic& topic) {
-			_out.putEntry(VNL_IO_CALL, 1);
-			_out.putHash(0xdc322bca);
-			vnl::write(_out, topic);
+		void unsubscribe_all() {
+			_out.putEntry(VNL_IO_CALL, 0);
+			_out.putHash(0x14ffa0f1);
 		}
 		void subscribe(const vnl::String& domain, const vnl::String& topic) {
 			_out.putEntry(VNL_IO_CALL, 2);
@@ -46,9 +47,23 @@ public:
 			vnl::write(_out, domain);
 			vnl::write(_out, topic);
 		}
+		void reset() {
+			_out.putEntry(VNL_IO_CALL, 0);
+			_out.putHash(0xbd19b5cb);
+		}
 		void publish(const vnl::String& domain, const vnl::String& topic) {
 			_out.putEntry(VNL_IO_CALL, 2);
 			_out.putHash(0x7fbbe878);
+			vnl::write(_out, domain);
+			vnl::write(_out, topic);
+		}
+		void get_remote_info() {
+			_out.putEntry(VNL_IO_CONST_CALL, 0);
+			_out.putHash(0x6ccccd5b);
+		}
+		void unpublish(const vnl::String& domain, const vnl::String& topic) {
+			_out.putEntry(VNL_IO_CALL, 2);
+			_out.putHash(0xc7428d8c);
 			vnl::write(_out, domain);
 			vnl::write(_out, topic);
 		}
@@ -108,11 +123,11 @@ public:
 		return *this;
 	}
 	
-	void publish(const vnl::Topic& topic) {
+	void unsubscribe(const vnl::String& domain, const vnl::String& topic) {
 		_buf.wrap(_data);
 		{
 			Writer _wr(_out);
-			_wr.publish(topic);
+			_wr.unsubscribe(domain, topic);
 		}
 		vnl::Packet* _pkt = _call(vnl::Frame::CALL);
 		if(_pkt) {
@@ -122,11 +137,11 @@ public:
 		}
 	}
 	
-	void subscribe(const vnl::Topic& topic) {
+	void unsubscribe_all() {
 		_buf.wrap(_data);
 		{
 			Writer _wr(_out);
-			_wr.subscribe(topic);
+			_wr.unsubscribe_all();
 		}
 		vnl::Packet* _pkt = _call(vnl::Frame::CALL);
 		if(_pkt) {
@@ -150,11 +165,56 @@ public:
 		}
 	}
 	
+	void reset() {
+		_buf.wrap(_data);
+		{
+			Writer _wr(_out);
+			_wr.reset();
+		}
+		vnl::Packet* _pkt = _call(vnl::Frame::CALL);
+		if(_pkt) {
+			_pkt->ack();
+		} else {
+			throw vnl::IOException();
+		}
+	}
+	
 	void publish(const vnl::String& domain, const vnl::String& topic) {
 		_buf.wrap(_data);
 		{
 			Writer _wr(_out);
 			_wr.publish(domain, topic);
+		}
+		vnl::Packet* _pkt = _call(vnl::Frame::CALL);
+		if(_pkt) {
+			_pkt->ack();
+		} else {
+			throw vnl::IOException();
+		}
+	}
+	
+	vnl::info::RemoteInfo get_remote_info() {
+		_buf.wrap(_data);
+		{
+			Writer _wr(_out);
+			_wr.get_remote_info();
+		}
+		vnl::Packet* _pkt = _call(vnl::Frame::CONST_CALL);
+		vnl::info::RemoteInfo _result;
+		if(_pkt) {
+			vnl::read(_in, _result);
+			_pkt->ack();
+		} else {
+			throw vnl::IOException();
+		}
+		return _result;
+	}
+	
+	void unpublish(const vnl::String& domain, const vnl::String& topic) {
+		_buf.wrap(_data);
+		{
+			Writer _wr(_out);
+			_wr.unpublish(domain, topic);
 		}
 		vnl::Packet* _pkt = _call(vnl::Frame::CALL);
 		if(_pkt) {

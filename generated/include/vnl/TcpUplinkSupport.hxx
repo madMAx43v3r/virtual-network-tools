@@ -7,6 +7,7 @@
 #include <vnl/Object.h>
 #include <vnl/String.h>
 #include <vnl/Topic.hxx>
+#include <vnl/info/RemoteInfo.hxx>
 
 #include <vnl/Type.hxx>
 
@@ -51,10 +52,19 @@ public:
 	virtual void set_field(int _index, vnl::io::TypeInput& _in);
 	
 protected:
-	virtual void publish(const vnl::Topic& topic) = 0;
-	virtual void subscribe(const vnl::Topic& topic) = 0;
+	virtual void handle(const vnl::info::RemoteInfo& sample, const vnl::Packet& packet) { handle(sample); }
+	virtual void handle(const vnl::info::RemoteInfo& sample, vnl::Basic* input) { handle(sample); }
+	virtual void handle(const vnl::info::RemoteInfo& sample) {}
+	virtual void unsubscribe(const vnl::String& domain, const vnl::String& topic) = 0;
+	virtual void handle(const vnl::Topic& sample, const vnl::Packet& packet) { handle(sample); }
+	virtual void handle(const vnl::Topic& sample, vnl::Basic* input) { handle(sample); }
+	virtual void handle(const vnl::Topic& sample) {}
+	virtual void unsubscribe_all() = 0;
 	virtual void subscribe(const vnl::String& domain, const vnl::String& topic) = 0;
+	virtual void reset() = 0;
 	virtual void publish(const vnl::String& domain, const vnl::String& topic) = 0;
+	virtual vnl::info::RemoteInfo get_remote_info() const = 0;
+	virtual void unpublish(const vnl::String& domain, const vnl::String& topic) = 0;
 	
 	virtual bool vni_call(vnl::io::TypeInput& _in, uint32_t _hash, int _num_args);
 	virtual bool vni_const_call(vnl::io::TypeInput& _in, uint32_t _hash, int _num_args, vnl::io::TypeOutput& _out);
