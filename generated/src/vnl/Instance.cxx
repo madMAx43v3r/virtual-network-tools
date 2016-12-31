@@ -28,6 +28,7 @@ void Instance::serialize(vnl::io::TypeOutput& _out) const {
 	_out.putHash(0x5fa779df); vnl::write(_out, type);
 	_out.putHash(0x5190a58c); vnl::write(_out, domain);
 	_out.putHash(0xf68c6937); vnl::write(_out, topic);
+	_out.putHash(0x85aba286); vnl::write(_out, src_mac);
 }
 
 void Instance::deserialize(vnl::io::TypeInput& _in, int _size) {
@@ -38,6 +39,7 @@ void Instance::deserialize(vnl::io::TypeInput& _in, int _size) {
 			case 0x5fa779df: vnl::read(_in, type); break;
 			case 0x5190a58c: vnl::read(_in, domain); break;
 			case 0xf68c6937: vnl::read(_in, topic); break;
+			case 0x85aba286: vnl::read(_in, src_mac); break;
 			default: _in.skip();
 		}
 	}
@@ -48,6 +50,7 @@ int Instance::get_field_index(vnl::Hash32 _hash) const {
 		case 0x5fa779df: return 0;
 		case 0x5190a58c: return 1;
 		case 0xf68c6937: return 2;
+		case 0x85aba286: return 3;
 		default: return -1;
 	}
 }
@@ -57,6 +60,7 @@ const char* Instance::get_field_name(int _index) const {
 		case 0: return "type";
 		case 1: return "domain";
 		case 2: return "topic";
+		case 3: return "src_mac";
 		default: return 0;
 	}
 }
@@ -66,6 +70,7 @@ void Instance::get_field(int _index, vnl::String& _str) const {
 		case 0: vnl::to_string(_str, type); break;
 		case 1: vnl::to_string(_str, domain); break;
 		case 2: vnl::to_string(_str, topic); break;
+		case 3: vnl::to_string(_str, src_mac); break;
 	}
 }
 
@@ -74,6 +79,7 @@ void Instance::set_field(int _index, const vnl::String& _str) {
 		case 0: vnl::from_string(_str, type); break;
 		case 1: vnl::from_string(_str, domain); break;
 		case 2: vnl::from_string(_str, topic); break;
+		case 3: vnl::from_string(_str, src_mac); break;
 	}
 }
 
@@ -82,6 +88,7 @@ void Instance::get_field(int _index, vnl::io::TypeOutput& _out) const {
 		case 0: vnl::write(_out, type); break;
 		case 1: vnl::write(_out, domain); break;
 		case 2: vnl::write(_out, topic); break;
+		case 3: vnl::write(_out, src_mac); break;
 		default: _out.putNull();
 	}
 }
@@ -91,6 +98,7 @@ void Instance::set_field(int _index, vnl::io::TypeInput& _in) {
 		case 0: vnl::read(_in, type); break;
 		case 1: vnl::read(_in, domain); break;
 		case 2: vnl::read(_in, topic); break;
+		case 3: vnl::read(_in, src_mac); break;
 	}
 }
 

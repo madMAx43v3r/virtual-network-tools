@@ -30,15 +30,27 @@
 #include <QIcon>
 #include <QTabWidget>
 #include <QSplitter>
-#include <QTreeView>
-#include <QListView>
+#include <QTreeWidget>
+#include <QListWidget>
 #include <QScrollArea>
 #include <QStackedWidget>
 #include <QTextEdit>
+#include <QHeaderView>
+#include <QTreeWidgetItemIterator>
 
 
 namespace vnl {
 namespace tools {
+
+inline std::string subs(std::string str, const std::string& from, const std::string& to) {
+    size_t start_pos = 0;
+    while((start_pos = str.find(from, start_pos)) != std::string::npos) {
+        str.replace(start_pos, from.length(), to);
+        start_pos += to.length(); // Handles case where 'to' is a substring of 'from'
+    }
+    return str;
+}
+
 
 class AdminGUI : public QWidget, public AdminGUIBase {
 	Q_OBJECT
@@ -53,6 +65,7 @@ public:
 protected:
 	struct module_t {
 		vnl::Instance instance;
+		QTreeWidgetItem* tree_item = 0;
 		QTextEdit* log_view = 0;
 		bool running = true;
 	};
@@ -60,10 +73,10 @@ protected:
 	struct topic_t {
 		vnl::Topic topic;
 		QScrollArea* dump_widget = 0;
-		QTreeView* dump_tree = 0;
+		QTreeWidget* dump_tree = 0;
 		QSplitter* pubsub_widget = 0;
-		QListView* publishers = 0;
-		QListView* subscribers = 0;
+		QListWidget* publishers = 0;
+		QListWidget* subscribers = 0;
 	};
 	
 	void main() {
@@ -80,7 +93,7 @@ protected:
 		{
 			QTimer* timer = new QTimer(this);
 			connect(timer, SIGNAL(timeout()), this, SLOT(poll_messages()));
-			timer->start(100);
+			timer->start(50);
 		}
 		{
 			QTimer* timer = new QTimer(this);
@@ -116,21 +129,27 @@ protected:
 			QSplitter* splitter = new QSplitter();
 			{
 				QScrollArea* area = new QScrollArea();
-				module_tree = new QTreeView();
-				connect(module_tree, SIGNAL(pressed()), this, SLOT(scan()));
+				area->setWidgetResizable(true);
+				module_tree = new QTreeWidget();
+				module_tree->setSelectionBehavior(QTreeWidget::SelectionBehavior::SelectItems);
+				module_tree->setSelectionMode(QTreeWidget::SelectionMode::SingleSelection);
+				connect(module_tree, SIGNAL(itemSelectionChanged()), this, SLOT(setCurrentModule()));
 				area->setWidget(module_tree);
+				module_tree->header()->close();
 				splitter->addWidget(area);
 			}
 			
 			QTabWidget* sub_pager = new QTabWidget();
 			{
 				QScrollArea* area = new QScrollArea();
+				area->setWidgetResizable(true);
 				module_log_stack = new QStackedWidget();
 				area->setWidget(module_log_stack);
 				sub_pager->addTab(area, "Log Output");
 			}
 			{
 				QScrollArea* area = new QScrollArea();
+				area->setWidgetResizable(true);
 				module_config_stack = new QStackedWidget();
 				area->setWidget(module_config_stack);
 				sub_pager->addTab(area, "Configuration");
@@ -146,7 +165,8 @@ protected:
 			QSplitter* splitter = new QSplitter();
 			{
 				QScrollArea* area = new QScrollArea();
-				topic_tree = new QTreeView();
+				area->setWidgetResizable(true);
+				topic_tree = new QListWidget();
 				connect(topic_tree, SIGNAL(pressed()), this, SLOT(scan()));
 				area->setWidget(topic_tree);
 				splitter->addWidget(area);
@@ -202,8 +222,22 @@ protected:
 	}
 	
 	void handle(const vnl::LogMsg& sample) {
-		module_t& module = get_module(sample.domain, sample.topic);
-		module.log_view->append(sample.msg.to_string().c_str());
+		module_t* module = get_module(sample.src_mac);
+		if(module) {
+			QTextCursor tmp = module->log_view->textCursor();
+			module->log_view->moveCursor(QTextCursor::End);
+			QString text;
+			switch(sample.level) {
+			case DEBUG: text += "[DEBUG] "; break;
+			case INFO: text += "<font color=blue>[INFO]</font> "; break;
+			case WARN: text += "<font color=orange>[WARN]</font> "; break;
+			case ERROR: text += "<font color=red>[ERROR]</font> "; break;
+			}
+			text += subs(sample.msg.to_string(), "\n", "<br>").c_str();
+			module->log_view->insertHtml(text);
+			module->log_view->setTextCursor(tmp);
+			module->log_view->update();
+		}
 	}
 	
 	void handle(const vnl::info::RemoteInfo& sample) {
@@ -211,6 +245,7 @@ protected:
 		tcp_client.subscribe(remote.domain_name, "vnl.log");
 		tcp_client.publish(remote.domain_name, "Process");
 		process.set_address(remote.domain_name, "Process");
+		subscribe(remote.domain_name, "vnl.log");
 		
 		setWindowTitle(QCoreApplication::applicationName() + " (" + remote.domain_name.to_string().c_str()
 				+ " at " + target_host.to_string().c_str() + ":" + QString::number(target_port) + ")");
@@ -230,6 +265,8 @@ protected:
 	}
 	
 	void setup_client() {
+		unsubscribe(remote.domain_name, "vnl.log");
+		unsubscribe(current_topic);
 		tcp_client.set_endpoint(target_host);
 		tcp_client.set_port(target_port);
 		tcp_client.reconnect();
@@ -237,9 +274,6 @@ protected:
 	
 signals:
 	void setFileName(const QString&);
-	void setTime(const QString&);
-	void setTimeEnd(const QString&);
-	void setPosition(int);
 	
 private slots:
 	void new_target(const QString& target) {
@@ -252,16 +286,30 @@ private slots:
 		setup_client();
 	}
 	
+	void setCurrentModule() {
+		QList<QTreeWidgetItem*> selection = module_tree->selectedItems();
+		if(selection.count() != 1) {
+			return;
+		}
+		QTreeWidgetItem* item = selection.first();
+		if(item && item->parent()) {
+			QVariant mac = item->data(1, Qt::ItemDataRole::UserRole);
+			module_t* module = get_module(mac.toULongLong());
+			if(module) {
+				module_log_stack->setCurrentWidget(module->log_view);
+				module_log_stack->update();
+			}
+		}
+	}
+	
 	void update_view() {
 		if(process.get_address().is_null()) {
 			return;
 		}
+		for(module_t& module : modules) {
+			module.running = false;
+		}
 		try {
-			
-			for(module_t& module : modules) {
-				module.running = false;
-			}
-			
 			vnl::Array<vnl::Instance> objects = process.get_objects();
 			for(vnl::Instance& inst : objects) {
 				module_t& module = get_module(inst);
@@ -292,23 +340,51 @@ private:
 	}
 	
 	module_t& get_module(const vnl::Instance& inst) {
-		module_t& module = get_module(inst.domain, inst.topic);
-		module.instance = inst;
-		return module;
+		module_t* module = get_module(inst.src_mac);
+		if(!module) {
+			module = &(*modules.push_back());
+			module->instance = inst;
+			module->log_view = new QTextEdit();
+			module->log_view->setReadOnly(true);
+			module->log_view->setLineWrapMode(QTextEdit::NoWrap);
+			module_log_stack->addWidget(module->log_view);
+			
+			QString domain = inst.domain.to_string().c_str();
+			QString topic = inst.topic.to_string().c_str();
+			QTreeWidgetItem* parent = 0;
+			{
+				QTreeWidgetItemIterator it(module_tree);
+				while(*it) {
+					if((*it)->parent() == 0 && (*it)->data(0, Qt::ItemDataRole::DisplayRole) == domain) {
+						parent = *it;
+					}
+					it++;
+				}
+			}
+			if(!parent) {
+				parent = new QTreeWidgetItem();
+				parent->setData(0, Qt::ItemDataRole::DisplayRole, domain);
+				module_tree->addTopLevelItem(parent);
+				parent->setExpanded(true);
+			}
+			
+			module->tree_item = new QTreeWidgetItem();
+			module->tree_item->setData(0, Qt::ItemDataRole::DisplayRole, topic);
+			module->tree_item->setData(1, Qt::ItemDataRole::UserRole, QVariant(qulonglong(inst.src_mac.value)));
+			parent->addChild(module->tree_item);
+			module_tree->sortItems(0, Qt::SortOrder::AscendingOrder);
+			module_tree->update();
+		}
+		return *module;
 	}
 	
-	module_t& get_module(const vnl::String& domain, const vnl::String& topic) {
+	module_t* get_module(uint64_t src_mac) {
 		for(module_t& module : modules) {
-			if(module.instance.domain == domain && module.instance.topic == topic) {
-				return module;
+			if(module.instance.src_mac == src_mac) {
+				return &module;
 			}
 		}
-		module_t& module = *modules.push_back();
-		module.log_view = new QTextEdit();
-		module.log_view->setReadOnly(true);
-		module.log_view->setLineWrapMode(QTextEdit::NoWrap);
-		module_log_stack->addWidget(module.log_view);
-		return module;
+		return 0;
 	}
 	
 	topic_t& get_topic(const vnl::Topic& top) {
@@ -321,7 +397,7 @@ private:
 		topic.topic = top;
 		{
 			topic.dump_widget = new QScrollArea();
-			topic.dump_tree = new QTreeView();
+			topic.dump_tree = new QTreeWidget();
 			topic.dump_widget->setWidget(topic.dump_tree);
 			topic_dump_stack->addWidget(topic.dump_widget);
 		}
@@ -330,13 +406,13 @@ private:
 			topic.pubsub_widget->setOrientation(Qt::Vertical);
 			{
 				QScrollArea* area = new QScrollArea();
-				topic.publishers = new QListView();
+				topic.publishers = new QListWidget();
 				area->setWidget(topic.publishers);
 				topic.pubsub_widget->addWidget(area);
 			}
 			{
 				QScrollArea* area = new QScrollArea();
-				topic.subscribers = new QListView();
+				topic.subscribers = new QListWidget();
 				area->setWidget(topic.subscribers);
 				topic.pubsub_widget->addWidget(area);
 			}
@@ -354,8 +430,8 @@ private:
 	vnl::Map<vnl::Hash32, vnl::info::Type> type_info;
 	vnl::Array<vnl::info::TopicInfo> topic_info;
 	
-	QTreeView* module_tree = 0;
-	QTreeView* topic_tree = 0;
+	QTreeWidget* module_tree = 0;
+	QListWidget* topic_tree = 0;
 	
 	vnl::List<module_t> modules;
 	QStackedWidget* module_log_stack = 0;

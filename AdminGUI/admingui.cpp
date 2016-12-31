@@ -6,6 +6,7 @@
  */
 
 #include <vnl/Layer.h>
+#include <vnl/Terminal.h>
 
 #include <signal.h>
 #include "admingui.h"
@@ -17,6 +18,8 @@ int main(int argc, char** argv) {
 	QCoreApplication::setApplicationName("AdminGUI");
 	
 	vnl::Layer layer("AdminGUI");
+	
+	vnl::spawn(new vnl::Terminal());
 	
 	vnl::tools::AdminGUI* module = new vnl::tools::AdminGUI(vnl::local_domain_name, &app);
 	vnl::run(module);

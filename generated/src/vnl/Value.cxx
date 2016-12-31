@@ -127,6 +127,11 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 			field.name = "topic";
 			field.type = "vnl.String";
 		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.name = "src_mac";
+			field.type = "vnl.Hash64";
+		}
 	}
 	{
 		vnl::info::Type& info = res["vnl.LogMsg"];
@@ -135,6 +140,11 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 			vnl::info::Field& field = *info.fields.push_back();
 			field.name = "level";
 			field.type = "int";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.name = "src_mac";
+			field.type = "vnl.Hash64";
 		}
 		{
 			vnl::info::Field& field = *info.fields.push_back();
