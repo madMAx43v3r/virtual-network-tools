@@ -133,6 +133,12 @@ protected:
 		
 		QTabWidget* pager = new QTabWidget();
 		{
+			terminal = new QTextEdit();
+			terminal->setReadOnly(true);
+			terminal->setLineWrapMode(QTextEdit::NoWrap);
+			pager->addTab(terminal, "Terminal");
+		}
+		{
 			QSplitter* splitter = new QSplitter();
 			
 			module_tree = new QTreeWidget();
@@ -226,26 +232,18 @@ protected:
 	void handle(const vnl::LogMsg& sample) {
 		module_t* module = get_module(sample.src_mac);
 		if(module) {
-			int old_scrollbar_value = module->log_view->verticalScrollBar()->value();
-			bool is_scrolled_down = old_scrollbar_value == module->log_view->verticalScrollBar()->maximum();
-			QTextCursor tmp = module->log_view->textCursor();
-			module->log_view->moveCursor(QTextCursor::End);
 			QString text;
 			switch(sample.level) {
-			case DEBUG: text += "[DEBUG] "; break;
-			case INFO: text += "<font color=blue>[INFO]</font> "; break;
-			case WARN: text += "<font color=orange>[WARN]</font> "; break;
-			case ERROR: text += "<font color=red>[ERROR]</font> "; break;
+			case DEBUG: text += "DEBUG: "; break;
+			case INFO: text += "<font color=blue>INFO:</font> "; break;
+			case WARN: text += "<font color=orange>WARN:</font> "; break;
+			case ERROR: text += "<font color=red>ERROR:</font> "; break;
 			}
 			text += subs(sample.msg.to_string(), "\n", "<br>").c_str();
-			module->log_view->insertHtml(text);
-			module->log_view->setTextCursor(tmp);
-			if(is_scrolled_down) {
-				module->log_view->verticalScrollBar()->setValue(module->log_view->verticalScrollBar()->maximum());
-			} else {
-				module->log_view->verticalScrollBar()->setValue(old_scrollbar_value);
-			}
-			module->log_view->update();
+			append_html(module->log_view, text);
+			
+			text = QString("[") + sample.topic.to_string().c_str() + "] " + text;
+			append_html(terminal, text);
 		}
 	}
 	
@@ -294,8 +292,8 @@ protected:
 			set_cell_data(topic_overview, row, 1, info.topic.name.to_string().c_str());
 			set_cell_data(topic_overview, row, 2, qlonglong(info.send_counter));
 			set_cell_data(topic_overview, row, 3, qlonglong(info.receive_counter));
-			set_cell_data(topic_overview, row, 4, QString::number(float(info.last_time-info.first_time)/info.send_counter/1e6) + "s");
-			set_cell_data(topic_overview, row, 5, QString::number(float(sample.time-info.last_time)/1e6) + "s");
+			set_cell_data(topic_overview, row, 4, QString::number(float(info.last_time-info.first_time)/(info.send_counter-1)/1e3, 103, 4) + " ms");
+			set_cell_data(topic_overview, row, 5, QString::number((sample.time-info.last_time)/1000000) + " s");
 			
 			int r = 0;
 			for(auto& entry : info.publishers) {
@@ -342,8 +340,7 @@ protected:
 	}
 	
 	void setup_client() {
-		unsubscribe(remote.domain_name, "vnl.log");
-		unsubscribe(current_topic);
+		tcp_client.unsubscribe_all();
 		tcp_client.set_endpoint(target_host);
 		tcp_client.set_port(target_port);
 		tcp_client.reconnect();
@@ -430,6 +427,7 @@ private slots:
 	void reset_all() {
 		modules.clear();
 		topics.clear();
+		terminal->clear();
 		module_tree->clear();
 		topic_tree->clear();
 	}
@@ -438,7 +436,7 @@ private:
 	module_t& get_module(const vnl::Instance& inst) {
 		module_t* module = get_module(inst.src_mac);
 		if(!module) {
-			module = &(*modules.push_back());
+			module = &modules.push_back();
 			module->instance = inst;
 			module->log_view = new QTextEdit();
 			module->log_view->setReadOnly(true);
@@ -501,7 +499,7 @@ private:
 			return *found;
 		}
 		
-		topic_t& topic = *topics.push_back();
+		topic_t& topic = topics.push_back();
 		topic.topic = top;
 		
 		topic.dump_tree = new QTreeWidget();
@@ -581,6 +579,21 @@ private:
 		}
 	}
 	
+	static void append_html(QTextEdit* widget, QString text) {
+		int old_scrollbar_value = widget->verticalScrollBar()->value();
+		bool is_scrolled_down = old_scrollbar_value == widget->verticalScrollBar()->maximum();
+		QTextCursor tmp = widget->textCursor();
+		widget->moveCursor(QTextCursor::End);
+		widget->insertHtml(text);
+		widget->setTextCursor(tmp);
+		if(is_scrolled_down) {
+			widget->verticalScrollBar()->setValue(widget->verticalScrollBar()->maximum());
+		} else {
+			widget->verticalScrollBar()->setValue(old_scrollbar_value);
+		}
+		widget->update();
+	}
+	
 private:
 	QApplication* application;
 	vnl::TcpClientClient tcp_client;
@@ -589,14 +602,15 @@ private:
 	
 	vnl::Map<vnl::Hash32, vnl::info::Type> type_info;
 	
+	QTextEdit* terminal = 0;
 	QTreeWidget* module_tree = 0;
 	QTreeWidget* topic_tree = 0;
 	
-	vnl::List<module_t> modules;
+	vnl::Array<module_t> modules;
 	QStackedWidget* module_log_stack = 0;
 	QStackedWidget* module_config_stack = 0;
 	
-	vnl::List<topic_t> topics;
+	vnl::Array<topic_t> topics;
 	QTableWidget* topic_overview = 0;
 	QStackedWidget* topic_pubsub_stack = 0;
 	QStackedWidget* topic_dump_stack = 0;
