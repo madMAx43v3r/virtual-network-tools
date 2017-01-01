@@ -83,14 +83,18 @@ protected:
 	};
 	
 	void main() {
-		add_client(tcp_client);
-		tcp_client = vnl::spawn(new vnl::TcpClient(vnl::local_domain_name, "TcpClient"));
-		subscribe(tcp_client.get_private_domain(), "remote_info");
-		setup_client();
-		
-		add_client(process);
 		process.set_fail(true);
 		process.set_timeout(1000);
+		add_client(process);
+		
+		add_client(tcp_client);
+		{
+			vnl::TcpClient* module = new vnl::TcpClient(vnl::local_domain_name, "TcpClient");
+			module->endpoint = target_host;
+			module->port = target_port;
+			tcp_client = vnl::spawn(module);
+		}
+		subscribe(tcp_client.get_private_domain(), "remote_info");
 		
 		setWindowTitle(QCoreApplication::applicationName());
 		{
@@ -249,7 +253,6 @@ protected:
 		remote = sample;
 		process.set_address(remote.domain_name, "Process");
 		tcp_client.publish(remote.domain_name, "Process");
-		usleep(100000);
 		
 		vnl::String process_domain;
 		try {
