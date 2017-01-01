@@ -14,6 +14,7 @@
 #include <vnl/TcpClientClient.hxx>
 #include <vnl/ProcessClient.hxx>
 #include <vnl/tools/AdminGUISupport.hxx>
+#include <vnl/info/TopicInfoList.hxx>
 
 #include <QApplication>
 #include <QWidget>
@@ -35,6 +36,7 @@
 #include <QScrollArea>
 #include <QStackedWidget>
 #include <QTextEdit>
+#include <QTableWidget>
 #include <QHeaderView>
 #include <QTreeWidgetItemIterator>
 
@@ -67,16 +69,16 @@ protected:
 		vnl::Instance instance;
 		QTreeWidgetItem* tree_item = 0;
 		QTextEdit* log_view = 0;
-		bool running = true;
+		bool is_running = true;
 	};
 	
 	struct topic_t {
 		vnl::Topic topic;
-		QScrollArea* dump_widget = 0;
+		QTreeWidgetItem* tree_item = 0;
 		QTreeWidget* dump_tree = 0;
 		QSplitter* pubsub_widget = 0;
-		QListWidget* publishers = 0;
-		QListWidget* subscribers = 0;
+		QTableWidget* publishers = 0;
+		QTableWidget* subscribers = 0;
 	};
 	
 	void main() {
@@ -127,33 +129,22 @@ protected:
 		QTabWidget* pager = new QTabWidget();
 		{
 			QSplitter* splitter = new QSplitter();
-			{
-				QScrollArea* area = new QScrollArea();
-				area->setWidgetResizable(true);
-				module_tree = new QTreeWidget();
-				module_tree->setSelectionBehavior(QTreeWidget::SelectionBehavior::SelectItems);
-				module_tree->setSelectionMode(QTreeWidget::SelectionMode::SingleSelection);
-				connect(module_tree, SIGNAL(itemSelectionChanged()), this, SLOT(setCurrentModule()));
-				area->setWidget(module_tree);
-				module_tree->header()->close();
-				splitter->addWidget(area);
-			}
+			
+			module_tree = new QTreeWidget();
+			module_tree->setSelectionBehavior(QTreeWidget::SelectionBehavior::SelectItems);
+			module_tree->setSelectionMode(QTreeWidget::SelectionMode::SingleSelection);
+			module_tree->header()->close();
+			connect(module_tree, SIGNAL(itemSelectionChanged()), this, SLOT(setCurrentModule()));
+			splitter->addWidget(module_tree);
 			
 			QTabWidget* sub_pager = new QTabWidget();
-			{
-				QScrollArea* area = new QScrollArea();
-				area->setWidgetResizable(true);
-				module_log_stack = new QStackedWidget();
-				area->setWidget(module_log_stack);
-				sub_pager->addTab(area, "Log Output");
-			}
-			{
-				QScrollArea* area = new QScrollArea();
-				area->setWidgetResizable(true);
-				module_config_stack = new QStackedWidget();
-				area->setWidget(module_config_stack);
-				sub_pager->addTab(area, "Configuration");
-			}
+			
+			module_log_stack = new QStackedWidget();
+			sub_pager->addTab(module_log_stack, "Log Output");
+			
+			module_config_stack = new QStackedWidget();
+			sub_pager->addTab(module_config_stack, "Configuration");
+			
 			splitter->addWidget(sub_pager);
 			QList<int> sizes;
 			sizes << 300 << 900;
@@ -163,26 +154,32 @@ protected:
 		}
 		{
 			QSplitter* splitter = new QSplitter();
-			{
-				QScrollArea* area = new QScrollArea();
-				area->setWidgetResizable(true);
-				topic_tree = new QListWidget();
-				connect(topic_tree, SIGNAL(pressed()), this, SLOT(scan()));
-				area->setWidget(topic_tree);
-				splitter->addWidget(area);
-			}
+			
+			topic_tree = new QTreeWidget();
+			topic_tree->setSelectionBehavior(QTreeWidget::SelectionBehavior::SelectItems);
+			topic_tree->setSelectionMode(QTreeWidget::SelectionMode::SingleSelection);
+			topic_tree->header()->close();
+			connect(topic_tree, SIGNAL(itemSelectionChanged()), this, SLOT(setCurrentTopic()));
+			splitter->addWidget(topic_tree);
 			
 			QTabWidget* sub_pager = new QTabWidget();
-			{
-				topic_dump_stack = new QStackedWidget();
-				splitter->addWidget(topic_dump_stack);
-				sub_pager->addTab(topic_dump_stack, "Data View");
-			}
-			{
-				topic_pubsub_stack = new QStackedWidget();
-				splitter->addWidget(topic_pubsub_stack);
-				sub_pager->addTab(topic_pubsub_stack, "Publishers / Subscribers");
-			}
+			
+			topic_overview = new QTableWidget();
+			topic_overview->setColumnCount(6);
+			topic_overview->verticalHeader()->hide();
+			topic_overview->setSelectionMode(QAbstractItemView::SelectionMode::NoSelection);
+			topic_overview->setHorizontalHeaderLabels(QStringList() << "Domain" << "Topic" << "Sent" << "Received" << "Cycle Time" << "Last Seen");
+			splitter->addWidget(topic_overview);
+			sub_pager->addTab(topic_overview, "Overview");
+			
+			topic_dump_stack = new QStackedWidget();
+			splitter->addWidget(topic_dump_stack);
+			sub_pager->addTab(topic_dump_stack, "Data View");
+			
+			topic_pubsub_stack = new QStackedWidget();
+			splitter->addWidget(topic_pubsub_stack);
+			sub_pager->addTab(topic_pubsub_stack, "Publishers / Subscribers");
+				
 			splitter->addWidget(sub_pager);
 			QList<int> sizes;
 			sizes << 300 << 900;
@@ -242,22 +239,84 @@ protected:
 	
 	void handle(const vnl::info::RemoteInfo& sample) {
 		remote = sample;
-		tcp_client.subscribe(remote.domain_name, "vnl.log");
-		tcp_client.publish(remote.domain_name, "Process");
 		process.set_address(remote.domain_name, "Process");
+		tcp_client.publish(remote.domain_name, "Process");
+		
+		vnl::String process_domain;
+		vnl::info::TopicInfoList topic_info;
+		try {
+			type_info = process.get_type_info();
+			topic_info = process.get_topic_info();
+			process_domain = process.get_private_domain();
+		} catch(vnl::Exception& ex) {
+			log(ERROR).out << "handle(const vnl::info::RemoteInfo&): Caught " << ex.get_type_name() << vnl::endl;
+			return;
+		}
+		
+		tcp_client.subscribe(remote.domain_name, "vnl.log");
+		tcp_client.subscribe(process_domain, "topic_info");
+		subscribe(process_domain, "topic_info");
 		subscribe(remote.domain_name, "vnl.log");
 		
+		reset_all();
 		setWindowTitle(QCoreApplication::applicationName() + " (" + remote.domain_name.to_string().c_str()
 				+ " at " + target_host.to_string().c_str() + ":" + QString::number(target_port) + ")");
 		
-		try {
-			type_info = process.get_type_info();
-		} catch(vnl::Exception& ex) {
-			log(ERROR).out << "process.get_type_info() failed with " << ex.get_type_name() << vnl::endl;
-		}
-		
 		update_view();
+		handle(topic_info);
 		log(INFO).out << "Connected to " << remote.domain_name << vnl::endl;
+	}
+	
+	void handle(const vnl::info::TopicInfoList& sample) {
+		int row = 0;
+		topic_overview->setRowCount(sample.topics.size());
+		for(const vnl::info::TopicInfo& info : sample.topics) {
+			topic_t& topic = get_topic(info.topic);
+			topic_overview->setItem(row, 0, new QTableWidgetItem(info.topic.domain.to_string().c_str()));
+			topic_overview->setItem(row, 1, new QTableWidgetItem(info.topic.name.to_string().c_str()));
+			topic_overview->setItem(row, 2, new QTableWidgetItem(QString::number(info.send_counter)));
+			topic_overview->setItem(row, 3, new QTableWidgetItem(QString::number(info.receive_counter)));
+			topic_overview->setItem(row, 4, new QTableWidgetItem(QString::number(float(info.last_time-info.first_time)/info.send_counter/1e6) + "s"));
+			topic_overview->setItem(row, 5, new QTableWidgetItem(QString::number(float(sample.time-info.last_time)/1e6) + "s"));
+			
+			int r = 0;
+			for(auto& entry : info.publishers) {
+				module_t* module = get_module(entry.first);
+				if(module && module->is_running) {
+					topic.publishers->setRowCount(r+1);
+					topic.publishers->setItem(r, 0, new QTableWidgetItem(module->instance.domain.to_string().c_str()));
+					topic.publishers->setItem(r, 1, new QTableWidgetItem(module->instance.topic.to_string().c_str()));
+					topic.publishers->setItem(r, 2, new QTableWidgetItem(QString::number(entry.second)));
+					r++;
+				}
+			}
+			resize_table(topic.publishers);
+			topic.publishers->sortByColumn(1, Qt::SortOrder::AscendingOrder);
+			topic.publishers->sortByColumn(0, Qt::SortOrder::AscendingOrder);
+			topic.publishers->update();
+			
+			r = 0;
+			for(auto& entry : info.subscribers) {
+				module_t* module = get_module(entry.first);
+				if(module && module->is_running) {
+					topic.subscribers->setRowCount(r+1);
+					topic.subscribers->setItem(r, 0, new QTableWidgetItem(module->instance.domain.to_string().c_str()));
+					topic.subscribers->setItem(r, 1, new QTableWidgetItem(module->instance.topic.to_string().c_str()));
+					topic.subscribers->setItem(r, 2, new QTableWidgetItem(QString::number(entry.second)));
+					r++;
+				}
+			}
+			resize_table(topic.subscribers);
+			topic.subscribers->sortByColumn(1, Qt::SortOrder::AscendingOrder);
+			topic.subscribers->sortByColumn(0, Qt::SortOrder::AscendingOrder);
+			topic.subscribers->update();
+			
+			row++;
+		}
+		resize_table(topic_overview);
+		topic_overview->sortByColumn(1, Qt::SortOrder::AscendingOrder);
+		topic_overview->sortByColumn(0, Qt::SortOrder::AscendingOrder);
+		topic_overview->update();
 	}
 	
 	void read_sample(vnl::io::TypeInput& in) {
@@ -302,25 +361,44 @@ private slots:
 		}
 	}
 	
+	void setCurrentTopic() {
+		QList<QTreeWidgetItem*> selection = topic_tree->selectedItems();
+		if(selection.count() != 1) {
+			return;
+		}
+		QTreeWidgetItem* item = selection.first();
+		if(item && item->parent()) {
+			QVariant domain = item->parent()->data(0, Qt::ItemDataRole::DisplayRole);
+			QVariant name = item->data(0, Qt::ItemDataRole::DisplayRole);
+			vnl::Topic key;
+			key.domain = domain.toString().toStdString();
+			key.name = name.toString().toStdString();
+			topic_t* topic = find_topic(key);
+			if(topic) {
+				topic_pubsub_stack->setCurrentWidget(topic->pubsub_widget);
+				topic_pubsub_stack->update();
+			}
+		}
+	}
+	
 	void update_view() {
-		if(process.get_address().is_null()) {
+		if(!tcp_client.get_are_connected()) {
+			setWindowTitle(QCoreApplication::applicationName());
 			return;
 		}
 		for(module_t& module : modules) {
-			module.running = false;
+			module.is_running = false;
 		}
+		vnl::Array<vnl::Instance> objects;
+		vnl::Array<vnl::info::TopicInfo> topic_info;
 		try {
-			vnl::Array<vnl::Instance> objects = process.get_objects();
-			for(vnl::Instance& inst : objects) {
-				module_t& module = get_module(inst);
-				module.running = true;
-			}
-			
-			topic_info = process.get_topic_info();
-			
-			
+			objects = process.get_objects();
 		} catch (vnl::Exception& ex) {
 			log(ERROR).out << "update_view(): Caught " << ex.get_type_name() << vnl::endl;
+		}
+		for(vnl::Instance& inst : objects) {
+			module_t& module = get_module(inst);
+			module.is_running = true;
 		}
 	}
 	
@@ -331,14 +409,14 @@ private slots:
 		}
 	}
 	
-private:
-	QString time_to_string(int64_t time, int64_t epoch = 0) {
-		time -= epoch;
-		int64_t sec = 1000*1000;
-		int64_t min = 60 * sec;
-		return QString().sprintf("%.3ld:%.2ld.%.3ld", time/min, (time/sec) % 60, (time/1000) % 1000);
+	void reset_all() {
+		modules.clear();
+		topics.clear();
+		module_tree->clear();
+		topic_tree->clear();
 	}
 	
+private:
 	module_t& get_module(const vnl::Instance& inst) {
 		module_t* module = get_module(inst.src_mac);
 		if(!module) {
@@ -350,7 +428,6 @@ private:
 			module_log_stack->addWidget(module->log_view);
 			
 			QString domain = inst.domain.to_string().c_str();
-			QString topic = inst.topic.to_string().c_str();
 			QTreeWidgetItem* parent = 0;
 			{
 				QTreeWidgetItemIterator it(module_tree);
@@ -361,6 +438,7 @@ private:
 					it++;
 				}
 			}
+			bool first = module_tree->topLevelItemCount() == 0;
 			if(!parent) {
 				parent = new QTreeWidgetItem();
 				parent->setData(0, Qt::ItemDataRole::DisplayRole, domain);
@@ -369,9 +447,12 @@ private:
 			}
 			
 			module->tree_item = new QTreeWidgetItem();
-			module->tree_item->setData(0, Qt::ItemDataRole::DisplayRole, topic);
+			module->tree_item->setData(0, Qt::ItemDataRole::DisplayRole, inst.topic.to_string().c_str());
 			module->tree_item->setData(1, Qt::ItemDataRole::UserRole, QVariant(qulonglong(inst.src_mac.value)));
 			parent->addChild(module->tree_item);
+			if(first) {
+				module->tree_item->setSelected(true);
+			}
 			module_tree->sortItems(0, Qt::SortOrder::AscendingOrder);
 			module_tree->update();
 		}
@@ -387,38 +468,89 @@ private:
 		return 0;
 	}
 	
-	topic_t& get_topic(const vnl::Topic& top) {
+	topic_t* find_topic(const vnl::Topic& top) {
 		for(topic_t& topic : topics) {
 			if(topic.topic.domain == top.domain && topic.topic.name == top.name) {
-				return topic;
+				return &topic;
 			}
 		}
+		return 0;
+	}
+	
+	topic_t& get_topic(const vnl::Topic& top) {
+		topic_t* found = find_topic(top);
+		if(found) {
+			return *found;
+		}
+		
 		topic_t& topic = *topics.push_back();
 		topic.topic = top;
+		
+		topic.dump_tree = new QTreeWidget();
+		topic_dump_stack->addWidget(topic.dump_tree);
+		
+		topic.pubsub_widget = new QSplitter();
+		topic.pubsub_widget->setOrientation(Qt::Vertical);
+		
+		topic.publishers = new QTableWidget();
+		topic.publishers->setColumnCount(3);
+		topic.publishers->verticalHeader()->hide();
+		topic.publishers->setSelectionMode(QAbstractItemView::SelectionMode::NoSelection);
+		topic.publishers->setHorizontalHeaderLabels(QStringList() << "Domain" << "Topic" << "Sent");
+		topic.pubsub_widget->addWidget(topic.publishers);
+		
+		topic.subscribers = new QTableWidget();
+		topic.subscribers->setColumnCount(3);
+		topic.subscribers->verticalHeader()->hide();
+		topic.subscribers->setSelectionMode(QAbstractItemView::SelectionMode::NoSelection);
+		topic.subscribers->setHorizontalHeaderLabels(QStringList() << "Domain" << "Topic" << "Received");
+		topic.pubsub_widget->addWidget(topic.subscribers);
+		topic_pubsub_stack->addWidget(topic.pubsub_widget);
+		
+		QString domain = top.domain.to_string().c_str();
+		QTreeWidgetItem* parent = 0;
 		{
-			topic.dump_widget = new QScrollArea();
-			topic.dump_tree = new QTreeWidget();
-			topic.dump_widget->setWidget(topic.dump_tree);
-			topic_dump_stack->addWidget(topic.dump_widget);
-		}
-		{
-			topic.pubsub_widget = new QSplitter();
-			topic.pubsub_widget->setOrientation(Qt::Vertical);
-			{
-				QScrollArea* area = new QScrollArea();
-				topic.publishers = new QListWidget();
-				area->setWidget(topic.publishers);
-				topic.pubsub_widget->addWidget(area);
+			QTreeWidgetItemIterator it(topic_tree);
+			while(*it) {
+				if((*it)->parent() == 0 && (*it)->data(0, Qt::ItemDataRole::DisplayRole) == domain) {
+					parent = *it;
+				}
+				it++;
 			}
-			{
-				QScrollArea* area = new QScrollArea();
-				topic.subscribers = new QListWidget();
-				area->setWidget(topic.subscribers);
-				topic.pubsub_widget->addWidget(area);
-			}
-			topic_pubsub_stack->addWidget(topic.pubsub_widget);
 		}
+		bool first = topic_tree->topLevelItemCount() == 0;
+		if(!parent) {
+			parent = new QTreeWidgetItem();
+			parent->setData(0, Qt::ItemDataRole::DisplayRole, domain);
+			topic_tree->addTopLevelItem(parent);
+			parent->setExpanded(true);
+		}
+		
+		topic.tree_item = new QTreeWidgetItem();
+		topic.tree_item->setData(0, Qt::ItemDataRole::DisplayRole, top.name.to_string().c_str());
+		parent->addChild(topic.tree_item);
+		if(first) {
+			topic.tree_item->setSelected(true);
+		}
+		topic_tree->sortItems(0, Qt::SortOrder::AscendingOrder);
+		topic_tree->update();
 		return topic;
+	}
+	
+	QString time_to_string(int64_t time, int64_t epoch = 0) {
+		time -= epoch;
+		int64_t sec = 1000*1000;
+		int64_t min = 60 * sec;
+		return QString().sprintf("%.3ld:%.2ld.%.3ld", time/min, (time/sec) % 60, (time/1000) % 1000);
+	}
+	
+	void resize_table(QTableWidget* table, int padding = 10, int min_width = 80) {
+		table->resizeColumnsToContents();
+		for(int i = 0; i < table->columnCount(); ++i) {
+			int size = table->columnWidth(i) + padding;
+			size += padding - (size % padding);
+			table->setColumnWidth(i, std::max(size, min_width));
+		}
 	}
 	
 private:
@@ -428,16 +560,16 @@ private:
 	vnl::info::RemoteInfo remote;
 	
 	vnl::Map<vnl::Hash32, vnl::info::Type> type_info;
-	vnl::Array<vnl::info::TopicInfo> topic_info;
 	
 	QTreeWidget* module_tree = 0;
-	QListWidget* topic_tree = 0;
+	QTreeWidget* topic_tree = 0;
 	
 	vnl::List<module_t> modules;
 	QStackedWidget* module_log_stack = 0;
 	QStackedWidget* module_config_stack = 0;
 	
 	vnl::List<topic_t> topics;
+	QTableWidget* topic_overview = 0;
 	QStackedWidget* topic_pubsub_stack = 0;
 	QStackedWidget* topic_dump_stack = 0;
 	

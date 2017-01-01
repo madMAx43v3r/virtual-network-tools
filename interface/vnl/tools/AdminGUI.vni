@@ -10,5 +10,6 @@ object AdminGUI {
 	void handle(Value sample);
 	void handle(vnl.LogMsg sample);
 	void handle(vnl.info.RemoteInfo sample);
+	void handle(vnl.info.TopicInfoList sample);
 	
 }
