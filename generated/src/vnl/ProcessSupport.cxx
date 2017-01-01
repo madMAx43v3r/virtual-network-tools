@@ -172,7 +172,7 @@ bool ProcessBase::vni_const_call(vnl::io::TypeInput& _in, uint32_t _hash, int _n
 		switch(_num_args) {
 			case 0: {
 				if(!_in.error()) {
-					vnl::Array<vnl::info::TopicInfo > _res = get_topic_info();
+					vnl::info::TopicInfoList _res = get_topic_info();
 					vnl::write(_out, _res);
 					return true;
 				}

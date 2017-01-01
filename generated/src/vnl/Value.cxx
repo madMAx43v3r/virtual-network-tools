@@ -25,6 +25,7 @@
 #include <vnl/info/PlayerStatus.hxx>
 #include <vnl/info/RemoteInfo.hxx>
 #include <vnl/info/TopicInfo.hxx>
+#include <vnl/info/TopicInfoList.hxx>
 #include <vnl/info/Type.hxx>
 
 namespace vnl {
@@ -53,6 +54,7 @@ vnl::Value* create(vnl::Hash32 hash) {
 		case 0xf9baa92e: return vnl::create<vnl::info::PlayerStatus>();
 		case 0x7aa64297: return vnl::create<vnl::info::RemoteInfo>();
 		case 0x1e3eb783: return vnl::create<vnl::info::TopicInfo>();
+		case 0xdc558ad: return vnl::create<vnl::info::TopicInfoList>();
 		case 0xbde99c40: return vnl::create<vnl::info::Type>();
 		default: return 0;
 	}
@@ -380,6 +382,11 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		}
 		{
 			vnl::info::Field& field = *info.fields.push_back();
+			field.name = "subscribers";
+			field.type = "vnl.Map";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
 			field.name = "send_counter";
 			field.type = "long";
 		}
@@ -397,6 +404,20 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 			vnl::info::Field& field = *info.fields.push_back();
 			field.name = "last_time";
 			field.type = "long";
+		}
+	}
+	{
+		vnl::info::Type& info = res["vnl.info.TopicInfoList"];
+		info.name = "vnl.info.TopicInfoList";
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.name = "time";
+			field.type = "long";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.name = "topics";
+			field.type = "vnl.Array";
 		}
 	}
 	{
@@ -440,6 +461,7 @@ vnl::Array<vnl::String> get_class_names() {
 	res.push_back("vnl.info.PlayerStatus");
 	res.push_back("vnl.info.RemoteInfo");
 	res.push_back("vnl.info.TopicInfo");
+	res.push_back("vnl.info.TopicInfoList");
 	res.push_back("vnl.info.Type");
 	return res;
 }

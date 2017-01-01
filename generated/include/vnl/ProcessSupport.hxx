@@ -14,7 +14,7 @@
 #include <vnl/Object.h>
 #include <vnl/Shutdown.hxx>
 #include <vnl/String.h>
-#include <vnl/info/TopicInfo.hxx>
+#include <vnl/info/TopicInfoList.hxx>
 #include <vnl/info/Type.hxx>
 
 #include <vnl/Type.hxx>
@@ -72,7 +72,7 @@ protected:
 	virtual void handle(const vnl::LogMsg& event, const vnl::Packet& packet) { handle(event); }
 	virtual void handle(const vnl::LogMsg& event, vnl::Basic* input) { handle(event); }
 	virtual void handle(const vnl::LogMsg& event) {}
-	virtual vnl::Array<vnl::info::TopicInfo > get_topic_info() const = 0;
+	virtual vnl::info::TopicInfoList get_topic_info() const = 0;
 	
 	virtual bool vni_call(vnl::io::TypeInput& _in, uint32_t _hash, int _num_args);
 	virtual bool vni_const_call(vnl::io::TypeInput& _in, uint32_t _hash, int _num_args, vnl::io::TypeOutput& _out);

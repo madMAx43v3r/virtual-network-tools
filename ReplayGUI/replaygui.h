@@ -44,7 +44,7 @@ protected:
 		player.set_address(vnl::local_domain_name, "Player");
 		player.connect(engine);
 		
-		subscribe(vnl::local_domain_name, "PlayerStatus");
+		subscribe(player.get_private_domain(), "player_status");
 		
 		setWindowTitle(QCoreApplication::applicationName());
 		{

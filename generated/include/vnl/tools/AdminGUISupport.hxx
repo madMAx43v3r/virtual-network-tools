@@ -29,6 +29,7 @@
 #include <vnl/info/PlayerStatus.hxx>
 #include <vnl/info/RemoteInfo.hxx>
 #include <vnl/info/TopicInfo.hxx>
+#include <vnl/info/TopicInfoList.hxx>
 #include <vnl/info/Type.hxx>
 
 #include <vnl/Type.hxx>
@@ -72,6 +73,9 @@ public:
 	virtual void set_field(int _index, vnl::io::TypeInput& _in);
 	
 protected:
+	virtual void handle(const vnl::info::TopicInfoList& sample, const vnl::Packet& packet) { handle(sample); }
+	virtual void handle(const vnl::info::TopicInfoList& sample, vnl::Basic* input) { handle(sample); }
+	virtual void handle(const vnl::info::TopicInfoList& sample) {}
 	virtual void handle(const vnl::info::RemoteInfo& sample, const vnl::Packet& packet) { handle(sample); }
 	virtual void handle(const vnl::info::RemoteInfo& sample, vnl::Basic* input) { handle(sample); }
 	virtual void handle(const vnl::info::RemoteInfo& sample) {}

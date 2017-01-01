@@ -28,6 +28,7 @@
 #include <vnl/info/PlayerStatus.hxx>
 #include <vnl/info/RemoteInfo.hxx>
 #include <vnl/info/TopicInfo.hxx>
+#include <vnl/info/TopicInfoList.hxx>
 #include <vnl/info/Type.hxx>
 
 #include <vnl/ObjectClient.hxx>

@@ -13,7 +13,7 @@
 #include <vnl/Map.h>
 #include <vnl/Shutdown.hxx>
 #include <vnl/String.h>
-#include <vnl/info/TopicInfo.hxx>
+#include <vnl/info/TopicInfoList.hxx>
 #include <vnl/info/Type.hxx>
 
 #include <vnl/ObjectClient.hxx>
@@ -217,14 +217,14 @@ public:
 		return _result;
 	}
 	
-	vnl::Array<vnl::info::TopicInfo > get_topic_info() {
+	vnl::info::TopicInfoList get_topic_info() {
 		_buf.wrap(_data);
 		{
 			Writer _wr(_out);
 			_wr.get_topic_info();
 		}
 		vnl::Packet* _pkt = _call(vnl::Frame::CONST_CALL);
-		vnl::Array<vnl::info::TopicInfo > _result;
+		vnl::info::TopicInfoList _result;
 		if(_pkt) {
 			vnl::read(_in, _result);
 			_pkt->ack();

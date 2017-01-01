@@ -39,6 +39,7 @@ ADD_LIBRARY(vni STATIC
 	src/vnl/info/PlayerStatus.cxx
 	src/vnl/info/RemoteInfo.cxx
 	src/vnl/info/TopicInfo.cxx
+	src/vnl/info/TopicInfoList.cxx
 	src/vnl/info/Type.cxx
 	src/vnl/tools/AdminGUISupport.cxx
 	src/vnl/tools/ReplayGUISupport.cxx

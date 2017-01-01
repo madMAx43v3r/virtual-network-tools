@@ -146,6 +146,7 @@ bool AdminGUIBase::handle_switch(vnl::Value* _sample, vnl::Packet* _packet) {
 	case 0xf9baa92e: handle(*((vnl::info::PlayerStatus*)_sample), *_packet); return true;
 	case 0x7aa64297: handle(*((vnl::info::RemoteInfo*)_sample), *_packet); return true;
 	case 0x1e3eb783: handle(*((vnl::info::TopicInfo*)_sample), *_packet); return true;
+	case 0xdc558ad: handle(*((vnl::info::TopicInfoList*)_sample), *_packet); return true;
 	case 0xbde99c40: handle(*((vnl::info::Type*)_sample), *_packet); return true;
 	}
 	return Super::handle_switch(_sample, _packet);
@@ -176,6 +177,7 @@ bool AdminGUIBase::handle_switch(vnl::Value* _sample, vnl::Basic* _input) {
 	case 0xf9baa92e: handle(*((vnl::info::PlayerStatus*)_sample), _input); return true;
 	case 0x7aa64297: handle(*((vnl::info::RemoteInfo*)_sample), _input); return true;
 	case 0x1e3eb783: handle(*((vnl::info::TopicInfo*)_sample), _input); return true;
+	case 0xdc558ad: handle(*((vnl::info::TopicInfoList*)_sample), _input); return true;
 	case 0xbde99c40: handle(*((vnl::info::Type*)_sample), _input); return true;
 	}
 	return Super::handle_switch(_sample, _input);
