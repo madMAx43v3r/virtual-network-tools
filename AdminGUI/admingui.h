@@ -36,6 +36,7 @@
 #include <QScrollArea>
 #include <QStackedWidget>
 #include <QTextEdit>
+#include <QScrollBar>
 #include <QTableWidget>
 #include <QHeaderView>
 #include <QTreeWidgetItemIterator>
@@ -221,6 +222,8 @@ protected:
 	void handle(const vnl::LogMsg& sample) {
 		module_t* module = get_module(sample.src_mac);
 		if(module) {
+			int old_scrollbar_value = module->log_view->verticalScrollBar()->value();
+			bool is_scrolled_down = old_scrollbar_value == module->log_view->verticalScrollBar()->maximum();
 			QTextCursor tmp = module->log_view->textCursor();
 			module->log_view->moveCursor(QTextCursor::End);
 			QString text;
@@ -233,6 +236,11 @@ protected:
 			text += subs(sample.msg.to_string(), "\n", "<br>").c_str();
 			module->log_view->insertHtml(text);
 			module->log_view->setTextCursor(tmp);
+			if(is_scrolled_down) {
+				module->log_view->verticalScrollBar()->setValue(module->log_view->verticalScrollBar()->maximum());
+			} else {
+				module->log_view->verticalScrollBar()->setValue(old_scrollbar_value);
+			}
 			module->log_view->update();
 		}
 	}
@@ -241,22 +249,29 @@ protected:
 		remote = sample;
 		process.set_address(remote.domain_name, "Process");
 		tcp_client.publish(remote.domain_name, "Process");
+		usleep(100000);
 		
 		vnl::String process_domain;
-		vnl::info::TopicInfoList topic_info;
 		try {
-			type_info = process.get_type_info();
-			topic_info = process.get_topic_info();
 			process_domain = process.get_private_domain();
 		} catch(vnl::Exception& ex) {
-			log(ERROR).out << "handle(const vnl::info::RemoteInfo&): Caught " << ex.get_type_name() << vnl::endl;
+			log(ERROR).out << "process.get_private_domain() failed with " << ex.get_type_name() << vnl::endl;
 			return;
 		}
 		
 		tcp_client.subscribe(remote.domain_name, "vnl.log");
 		tcp_client.subscribe(process_domain, "topic_info");
-		subscribe(process_domain, "topic_info");
 		subscribe(remote.domain_name, "vnl.log");
+		subscribe(process_domain, "topic_info");
+		
+		vnl::info::TopicInfoList topic_info;
+		try {
+			type_info = process.get_type_info();
+			topic_info = process.get_topic_info();
+		} catch(vnl::Exception& ex) {
+			log(ERROR).out << "handle(const vnl::info::RemoteInfo&): Caught " << ex.get_type_name() << vnl::endl;
+			return;
+		}
 		
 		reset_all();
 		setWindowTitle(QCoreApplication::applicationName() + " (" + remote.domain_name.to_string().c_str()
@@ -272,24 +287,24 @@ protected:
 		topic_overview->setRowCount(sample.topics.size());
 		for(const vnl::info::TopicInfo& info : sample.topics) {
 			topic_t& topic = get_topic(info.topic);
-			topic_overview->setItem(row, 0, new QTableWidgetItem(info.topic.domain.to_string().c_str()));
-			topic_overview->setItem(row, 1, new QTableWidgetItem(info.topic.name.to_string().c_str()));
-			topic_overview->setItem(row, 2, new QTableWidgetItem(QString::number(info.send_counter)));
-			topic_overview->setItem(row, 3, new QTableWidgetItem(QString::number(info.receive_counter)));
-			topic_overview->setItem(row, 4, new QTableWidgetItem(QString::number(float(info.last_time-info.first_time)/info.send_counter/1e6) + "s"));
-			topic_overview->setItem(row, 5, new QTableWidgetItem(QString::number(float(sample.time-info.last_time)/1e6) + "s"));
+			set_cell_data(topic_overview, row, 0, info.topic.domain.to_string().c_str());
+			set_cell_data(topic_overview, row, 1, info.topic.name.to_string().c_str());
+			set_cell_data(topic_overview, row, 2, qlonglong(info.send_counter));
+			set_cell_data(topic_overview, row, 3, qlonglong(info.receive_counter));
+			set_cell_data(topic_overview, row, 4, QString::number(float(info.last_time-info.first_time)/info.send_counter/1e6) + "s");
+			set_cell_data(topic_overview, row, 5, QString::number(float(sample.time-info.last_time)/1e6) + "s");
 			
 			int r = 0;
 			for(auto& entry : info.publishers) {
 				module_t* module = get_module(entry.first);
 				if(module && module->is_running) {
-					topic.publishers->setRowCount(r+1);
-					topic.publishers->setItem(r, 0, new QTableWidgetItem(module->instance.domain.to_string().c_str()));
-					topic.publishers->setItem(r, 1, new QTableWidgetItem(module->instance.topic.to_string().c_str()));
-					topic.publishers->setItem(r, 2, new QTableWidgetItem(QString::number(entry.second)));
+					set_cell_data(topic.publishers, r, 0, module->instance.domain.to_string().c_str());
+					set_cell_data(topic.publishers, r, 1, module->instance.topic.to_string().c_str());
+					set_cell_data(topic.publishers, r, 2, qlonglong(entry.second));
 					r++;
 				}
 			}
+			topic.publishers->setRowCount(r);
 			resize_table(topic.publishers);
 			topic.publishers->sortByColumn(1, Qt::SortOrder::AscendingOrder);
 			topic.publishers->sortByColumn(0, Qt::SortOrder::AscendingOrder);
@@ -299,13 +314,13 @@ protected:
 			for(auto& entry : info.subscribers) {
 				module_t* module = get_module(entry.first);
 				if(module && module->is_running) {
-					topic.subscribers->setRowCount(r+1);
-					topic.subscribers->setItem(r, 0, new QTableWidgetItem(module->instance.domain.to_string().c_str()));
-					topic.subscribers->setItem(r, 1, new QTableWidgetItem(module->instance.topic.to_string().c_str()));
-					topic.subscribers->setItem(r, 2, new QTableWidgetItem(QString::number(entry.second)));
+					set_cell_data(topic.subscribers, r, 0, module->instance.domain.to_string().c_str());
+					set_cell_data(topic.subscribers, r, 1, module->instance.topic.to_string().c_str());
+					set_cell_data(topic.subscribers, r, 2, qlonglong(entry.second));
 					r++;
 				}
 			}
+			topic.subscribers->setRowCount(r);
 			resize_table(topic.subscribers);
 			topic.subscribers->sortByColumn(1, Qt::SortOrder::AscendingOrder);
 			topic.subscribers->sortByColumn(0, Qt::SortOrder::AscendingOrder);
@@ -544,7 +559,17 @@ private:
 		return QString().sprintf("%.3ld:%.2ld.%.3ld", time/min, (time/sec) % 60, (time/1000) % 1000);
 	}
 	
-	void resize_table(QTableWidget* table, int padding = 10, int min_width = 80) {
+	static QTableWidgetItem* set_cell_data(QTableWidget* table, int row, int col, const QVariant& value) {
+		QTableWidgetItem* item = table->item(row, col);
+		if(!item) {
+			item = new QTableWidgetItem();
+			table->setItem(row, col, item);
+		}
+		item->setData(0, value);
+		return item;
+	}
+	
+	static void resize_table(QTableWidget* table, int padding = 10, int min_width = 80) {
 		table->resizeColumnsToContents();
 		for(int i = 0; i < table->columnCount(); ++i) {
 			int size = table->columnWidth(i) + padding;
