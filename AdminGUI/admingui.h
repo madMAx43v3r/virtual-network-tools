@@ -81,10 +81,10 @@ protected:
 		QSplitter* pubsub_widget = 0;
 		QTableWidget* publishers = 0;
 		QTableWidget* subscribers = 0;
-		bool do_capture = true;
 	};
 	
 	void main() {
+		add_input(tunnel);
 		process.set_fail(true);
 		process.set_timeout(1000);
 		add_client(process);
@@ -206,11 +206,12 @@ protected:
 		setLayout(vbox);
 		show();
 		application->exec();
+		tunnel.close();
 		tcp_client.exit();
 	}
 	
 	bool handle(vnl::Sample* sample) {
-		if(current_topic && current_topic->do_capture && sample->dst_addr == current_topic->address) {
+		if(do_capture && get_channel() == &tunnel && current_topic && sample->dst_addr == current_topic->address) {
 			dump_sample(sample);
 		}
 		return Super::handle(sample);
@@ -492,11 +493,11 @@ private slots:
 			if(topic) {
 				if(current_topic) {
 					tcp_client.unsubscribe(current_topic->topic.domain, current_topic->topic.name);
-					unsubscribe(current_topic->topic.domain, current_topic->topic.name);
+					tunnel.unsubscribe(Address(current_topic->topic.domain, current_topic->topic.name));
 				}
 				current_topic = topic;
 				tcp_client.subscribe(topic->topic.domain, topic->topic.name);
-				subscribe(topic->topic.domain, topic->topic.name);
+				tunnel.subscribe(Address(topic->topic.domain, topic->topic.name));
 				topic_dump_stack->setCurrentWidget(topic->dump_tree);
 				topic_dump_stack->update();
 				topic_pubsub_stack->setCurrentWidget(topic->pubsub_widget);
@@ -533,7 +534,10 @@ private slots:
 	}
 	
 	void reset_all() {
-		current_topic = 0;
+		if(current_topic) {
+			tunnel.unsubscribe(Address(current_topic->topic.domain, current_topic->topic.name));
+			current_topic = 0;
+		}
 		modules.clear();
 		topics.clear();
 		terminal->clear();
@@ -563,7 +567,6 @@ private:
 					it++;
 				}
 			}
-			bool first = module_tree->topLevelItemCount() == 0;
 			if(!parent) {
 				parent = new QTreeWidgetItem();
 				parent->setData(0, Qt::ItemDataRole::DisplayRole, domain);
@@ -575,9 +578,6 @@ private:
 			module->tree_item->setData(0, Qt::ItemDataRole::DisplayRole, inst.topic.to_string().c_str());
 			module->tree_item->setData(1, Qt::ItemDataRole::UserRole, QVariant(qulonglong(inst.src_mac.value)));
 			parent->addChild(module->tree_item);
-			if(first) {
-				module->tree_item->setSelected(true);
-			}
 			module_tree->sortItems(0, Qt::SortOrder::AscendingOrder);
 			module_tree->update();
 		}
@@ -645,7 +645,6 @@ private:
 				it++;
 			}
 		}
-		bool first = topic_tree->topLevelItemCount() == 0;
 		if(!parent) {
 			parent = new QTreeWidgetItem();
 			parent->setData(0, Qt::ItemDataRole::DisplayRole, domain);
@@ -656,9 +655,6 @@ private:
 		topic.tree_item = new QTreeWidgetItem();
 		topic.tree_item->setData(0, Qt::ItemDataRole::DisplayRole, top.name.to_string().c_str());
 		parent->addChild(topic.tree_item);
-		if(first) {
-			topic.tree_item->setSelected(true);
-		}
 		topic_tree->sortItems(0, Qt::SortOrder::AscendingOrder);
 		topic_tree->update();
 		return topic;
@@ -710,6 +706,7 @@ private:
 	vnl::TcpClientClient tcp_client;
 	vnl::ProcessClient process;
 	vnl::info::RemoteInfo remote;
+	Stream tunnel;
 	
 	vnl::Map<vnl::Hash32, vnl::info::Type> type_info;
 	
@@ -726,6 +723,7 @@ private:
 	QStackedWidget* topic_pubsub_stack = 0;
 	QStackedWidget* topic_dump_stack = 0;
 	
+	bool do_capture = true;
 	topic_t* current_topic = 0;
 	int64_t last_topic_dump = 0;
 	
