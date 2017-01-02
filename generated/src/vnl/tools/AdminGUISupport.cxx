@@ -17,6 +17,7 @@ int AdminGUIBase::get_field_index(vnl::Hash32 _hash) const {
 		case 0x97e08f18: return 2;
 		case 0x579173b0: return 3;
 		case 0xd129c896: return 4;
+		case 0xc526602e: return 5;
 		default: return -1;
 	}
 }
@@ -28,6 +29,7 @@ const char* AdminGUIBase::get_field_name(int _index) const {
 		case 2: return "target_host";
 		case 3: return "target_port";
 		case 4: return "interval";
+		case 5: return "max_topic_interval";
 		default: return 0;
 	}
 }
@@ -39,6 +41,7 @@ void AdminGUIBase::get_field(int _index, vnl::String& _str) const {
 		case 2: vnl::to_string(_str, target_host); break;
 		case 3: vnl::to_string(_str, target_port); break;
 		case 4: vnl::to_string(_str, interval); break;
+		case 5: vnl::to_string(_str, max_topic_interval); break;
 	}
 }
 
@@ -49,6 +52,7 @@ void AdminGUIBase::set_field(int _index, const vnl::String& _str) {
 		case 2: vnl::from_string(_str, target_host); break;
 		case 3: vnl::from_string(_str, target_port); break;
 		case 4: vnl::from_string(_str, interval); break;
+		case 5: vnl::from_string(_str, max_topic_interval); break;
 	}
 }
 
@@ -59,6 +63,7 @@ void AdminGUIBase::get_field(int _index, vnl::io::TypeOutput& _out) const {
 		case 2: vnl::write(_out, target_host); break;
 		case 3: vnl::write(_out, target_port); break;
 		case 4: vnl::write(_out, interval); break;
+		case 5: vnl::write(_out, max_topic_interval); break;
 		default: _out.putNull();
 	}
 }
@@ -70,6 +75,7 @@ void AdminGUIBase::set_field(int _index, vnl::io::TypeInput& _in) {
 		case 2: vnl::read(_in, target_host); break;
 		case 3: vnl::read(_in, target_port); break;
 		case 4: vnl::read(_in, interval); break;
+		case 5: vnl::read(_in, max_topic_interval); break;
 	}
 }
 
@@ -90,6 +96,12 @@ bool AdminGUIBase::vni_call(vnl::io::TypeInput& _in, uint32_t _hash, int _num_ar
 	case 0xd129c896: 
 		if(_num_args == 1) {
 			vnl::read(_in, interval);
+			return true;
+		}
+		break;
+	case 0xc526602e: 
+		if(_num_args == 1) {
+			vnl::read(_in, max_topic_interval);
 			return true;
 		}
 		break;
@@ -117,68 +129,30 @@ bool AdminGUIBase::vni_const_call(vnl::io::TypeInput& _in, uint32_t _hash, int _
 			return true;
 		}
 		break;
+	case 0xc526602e: 
+		if(_num_args == 0) {
+			vnl::write(_out, max_topic_interval);
+			return true;
+		}
+		break;
 	}
 	return Super::vni_const_call(_in, _hash, _num_args, _out);
 }
 
 bool AdminGUIBase::handle_switch(vnl::Value* _sample, vnl::Packet* _packet) {
 	switch(_sample->get_vni_hash()) {
-	case 0x417d65c7: handle(*((vnl::Announce*)_sample), *_packet); return true;
-	case 0x7e6aa525: handle(*((vnl::DuplicateKeyException*)_sample), *_packet); return true;
-	case 0xbe87903d: handle(*((vnl::Exception*)_sample), *_packet); return true;
-	case 0x3bd088b0: handle(*((vnl::Exit*)_sample), *_packet); return true;
-	case 0x52740af4: handle(*((vnl::Header*)_sample), *_packet); return true;
-	case 0xabd5ff87: handle(*((vnl::IOException*)_sample), *_packet); return true;
-	case 0x67d48190: handle(*((vnl::Instance*)_sample), *_packet); return true;
 	case 0x9df3e6f5: handle(*((vnl::LogMsg*)_sample), *_packet); return true;
-	case 0xd7988e27: handle(*((vnl::NoSuchFieldException*)_sample), *_packet); return true;
-	case 0xd8d131ca: handle(*((vnl::NoSuchKeyException*)_sample), *_packet); return true;
-	case 0x69a97186: handle(*((vnl::NoSuchMethodException*)_sample), *_packet); return true;
-	case 0xc10cd56c: handle(*((vnl::RecordHeader*)_sample), *_packet); return true;
-	case 0x1cdb1920: handle(*((vnl::RecordValue*)_sample), *_packet); return true;
-	case 0xcdc22e1f: handle(*((vnl::Shutdown*)_sample), *_packet); return true;
-	case 0x8c528f1: handle(*((vnl::TimeoutException*)_sample), *_packet); return true;
-	case 0xddc3d187: handle(*((vnl::Topic*)_sample), *_packet); return true;
-	case 0xfdb7a5a8: handle(*((vnl::Value*)_sample), *_packet); return true;
-	case 0xd52524d4: handle(*((vnl::info::Field*)_sample), *_packet); return true;
-	case 0x1b510753: handle(*((vnl::info::Method*)_sample), *_packet); return true;
-	case 0xf5e3f3b6: handle(*((vnl::info::Parameter*)_sample), *_packet); return true;
-	case 0xf9baa92e: handle(*((vnl::info::PlayerStatus*)_sample), *_packet); return true;
 	case 0x7aa64297: handle(*((vnl::info::RemoteInfo*)_sample), *_packet); return true;
-	case 0x1e3eb783: handle(*((vnl::info::TopicInfo*)_sample), *_packet); return true;
 	case 0xdc558ad: handle(*((vnl::info::TopicInfoList*)_sample), *_packet); return true;
-	case 0xbde99c40: handle(*((vnl::info::Type*)_sample), *_packet); return true;
 	}
 	return Super::handle_switch(_sample, _packet);
 }
 
 bool AdminGUIBase::handle_switch(vnl::Value* _sample, vnl::Basic* _input) {
 	switch(_sample->get_vni_hash()) {
-	case 0x417d65c7: handle(*((vnl::Announce*)_sample), _input); return true;
-	case 0x7e6aa525: handle(*((vnl::DuplicateKeyException*)_sample), _input); return true;
-	case 0xbe87903d: handle(*((vnl::Exception*)_sample), _input); return true;
-	case 0x3bd088b0: handle(*((vnl::Exit*)_sample), _input); return true;
-	case 0x52740af4: handle(*((vnl::Header*)_sample), _input); return true;
-	case 0xabd5ff87: handle(*((vnl::IOException*)_sample), _input); return true;
-	case 0x67d48190: handle(*((vnl::Instance*)_sample), _input); return true;
 	case 0x9df3e6f5: handle(*((vnl::LogMsg*)_sample), _input); return true;
-	case 0xd7988e27: handle(*((vnl::NoSuchFieldException*)_sample), _input); return true;
-	case 0xd8d131ca: handle(*((vnl::NoSuchKeyException*)_sample), _input); return true;
-	case 0x69a97186: handle(*((vnl::NoSuchMethodException*)_sample), _input); return true;
-	case 0xc10cd56c: handle(*((vnl::RecordHeader*)_sample), _input); return true;
-	case 0x1cdb1920: handle(*((vnl::RecordValue*)_sample), _input); return true;
-	case 0xcdc22e1f: handle(*((vnl::Shutdown*)_sample), _input); return true;
-	case 0x8c528f1: handle(*((vnl::TimeoutException*)_sample), _input); return true;
-	case 0xddc3d187: handle(*((vnl::Topic*)_sample), _input); return true;
-	case 0xfdb7a5a8: handle(*((vnl::Value*)_sample), _input); return true;
-	case 0xd52524d4: handle(*((vnl::info::Field*)_sample), _input); return true;
-	case 0x1b510753: handle(*((vnl::info::Method*)_sample), _input); return true;
-	case 0xf5e3f3b6: handle(*((vnl::info::Parameter*)_sample), _input); return true;
-	case 0xf9baa92e: handle(*((vnl::info::PlayerStatus*)_sample), _input); return true;
 	case 0x7aa64297: handle(*((vnl::info::RemoteInfo*)_sample), _input); return true;
-	case 0x1e3eb783: handle(*((vnl::info::TopicInfo*)_sample), _input); return true;
 	case 0xdc558ad: handle(*((vnl::info::TopicInfoList*)_sample), _input); return true;
-	case 0xbde99c40: handle(*((vnl::info::Type*)_sample), _input); return true;
 	}
 	return Super::handle_switch(_sample, _input);
 }

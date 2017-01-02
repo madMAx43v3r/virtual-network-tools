@@ -26,8 +26,16 @@ void Type::destroy() {
 void Type::serialize(vnl::io::TypeOutput& _out) const {
 	_out.putEntry(VNL_IO_CLASS, NUM_FIELDS);
 	_out.putHash(VNI_HASH);
+	_out.putHash(0xc114cc40); vnl::write(_out, hash);
 	_out.putHash(0x539b7130); vnl::write(_out, name);
+	_out.putHash(0x72700701); vnl::write(_out, is_struct);
+	_out.putHash(0x674ff4e3); vnl::write(_out, is_class);
+	_out.putHash(0xc1fa0e8c); vnl::write(_out, is_enum);
+	_out.putHash(0x3e98de28); vnl::write(_out, is_interface);
+	_out.putHash(0x4b4df272); vnl::write(_out, is_object);
 	_out.putHash(0x96d44ab3); vnl::write(_out, fields);
+	_out.putHash(0x8457c8be); vnl::write(_out, methods);
+	_out.putHash(0x7cefe7cf); vnl::write(_out, symbols);
 }
 
 void Type::deserialize(vnl::io::TypeInput& _in, int _size) {
@@ -35,8 +43,16 @@ void Type::deserialize(vnl::io::TypeInput& _in, int _size) {
 		uint32_t _hash = 0;
 		_in.getHash(_hash);
 		switch(_hash) {
+			case 0xc114cc40: vnl::read(_in, hash); break;
 			case 0x539b7130: vnl::read(_in, name); break;
+			case 0x72700701: vnl::read(_in, is_struct); break;
+			case 0x674ff4e3: vnl::read(_in, is_class); break;
+			case 0xc1fa0e8c: vnl::read(_in, is_enum); break;
+			case 0x3e98de28: vnl::read(_in, is_interface); break;
+			case 0x4b4df272: vnl::read(_in, is_object); break;
 			case 0x96d44ab3: vnl::read(_in, fields); break;
+			case 0x8457c8be: vnl::read(_in, methods); break;
+			case 0x7cefe7cf: vnl::read(_in, symbols); break;
 			default: _in.skip();
 		}
 	}
@@ -44,46 +60,94 @@ void Type::deserialize(vnl::io::TypeInput& _in, int _size) {
 
 int Type::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
-		case 0x539b7130: return 0;
-		case 0x96d44ab3: return 1;
+		case 0xc114cc40: return 0;
+		case 0x539b7130: return 1;
+		case 0x72700701: return 2;
+		case 0x674ff4e3: return 3;
+		case 0xc1fa0e8c: return 4;
+		case 0x3e98de28: return 5;
+		case 0x4b4df272: return 6;
+		case 0x96d44ab3: return 7;
+		case 0x8457c8be: return 8;
+		case 0x7cefe7cf: return 9;
 		default: return -1;
 	}
 }
 
 const char* Type::get_field_name(int _index) const {
 	switch(_index) {
-		case 0: return "name";
-		case 1: return "fields";
+		case 0: return "hash";
+		case 1: return "name";
+		case 2: return "is_struct";
+		case 3: return "is_class";
+		case 4: return "is_enum";
+		case 5: return "is_interface";
+		case 6: return "is_object";
+		case 7: return "fields";
+		case 8: return "methods";
+		case 9: return "symbols";
 		default: return 0;
 	}
 }
 
 void Type::get_field(int _index, vnl::String& _str) const {
 	switch(_index) {
-		case 0: vnl::to_string(_str, name); break;
-		case 1: vnl::to_string(_str, fields); break;
+		case 0: vnl::to_string(_str, hash); break;
+		case 1: vnl::to_string(_str, name); break;
+		case 2: vnl::to_string(_str, is_struct); break;
+		case 3: vnl::to_string(_str, is_class); break;
+		case 4: vnl::to_string(_str, is_enum); break;
+		case 5: vnl::to_string(_str, is_interface); break;
+		case 6: vnl::to_string(_str, is_object); break;
+		case 7: vnl::to_string(_str, fields); break;
+		case 8: vnl::to_string(_str, methods); break;
+		case 9: vnl::to_string(_str, symbols); break;
 	}
 }
 
 void Type::set_field(int _index, const vnl::String& _str) {
 	switch(_index) {
-		case 0: vnl::from_string(_str, name); break;
-		case 1: vnl::from_string(_str, fields); break;
+		case 0: vnl::from_string(_str, hash); break;
+		case 1: vnl::from_string(_str, name); break;
+		case 2: vnl::from_string(_str, is_struct); break;
+		case 3: vnl::from_string(_str, is_class); break;
+		case 4: vnl::from_string(_str, is_enum); break;
+		case 5: vnl::from_string(_str, is_interface); break;
+		case 6: vnl::from_string(_str, is_object); break;
+		case 7: vnl::from_string(_str, fields); break;
+		case 8: vnl::from_string(_str, methods); break;
+		case 9: vnl::from_string(_str, symbols); break;
 	}
 }
 
 void Type::get_field(int _index, vnl::io::TypeOutput& _out) const {
 	switch(_index) {
-		case 0: vnl::write(_out, name); break;
-		case 1: vnl::write(_out, fields); break;
+		case 0: vnl::write(_out, hash); break;
+		case 1: vnl::write(_out, name); break;
+		case 2: vnl::write(_out, is_struct); break;
+		case 3: vnl::write(_out, is_class); break;
+		case 4: vnl::write(_out, is_enum); break;
+		case 5: vnl::write(_out, is_interface); break;
+		case 6: vnl::write(_out, is_object); break;
+		case 7: vnl::write(_out, fields); break;
+		case 8: vnl::write(_out, methods); break;
+		case 9: vnl::write(_out, symbols); break;
 		default: _out.putNull();
 	}
 }
 
 void Type::set_field(int _index, vnl::io::TypeInput& _in) {
 	switch(_index) {
-		case 0: vnl::read(_in, name); break;
-		case 1: vnl::read(_in, fields); break;
+		case 0: vnl::read(_in, hash); break;
+		case 1: vnl::read(_in, name); break;
+		case 2: vnl::read(_in, is_struct); break;
+		case 3: vnl::read(_in, is_class); break;
+		case 4: vnl::read(_in, is_enum); break;
+		case 5: vnl::read(_in, is_interface); break;
+		case 6: vnl::read(_in, is_object); break;
+		case 7: vnl::read(_in, fields); break;
+		case 8: vnl::read(_in, methods); break;
+		case 9: vnl::read(_in, symbols); break;
 	}
 }
 

@@ -33,7 +33,6 @@ ADD_LIBRARY(vni STATIC
 	src/vnl/UplinkSupport.cxx
 	src/vnl/Value.cxx
 	src/vnl/info/Field.cxx
-	src/vnl/info/Interface.cxx
 	src/vnl/info/Method.cxx
 	src/vnl/info/Parameter.cxx
 	src/vnl/info/PlayerStatus.cxx

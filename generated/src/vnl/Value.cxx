@@ -60,383 +60,6 @@ vnl::Value* create(vnl::Hash32 hash) {
 	}
 }
 
-vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
-	vnl::Map<vnl::Hash32, vnl::info::Type> res;
-	{
-		vnl::info::Type& info = res["vnl.Announce"];
-		info.name = "vnl.Announce";
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "instance";
-			field.type = "vnl.Instance";
-		}
-	}
-	{
-		vnl::info::Type& info = res["vnl.DuplicateKeyException"];
-		info.name = "vnl.DuplicateKeyException";
-	}
-	{
-		vnl::info::Type& info = res["vnl.Exception"];
-		info.name = "vnl.Exception";
-	}
-	{
-		vnl::info::Type& info = res["vnl.Exit"];
-		info.name = "vnl.Exit";
-	}
-	{
-		vnl::info::Type& info = res["vnl.Header"];
-		info.name = "vnl.Header";
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "src_topic";
-			field.type = "vnl.Topic";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "dst_topic";
-			field.type = "vnl.Topic";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "src_mac";
-			field.type = "vnl.Hash64";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "send_time";
-			field.type = "long";
-		}
-	}
-	{
-		vnl::info::Type& info = res["vnl.IOException"];
-		info.name = "vnl.IOException";
-	}
-	{
-		vnl::info::Type& info = res["vnl.Instance"];
-		info.name = "vnl.Instance";
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "type";
-			field.type = "vnl.String";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "domain";
-			field.type = "vnl.String";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "topic";
-			field.type = "vnl.String";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "src_mac";
-			field.type = "vnl.Hash64";
-		}
-	}
-	{
-		vnl::info::Type& info = res["vnl.LogMsg"];
-		info.name = "vnl.LogMsg";
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "level";
-			field.type = "int";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "src_mac";
-			field.type = "vnl.Hash64";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "domain";
-			field.type = "vnl.String";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "topic";
-			field.type = "vnl.String";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "msg";
-			field.type = "vnl.String";
-		}
-	}
-	{
-		vnl::info::Type& info = res["vnl.NoSuchFieldException"];
-		info.name = "vnl.NoSuchFieldException";
-	}
-	{
-		vnl::info::Type& info = res["vnl.NoSuchKeyException"];
-		info.name = "vnl.NoSuchKeyException";
-	}
-	{
-		vnl::info::Type& info = res["vnl.NoSuchMethodException"];
-		info.name = "vnl.NoSuchMethodException";
-	}
-	{
-		vnl::info::Type& info = res["vnl.RecordHeader"];
-		info.name = "vnl.RecordHeader";
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "version";
-			field.type = "int";
-			vnl::to_string(field.value, 1);
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "header_size";
-			field.type = "int";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "num_samples";
-			field.type = "long";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "begin_time";
-			field.type = "long";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "end_time";
-			field.type = "long";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "topics";
-			field.type = "vnl.Array";
-		}
-	}
-	{
-		vnl::info::Type& info = res["vnl.RecordValue"];
-		info.name = "vnl.RecordValue";
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "time";
-			field.type = "long";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "domain";
-			field.type = "vnl.Hash64";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "topic";
-			field.type = "vnl.Hash64";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "header";
-			field.type = "vnl.Pointer";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "value";
-			field.type = "vnl.Pointer";
-		}
-	}
-	{
-		vnl::info::Type& info = res["vnl.Shutdown"];
-		info.name = "vnl.Shutdown";
-	}
-	{
-		vnl::info::Type& info = res["vnl.TimeoutException"];
-		info.name = "vnl.TimeoutException";
-	}
-	{
-		vnl::info::Type& info = res["vnl.Topic"];
-		info.name = "vnl.Topic";
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "domain";
-			field.type = "vnl.String";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "name";
-			field.type = "vnl.String";
-		}
-	}
-	{
-		vnl::info::Type& info = res["vnl.info.Field"];
-		info.name = "vnl.info.Field";
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "name";
-			field.type = "vnl.String";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "value";
-			field.type = "vnl.String";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "type";
-			field.type = "vnl.String";
-		}
-	}
-	{
-		vnl::info::Type& info = res["vnl.info.Method"];
-		info.name = "vnl.info.Method";
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "name";
-			field.type = "vnl.String";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "type";
-			field.type = "vnl.String";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "params";
-			field.type = "vnl.List";
-		}
-	}
-	{
-		vnl::info::Type& info = res["vnl.info.Parameter"];
-		info.name = "vnl.info.Parameter";
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "name";
-			field.type = "vnl.String";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "type";
-			field.type = "vnl.String";
-		}
-	}
-	{
-		vnl::info::Type& info = res["vnl.info.PlayerStatus"];
-		info.name = "vnl.info.PlayerStatus";
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "filename";
-			field.type = "vnl.String";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "playing";
-			field.type = "bool";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "error";
-			field.type = "bool";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "begin_time";
-			field.type = "long";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "end_time";
-			field.type = "long";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "current_time";
-			field.type = "long";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "time_offset";
-			field.type = "long";
-		}
-	}
-	{
-		vnl::info::Type& info = res["vnl.info.RemoteInfo"];
-		info.name = "vnl.info.RemoteInfo";
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "domain_name";
-			field.type = "vnl.String";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "config_name";
-			field.type = "vnl.String";
-		}
-	}
-	{
-		vnl::info::Type& info = res["vnl.info.TopicInfo"];
-		info.name = "vnl.info.TopicInfo";
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "topic";
-			field.type = "vnl.Topic";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "publishers";
-			field.type = "vnl.Map";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "subscribers";
-			field.type = "vnl.Map";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "send_counter";
-			field.type = "long";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "receive_counter";
-			field.type = "long";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "first_time";
-			field.type = "long";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "last_time";
-			field.type = "long";
-		}
-	}
-	{
-		vnl::info::Type& info = res["vnl.info.TopicInfoList"];
-		info.name = "vnl.info.TopicInfoList";
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "time";
-			field.type = "long";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "topics";
-			field.type = "vnl.Array";
-		}
-	}
-	{
-		vnl::info::Type& info = res["vnl.info.Type"];
-		info.name = "vnl.info.Type";
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "name";
-			field.type = "vnl.String";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.name = "fields";
-			field.type = "vnl.List";
-		}
-	}
-	return res;
-}
-
 vnl::Array<vnl::String> get_class_names() {
 	vnl::Array<vnl::String> res;
 	res.push_back("vnl.Announce");
@@ -463,6 +86,576 @@ vnl::Array<vnl::String> get_class_names() {
 	res.push_back("vnl.info.TopicInfo");
 	res.push_back("vnl.info.TopicInfoList");
 	res.push_back("vnl.info.Type");
+	return res;
+}
+
+vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
+	vnl::Map<vnl::Hash32, vnl::info::Type> res;
+	{
+		vnl::info::Type& info = res["vnl.Announce"];
+		info.hash = 0x417d65c7;
+		info.name = "vnl.Announce";
+		info.is_struct = true;
+		info.is_class = true;
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xfb4f2b4;
+			field.name = "instance";
+			field.type = "vnl.Instance";
+		}
+	}
+	{
+		vnl::info::Type& info = res["vnl.DuplicateKeyException"];
+		info.hash = 0x7e6aa525;
+		info.name = "vnl.DuplicateKeyException";
+		info.is_struct = true;
+		info.is_class = true;
+	}
+	{
+		vnl::info::Type& info = res["vnl.Exception"];
+		info.hash = 0xbe87903d;
+		info.name = "vnl.Exception";
+		info.is_struct = true;
+		info.is_class = true;
+	}
+	{
+		vnl::info::Type& info = res["vnl.Exit"];
+		info.hash = 0x3bd088b0;
+		info.name = "vnl.Exit";
+		info.is_struct = true;
+		info.is_class = true;
+	}
+	{
+		vnl::info::Type& info = res["vnl.Header"];
+		info.hash = 0x52740af4;
+		info.name = "vnl.Header";
+		info.is_struct = true;
+		info.is_class = true;
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xd27ee4a0;
+			field.name = "src_topic";
+			field.type = "vnl.Topic";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xaaf981a0;
+			field.name = "dst_topic";
+			field.type = "vnl.Topic";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x85aba286;
+			field.name = "src_mac";
+			field.type = "vnl.Hash64";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x6ed7c747;
+			field.name = "send_time";
+			field.type = "long";
+		}
+	}
+	{
+		vnl::info::Type& info = res["vnl.IOException"];
+		info.hash = 0xabd5ff87;
+		info.name = "vnl.IOException";
+		info.is_struct = true;
+		info.is_class = true;
+	}
+	{
+		vnl::info::Type& info = res["vnl.Instance"];
+		info.hash = 0x67d48190;
+		info.name = "vnl.Instance";
+		info.is_struct = true;
+		info.is_class = true;
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x5fa779df;
+			field.name = "type";
+			field.type = "vnl.String";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x5190a58c;
+			field.name = "domain";
+			field.type = "vnl.String";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xf68c6937;
+			field.name = "topic";
+			field.type = "vnl.String";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x85aba286;
+			field.name = "src_mac";
+			field.type = "vnl.Hash64";
+		}
+	}
+	{
+		vnl::info::Type& info = res["vnl.LogMsg"];
+		info.hash = 0x9df3e6f5;
+		info.name = "vnl.LogMsg";
+		info.is_struct = true;
+		info.is_class = true;
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x15364763;
+			field.name = "level";
+			field.type = "int";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x85aba286;
+			field.name = "src_mac";
+			field.type = "vnl.Hash64";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x5190a58c;
+			field.name = "domain";
+			field.type = "vnl.String";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xf68c6937;
+			field.name = "topic";
+			field.type = "vnl.String";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xf7a74926;
+			field.name = "msg";
+			field.type = "vnl.String";
+		}
+	}
+	{
+		vnl::info::Type& info = res["vnl.NoSuchFieldException"];
+		info.hash = 0xd7988e27;
+		info.name = "vnl.NoSuchFieldException";
+		info.is_struct = true;
+		info.is_class = true;
+	}
+	{
+		vnl::info::Type& info = res["vnl.NoSuchKeyException"];
+		info.hash = 0xd8d131ca;
+		info.name = "vnl.NoSuchKeyException";
+		info.is_struct = true;
+		info.is_class = true;
+	}
+	{
+		vnl::info::Type& info = res["vnl.NoSuchMethodException"];
+		info.hash = 0x69a97186;
+		info.name = "vnl.NoSuchMethodException";
+		info.is_struct = true;
+		info.is_class = true;
+	}
+	{
+		vnl::info::Type& info = res["vnl.RecordHeader"];
+		info.hash = 0xc10cd56c;
+		info.name = "vnl.RecordHeader";
+		info.is_struct = true;
+		info.is_class = true;
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x55c30e99;
+			field.name = "version";
+			field.type = "int";
+			vnl::to_string(field.value, 1);
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xd7a7ecc4;
+			field.name = "header_size";
+			field.type = "int";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x5ee0fae3;
+			field.name = "num_samples";
+			field.type = "long";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x9c1b758e;
+			field.name = "begin_time";
+			field.type = "long";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x28517039;
+			field.name = "end_time";
+			field.type = "long";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x22dd6aa2;
+			field.name = "topics";
+			field.type = "vnl.Array";
+		}
+	}
+	{
+		vnl::info::Type& info = res["vnl.RecordValue"];
+		info.hash = 0x1cdb1920;
+		info.name = "vnl.RecordValue";
+		info.is_struct = true;
+		info.is_class = true;
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xaf3e4ff0;
+			field.name = "time";
+			field.type = "long";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x5190a58c;
+			field.name = "domain";
+			field.type = "vnl.Hash64";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xf68c6937;
+			field.name = "topic";
+			field.type = "vnl.Hash64";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x278de0d5;
+			field.name = "header";
+			field.type = "vnl.Pointer";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xd6f81d18;
+			field.name = "value";
+			field.type = "vnl.Pointer";
+		}
+	}
+	{
+		vnl::info::Type& info = res["vnl.Shutdown"];
+		info.hash = 0xcdc22e1f;
+		info.name = "vnl.Shutdown";
+		info.is_struct = true;
+		info.is_class = true;
+	}
+	{
+		vnl::info::Type& info = res["vnl.TimeoutException"];
+		info.hash = 0x8c528f1;
+		info.name = "vnl.TimeoutException";
+		info.is_struct = true;
+		info.is_class = true;
+	}
+	{
+		vnl::info::Type& info = res["vnl.Topic"];
+		info.hash = 0xddc3d187;
+		info.name = "vnl.Topic";
+		info.is_struct = true;
+		info.is_class = true;
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x5190a58c;
+			field.name = "domain";
+			field.type = "vnl.String";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x539b7130;
+			field.name = "name";
+			field.type = "vnl.String";
+		}
+	}
+	{
+		vnl::info::Type& info = res["vnl.info.Field"];
+		info.hash = 0xd52524d4;
+		info.name = "vnl.info.Field";
+		info.is_struct = true;
+		info.is_class = true;
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xc114cc40;
+			field.name = "hash";
+			field.type = "vnl.Hash32";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x539b7130;
+			field.name = "name";
+			field.type = "vnl.String";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xd6f81d18;
+			field.name = "value";
+			field.type = "vnl.String";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x5fa779df;
+			field.name = "type";
+			field.type = "vnl.String";
+		}
+	}
+	{
+		vnl::info::Type& info = res["vnl.info.Method"];
+		info.hash = 0x1b510753;
+		info.name = "vnl.info.Method";
+		info.is_struct = true;
+		info.is_class = true;
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xc114cc40;
+			field.name = "hash";
+			field.type = "vnl.Hash32";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x539b7130;
+			field.name = "name";
+			field.type = "vnl.String";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x5fa779df;
+			field.name = "type";
+			field.type = "vnl.String";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x3f42b528;
+			field.name = "params";
+			field.type = "vnl.List";
+		}
+	}
+	{
+		vnl::info::Type& info = res["vnl.info.Parameter"];
+		info.hash = 0xf5e3f3b6;
+		info.name = "vnl.info.Parameter";
+		info.is_struct = true;
+		info.is_class = true;
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x539b7130;
+			field.name = "name";
+			field.type = "vnl.String";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x5fa779df;
+			field.name = "type";
+			field.type = "vnl.String";
+		}
+	}
+	{
+		vnl::info::Type& info = res["vnl.info.PlayerStatus"];
+		info.hash = 0xf9baa92e;
+		info.name = "vnl.info.PlayerStatus";
+		info.is_struct = true;
+		info.is_class = true;
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xb60d3446;
+			field.name = "filename";
+			field.type = "vnl.String";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x2c364d4d;
+			field.name = "playing";
+			field.type = "bool";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x38bdfa85;
+			field.name = "error";
+			field.type = "bool";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x9c1b758e;
+			field.name = "begin_time";
+			field.type = "long";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x28517039;
+			field.name = "end_time";
+			field.type = "long";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xec387c20;
+			field.name = "current_time";
+			field.type = "long";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x94c1d19e;
+			field.name = "time_offset";
+			field.type = "long";
+		}
+	}
+	{
+		vnl::info::Type& info = res["vnl.info.RemoteInfo"];
+		info.hash = 0x7aa64297;
+		info.name = "vnl.info.RemoteInfo";
+		info.is_struct = true;
+		info.is_class = true;
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x29243084;
+			field.name = "domain_name";
+			field.type = "vnl.String";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x95fd810;
+			field.name = "config_name";
+			field.type = "vnl.String";
+		}
+	}
+	{
+		vnl::info::Type& info = res["vnl.info.TopicInfo"];
+		info.hash = 0x1e3eb783;
+		info.name = "vnl.info.TopicInfo";
+		info.is_struct = true;
+		info.is_class = true;
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xf68c6937;
+			field.name = "topic";
+			field.type = "vnl.Topic";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x8494c8d8;
+			field.name = "publishers";
+			field.type = "vnl.Map";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xfcc8b8eb;
+			field.name = "subscribers";
+			field.type = "vnl.Map";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xf56f7d1e;
+			field.name = "send_counter";
+			field.type = "long";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xbafcf9f0;
+			field.name = "receive_counter";
+			field.type = "long";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x50ad8a03;
+			field.name = "first_time";
+			field.type = "long";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x13c371be;
+			field.name = "last_time";
+			field.type = "long";
+		}
+	}
+	{
+		vnl::info::Type& info = res["vnl.info.TopicInfoList"];
+		info.hash = 0xdc558ad;
+		info.name = "vnl.info.TopicInfoList";
+		info.is_struct = true;
+		info.is_class = true;
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xaf3e4ff0;
+			field.name = "time";
+			field.type = "long";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x22dd6aa2;
+			field.name = "topics";
+			field.type = "vnl.Array";
+		}
+	}
+	{
+		vnl::info::Type& info = res["vnl.info.Type"];
+		info.hash = 0xbde99c40;
+		info.name = "vnl.info.Type";
+		info.is_struct = true;
+		info.is_class = true;
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xc114cc40;
+			field.name = "hash";
+			field.type = "vnl.Hash32";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x539b7130;
+			field.name = "name";
+			field.type = "vnl.String";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x72700701;
+			field.name = "is_struct";
+			field.type = "bool";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x674ff4e3;
+			field.name = "is_class";
+			field.type = "bool";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xc1fa0e8c;
+			field.name = "is_enum";
+			field.type = "bool";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x3e98de28;
+			field.name = "is_interface";
+			field.type = "bool";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x4b4df272;
+			field.name = "is_object";
+			field.type = "bool";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x96d44ab3;
+			field.name = "fields";
+			field.type = "vnl.List";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x8457c8be;
+			field.name = "methods";
+			field.type = "vnl.List";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x7cefe7cf;
+			field.name = "symbols";
+			field.type = "vnl.List";
+		}
+	}
+	{
+		vnl::info::Type& info = res["vnl.Enum"];
+		info.hash = 0x5d6ea668;
+		info.name = "vnl.Enum";
+		info.is_enum = true;
+	}
 	return res;
 }
 

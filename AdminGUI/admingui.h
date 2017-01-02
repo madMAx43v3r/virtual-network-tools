@@ -75,11 +75,13 @@ protected:
 	
 	struct topic_t {
 		vnl::Topic topic;
+		vnl::Address address;
 		QTreeWidgetItem* tree_item = 0;
 		QTreeWidget* dump_tree = 0;
 		QSplitter* pubsub_widget = 0;
 		QTableWidget* publishers = 0;
 		QTableWidget* subscribers = 0;
+		bool do_capture = true;
 	};
 	
 	void main() {
@@ -185,7 +187,7 @@ protected:
 			
 			topic_dump_stack = new QStackedWidget();
 			splitter->addWidget(topic_dump_stack);
-			sub_pager->addTab(topic_dump_stack, "Data View");
+			sub_pager->addTab(topic_dump_stack, "Sample View");
 			
 			topic_pubsub_stack = new QStackedWidget();
 			splitter->addWidget(topic_pubsub_stack);
@@ -207,26 +209,11 @@ protected:
 		tcp_client.exit();
 	}
 	
-	void handle(const vnl::Value& sample, const vnl::Packet& packet) {
-		if(!do_capture || packet.dst_addr != current_topic) {
-			return;
+	bool handle(vnl::Sample* sample) {
+		if(current_topic && current_topic->do_capture && sample->dst_addr == current_topic->address) {
+			dump_sample(sample);
 		}
-		int64_t now = vnl::currentTimeMicros();
-		if(now - last_topic_update < 500000) {
-			return;
-		}
-		
-		vnl::Page* data = vnl::Page::alloc();
-		vnl::io::ByteBuffer buf(data);
-		vnl::io::TypeOutput out(&buf);
-		vnl::write(out, sample);
-		out.flush();
-		buf.flip();
-		
-		vnl::io::TypeInput in(&buf);
-		read_sample(in);
-		data->free_all();
-		last_topic_update = now;
+		return Super::handle(sample);
 	}
 	
 	void handle(const vnl::LogMsg& sample) {
@@ -335,8 +322,121 @@ protected:
 		topic_overview->update();
 	}
 	
-	void read_sample(vnl::io::TypeInput& in) {
+	void dump_sample(vnl::Sample* sample) {
+		int64_t now = vnl::currentTimeMicros();
+		if(now - last_topic_dump < max_topic_interval) {
+			return;
+		}
 		
+		vnl::Page* data = vnl::Page::alloc();
+		vnl::io::ByteBuffer buf(data);
+		vnl::io::TypeOutput out(&buf);
+		vnl::write(out, sample->data);
+		out.flush();
+		buf.flip();
+		
+		QTreeWidgetItem* item = new QTreeWidgetItem(QStringList(QString("Sample")));
+		vnl::io::TypeInput in(&buf);
+		dump_sample(in, item, 0);
+		current_topic->dump_tree->addTopLevelItem(item);
+		current_topic->dump_tree->update();
+		
+		data->free_all();
+		last_topic_dump = now;
+	}
+	
+	void dump_sample(vnl::io::TypeInput& in, QTreeWidgetItem* parent, vnl::info::Type* type) {
+		int size = 0;
+		int id = in.getEntry(size);
+		uint32_t hash = 0;
+		switch(id) {
+		case VNL_IO_BOOL: {
+			parent->setData(0, Qt::ItemDataRole::DisplayRole, parent->data(0, Qt::ItemDataRole::DisplayRole).toString() + ":  " + (size == VNL_IO_TRUE ? "true" : "false"));
+			break;
+		}
+		case VNL_IO_INTEGER: {
+			int64_t value;
+			in.readValue(value, id, size);
+			if(type && type->is_enum) {
+				QString symbol = "0x" + QString::number(value, 16);
+				for(const vnl::String& sym : type->symbols) {
+					if(vnl::Hash32(sym).value == uint32_t(int32_t(value))) {
+						symbol = sym.to_string().c_str();
+					}
+				}
+				parent->setData(0, Qt::ItemDataRole::DisplayRole, parent->data(0, Qt::ItemDataRole::DisplayRole).toString() + ":  " + symbol);
+			} else {
+				parent->setData(0, Qt::ItemDataRole::DisplayRole, parent->data(0, Qt::ItemDataRole::DisplayRole).toString() + ":  " + QString::number(value));
+			}
+			break;
+		}
+		case VNL_IO_REAL: {
+			double value;
+			in.readValue(value, id, size);
+			parent->setData(0, Qt::ItemDataRole::DisplayRole, parent->data(0, Qt::ItemDataRole::DisplayRole).toString() + ":  " + QString::number(value));
+			break;
+		}
+		case VNL_IO_BINARY: {
+			in.skip(id, size);
+			parent->setData(0, Qt::ItemDataRole::DisplayRole, parent->data(0, Qt::ItemDataRole::DisplayRole).toString() + ":  Binary of " + QString::number(size) + " bytes");
+			break;
+		}
+		case VNL_IO_STRING: {
+			vnl::String value;
+			in.readString(value, size);
+			parent->setData(0, Qt::ItemDataRole::DisplayRole, parent->data(0, Qt::ItemDataRole::DisplayRole).toString() + ":  \"" + value.to_string().c_str() + "\"");
+			break;
+		}
+		case VNL_IO_ARRAY: {
+			parent->setData(0, Qt::ItemDataRole::DisplayRole, parent->data(0, Qt::ItemDataRole::DisplayRole).toString() + "  (Array of size " + QString::number(size) + ")");
+			for(int i = 0; i < size; ++i) {
+				QTreeWidgetItem* item = new QTreeWidgetItem(QStringList(QString("[") + QString::number(i) + "]"));
+				dump_sample(in, item, 0);
+				parent->addChild(item);
+			}
+			break;
+		}
+		case VNL_IO_CLASS:
+			in.getHash(hash);
+			type = type_info.find(hash);
+			/* no break */
+		case VNL_IO_STRUCT:
+			if(!type) {
+				parent->setData(0, Qt::ItemDataRole::DisplayRole, parent->data(0, Qt::ItemDataRole::DisplayRole).toString() + "  (Class 0x" + QString::number(hash, 16) + ")");
+				if(hash) {
+					in.skip(id, size, hash);
+				} else {
+					in.skip(id, size);
+				}
+				return;
+			}
+			parent->setData(0, Qt::ItemDataRole::DisplayRole, parent->data(0, Qt::ItemDataRole::DisplayRole).toString() + "  (" + type->name.to_string().c_str() + ")");
+			for(int i = 0; i < size; ++i) {
+				uint32_t field_hash;
+				in.getHash(field_hash);
+				vnl::info::Field* field = 0;
+				for(vnl::info::Field& f : type->fields) {
+					if(f.hash == field_hash) {
+						field = &f;
+						break;
+					}
+				}
+				QString line;
+				vnl::info::Type* field_type = 0;
+				if(field) {
+					line = field->name.to_string().c_str();
+					field_type = type_info.find(field->type);
+				} else {
+					line = "0x" + QString::number(field_hash, 16);
+				}
+				QTreeWidgetItem* item = new QTreeWidgetItem(QStringList(line));
+				dump_sample(in, item, field_type);
+				parent->addChild(item);
+			}
+			break;
+		default:
+			in.skip(id, size);
+		}
 	}
 	
 	void setup_client() {
@@ -390,6 +490,15 @@ private slots:
 			key.name = name.toString().toStdString();
 			topic_t* topic = find_topic(key);
 			if(topic) {
+				if(current_topic) {
+					tcp_client.unsubscribe(current_topic->topic.domain, current_topic->topic.name);
+					unsubscribe(current_topic->topic.domain, current_topic->topic.name);
+				}
+				current_topic = topic;
+				tcp_client.subscribe(topic->topic.domain, topic->topic.name);
+				subscribe(topic->topic.domain, topic->topic.name);
+				topic_dump_stack->setCurrentWidget(topic->dump_tree);
+				topic_dump_stack->update();
 				topic_pubsub_stack->setCurrentWidget(topic->pubsub_widget);
 				topic_pubsub_stack->update();
 			}
@@ -501,8 +610,10 @@ private:
 		
 		topic_t& topic = topics.push_back();
 		topic.topic = top;
+		topic.address = vnl::Address(top.domain, top.name);
 		
 		topic.dump_tree = new QTreeWidget();
+		topic.dump_tree->header()->close();
 		topic_dump_stack->addWidget(topic.dump_tree);
 		
 		topic.pubsub_widget = new QSplitter();
@@ -615,9 +726,8 @@ private:
 	QStackedWidget* topic_pubsub_stack = 0;
 	QStackedWidget* topic_dump_stack = 0;
 	
-	bool do_capture = true;
-	vnl::Address current_topic;
-	int64_t last_topic_update = 0;
+	topic_t* current_topic = 0;
+	int64_t last_topic_dump = 0;
 	
 };
 

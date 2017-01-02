@@ -26,6 +26,7 @@ void Field::destroy() {
 void Field::serialize(vnl::io::TypeOutput& _out) const {
 	_out.putEntry(VNL_IO_CLASS, NUM_FIELDS);
 	_out.putHash(VNI_HASH);
+	_out.putHash(0xc114cc40); vnl::write(_out, hash);
 	_out.putHash(0x539b7130); vnl::write(_out, name);
 	_out.putHash(0xd6f81d18); vnl::write(_out, value);
 	_out.putHash(0x5fa779df); vnl::write(_out, type);
@@ -36,6 +37,7 @@ void Field::deserialize(vnl::io::TypeInput& _in, int _size) {
 		uint32_t _hash = 0;
 		_in.getHash(_hash);
 		switch(_hash) {
+			case 0xc114cc40: vnl::read(_in, hash); break;
 			case 0x539b7130: vnl::read(_in, name); break;
 			case 0xd6f81d18: vnl::read(_in, value); break;
 			case 0x5fa779df: vnl::read(_in, type); break;
@@ -46,52 +48,58 @@ void Field::deserialize(vnl::io::TypeInput& _in, int _size) {
 
 int Field::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
-		case 0x539b7130: return 0;
-		case 0xd6f81d18: return 1;
-		case 0x5fa779df: return 2;
+		case 0xc114cc40: return 0;
+		case 0x539b7130: return 1;
+		case 0xd6f81d18: return 2;
+		case 0x5fa779df: return 3;
 		default: return -1;
 	}
 }
 
 const char* Field::get_field_name(int _index) const {
 	switch(_index) {
-		case 0: return "name";
-		case 1: return "value";
-		case 2: return "type";
+		case 0: return "hash";
+		case 1: return "name";
+		case 2: return "value";
+		case 3: return "type";
 		default: return 0;
 	}
 }
 
 void Field::get_field(int _index, vnl::String& _str) const {
 	switch(_index) {
-		case 0: vnl::to_string(_str, name); break;
-		case 1: vnl::to_string(_str, value); break;
-		case 2: vnl::to_string(_str, type); break;
+		case 0: vnl::to_string(_str, hash); break;
+		case 1: vnl::to_string(_str, name); break;
+		case 2: vnl::to_string(_str, value); break;
+		case 3: vnl::to_string(_str, type); break;
 	}
 }
 
 void Field::set_field(int _index, const vnl::String& _str) {
 	switch(_index) {
-		case 0: vnl::from_string(_str, name); break;
-		case 1: vnl::from_string(_str, value); break;
-		case 2: vnl::from_string(_str, type); break;
+		case 0: vnl::from_string(_str, hash); break;
+		case 1: vnl::from_string(_str, name); break;
+		case 2: vnl::from_string(_str, value); break;
+		case 3: vnl::from_string(_str, type); break;
 	}
 }
 
 void Field::get_field(int _index, vnl::io::TypeOutput& _out) const {
 	switch(_index) {
-		case 0: vnl::write(_out, name); break;
-		case 1: vnl::write(_out, value); break;
-		case 2: vnl::write(_out, type); break;
+		case 0: vnl::write(_out, hash); break;
+		case 1: vnl::write(_out, name); break;
+		case 2: vnl::write(_out, value); break;
+		case 3: vnl::write(_out, type); break;
 		default: _out.putNull();
 	}
 }
 
 void Field::set_field(int _index, vnl::io::TypeInput& _in) {
 	switch(_index) {
-		case 0: vnl::read(_in, name); break;
-		case 1: vnl::read(_in, value); break;
-		case 2: vnl::read(_in, type); break;
+		case 0: vnl::read(_in, hash); break;
+		case 1: vnl::read(_in, name); break;
+		case 2: vnl::read(_in, value); break;
+		case 3: vnl::read(_in, type); break;
 	}
 }
 
