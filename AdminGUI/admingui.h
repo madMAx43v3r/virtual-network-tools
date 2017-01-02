@@ -144,8 +144,8 @@ protected:
 			QSplitter* splitter = new QSplitter();
 			
 			module_tree = new QTreeWidget();
-			module_tree->setSelectionBehavior(QTreeWidget::SelectionBehavior::SelectItems);
-			module_tree->setSelectionMode(QTreeWidget::SelectionMode::SingleSelection);
+			module_tree->setSelectionBehavior(QTreeWidget::SelectItems);
+			module_tree->setSelectionMode(QTreeWidget::SingleSelection);
 			module_tree->header()->close();
 			connect(module_tree, SIGNAL(itemSelectionChanged()), this, SLOT(setCurrentModule()));
 			splitter->addWidget(module_tree);
@@ -169,8 +169,8 @@ protected:
 			QSplitter* splitter = new QSplitter();
 			
 			topic_tree = new QTreeWidget();
-			topic_tree->setSelectionBehavior(QTreeWidget::SelectionBehavior::SelectItems);
-			topic_tree->setSelectionMode(QTreeWidget::SelectionMode::SingleSelection);
+			topic_tree->setSelectionBehavior(QTreeWidget::SelectItems);
+			topic_tree->setSelectionMode(QTreeWidget::SingleSelection);
 			topic_tree->header()->close();
 			connect(topic_tree, SIGNAL(itemSelectionChanged()), this, SLOT(setCurrentTopic()));
 			splitter->addWidget(topic_tree);
@@ -180,7 +180,7 @@ protected:
 			topic_overview = new QTableWidget();
 			topic_overview->setColumnCount(6);
 			topic_overview->verticalHeader()->hide();
-			topic_overview->setSelectionMode(QAbstractItemView::SelectionMode::NoSelection);
+			topic_overview->setSelectionMode(QAbstractItemView::NoSelection);
 			topic_overview->setHorizontalHeaderLabels(QStringList() << "Domain" << "Topic" << "Sent" << "Received" << "Cycle Time" << "Last Seen");
 			splitter->addWidget(topic_overview);
 			sub_pager->addTab(topic_overview, "Overview");
@@ -211,8 +211,11 @@ protected:
 	}
 	
 	bool handle(vnl::Sample* sample) {
-		if(do_capture && get_channel() == &tunnel && current_topic && sample->dst_addr == current_topic->address) {
-			dump_sample(sample);
+		if(get_channel() == &tunnel) {
+			if(do_capture && current_topic && sample->dst_addr == current_topic->address) {
+				dump_sample(sample);
+			}
+			return false;
 		}
 		return Super::handle(sample);
 	}
@@ -295,8 +298,8 @@ protected:
 			}
 			topic.publishers->setRowCount(r);
 			resize_table(topic.publishers);
-			topic.publishers->sortByColumn(1, Qt::SortOrder::AscendingOrder);
-			topic.publishers->sortByColumn(0, Qt::SortOrder::AscendingOrder);
+			topic.publishers->sortByColumn(1, Qt::AscendingOrder);
+			topic.publishers->sortByColumn(0, Qt::AscendingOrder);
 			topic.publishers->update();
 			
 			r = 0;
@@ -311,15 +314,15 @@ protected:
 			}
 			topic.subscribers->setRowCount(r);
 			resize_table(topic.subscribers);
-			topic.subscribers->sortByColumn(1, Qt::SortOrder::AscendingOrder);
-			topic.subscribers->sortByColumn(0, Qt::SortOrder::AscendingOrder);
+			topic.subscribers->sortByColumn(1, Qt::AscendingOrder);
+			topic.subscribers->sortByColumn(0, Qt::AscendingOrder);
 			topic.subscribers->update();
 			
 			row++;
 		}
 		resize_table(topic_overview);
-		topic_overview->sortByColumn(1, Qt::SortOrder::AscendingOrder);
-		topic_overview->sortByColumn(0, Qt::SortOrder::AscendingOrder);
+		topic_overview->sortByColumn(1, Qt::AscendingOrder);
+		topic_overview->sortByColumn(0, Qt::AscendingOrder);
 		topic_overview->update();
 	}
 	
@@ -352,7 +355,7 @@ protected:
 		uint32_t hash = 0;
 		switch(id) {
 		case VNL_IO_BOOL: {
-			parent->setData(0, Qt::ItemDataRole::DisplayRole, parent->data(0, Qt::ItemDataRole::DisplayRole).toString() + ":  " + (size == VNL_IO_TRUE ? "true" : "false"));
+			parent->setData(0, Qt::DisplayRole, parent->data(0, Qt::DisplayRole).toString() + ":  " + (size == VNL_IO_TRUE ? "true" : "false"));
 			break;
 		}
 		case VNL_IO_INTEGER: {
@@ -365,35 +368,42 @@ protected:
 						symbol = sym.to_string().c_str();
 					}
 				}
-				parent->setData(0, Qt::ItemDataRole::DisplayRole, parent->data(0, Qt::ItemDataRole::DisplayRole).toString() + ":  " + symbol);
+				parent->setData(0, Qt::DisplayRole, parent->data(0, Qt::DisplayRole).toString() + ":  " + symbol);
 			} else {
-				parent->setData(0, Qt::ItemDataRole::DisplayRole, parent->data(0, Qt::ItemDataRole::DisplayRole).toString() + ":  " + QString::number(value));
+				parent->setData(0, Qt::DisplayRole, parent->data(0, Qt::DisplayRole).toString() + ":  " + QString::number(value));
 			}
 			break;
 		}
 		case VNL_IO_REAL: {
 			double value;
 			in.readValue(value, id, size);
-			parent->setData(0, Qt::ItemDataRole::DisplayRole, parent->data(0, Qt::ItemDataRole::DisplayRole).toString() + ":  " + QString::number(value));
+			parent->setData(0, Qt::DisplayRole, parent->data(0, Qt::DisplayRole).toString() + ":  " + QString::number(value));
 			break;
 		}
 		case VNL_IO_BINARY: {
 			in.skip(id, size);
-			parent->setData(0, Qt::ItemDataRole::DisplayRole, parent->data(0, Qt::ItemDataRole::DisplayRole).toString() + ":  Binary of " + QString::number(size) + " bytes");
+			parent->setData(0, Qt::DisplayRole, parent->data(0, Qt::DisplayRole).toString() + ":  Binary of " + QString::number(size) + " bytes");
 			break;
 		}
 		case VNL_IO_STRING: {
 			vnl::String value;
 			in.readString(value, size);
-			parent->setData(0, Qt::ItemDataRole::DisplayRole, parent->data(0, Qt::ItemDataRole::DisplayRole).toString() + ":  \"" + value.to_string().c_str() + "\"");
+			parent->setData(0, Qt::DisplayRole, parent->data(0, Qt::DisplayRole).toString() + ":  \"" + value.to_string().c_str() + "\"");
 			break;
 		}
 		case VNL_IO_ARRAY: {
-			parent->setData(0, Qt::ItemDataRole::DisplayRole, parent->data(0, Qt::ItemDataRole::DisplayRole).toString() + "  (Array of size " + QString::number(size) + ")");
+			parent->setData(0, Qt::DisplayRole, parent->data(0, Qt::DisplayRole).toString() + "  (Array of size " + QString::number(size) + ")");
 			for(int i = 0; i < size; ++i) {
-				QTreeWidgetItem* item = new QTreeWidgetItem(QStringList(QString("[") + QString::number(i) + "]"));
-				dump_sample(in, item, 0);
-				parent->addChild(item);
+				if(i < max_array_size) {
+					QTreeWidgetItem* item = new QTreeWidgetItem(QStringList(QString("[") + QString::number(i) + "]"));
+					dump_sample(in, item, 0);
+					parent->addChild(item);
+				} else {
+					if(i == max_array_size) {
+						parent->addChild(new QTreeWidgetItem(QStringList(QString("..."))));
+					}
+					in.skip();
+				}
 			}
 			break;
 		}
@@ -403,7 +413,7 @@ protected:
 			/* no break */
 		case VNL_IO_STRUCT:
 			if(!type) {
-				parent->setData(0, Qt::ItemDataRole::DisplayRole, parent->data(0, Qt::ItemDataRole::DisplayRole).toString() + "  (Class 0x" + QString::number(hash, 16) + ")");
+				parent->setData(0, Qt::DisplayRole, parent->data(0, Qt::DisplayRole).toString() + "  (Class 0x" + QString::number(hash, 16) + ")");
 				if(hash) {
 					in.skip(id, size, hash);
 				} else {
@@ -411,7 +421,7 @@ protected:
 				}
 				return;
 			}
-			parent->setData(0, Qt::ItemDataRole::DisplayRole, parent->data(0, Qt::ItemDataRole::DisplayRole).toString() + "  (" + type->name.to_string().c_str() + ")");
+			parent->setData(0, Qt::DisplayRole, parent->data(0, Qt::DisplayRole).toString() + "  (" + type->name.to_string().c_str() + ")");
 			for(int i = 0; i < size; ++i) {
 				uint32_t field_hash;
 				in.getHash(field_hash);
@@ -484,8 +494,8 @@ private slots:
 		}
 		QTreeWidgetItem* item = selection.first();
 		if(item && item->parent()) {
-			QVariant domain = item->parent()->data(0, Qt::ItemDataRole::DisplayRole);
-			QVariant name = item->data(0, Qt::ItemDataRole::DisplayRole);
+			QVariant domain = item->parent()->data(0, Qt::DisplayRole);
+			QVariant name = item->data(0, Qt::DisplayRole);
 			vnl::Topic key;
 			key.domain = domain.toString().toStdString();
 			key.name = name.toString().toStdString();
@@ -561,7 +571,7 @@ private:
 			{
 				QTreeWidgetItemIterator it(module_tree);
 				while(*it) {
-					if((*it)->parent() == 0 && (*it)->data(0, Qt::ItemDataRole::DisplayRole) == domain) {
+					if((*it)->parent() == 0 && (*it)->data(0, Qt::DisplayRole) == domain) {
 						parent = *it;
 					}
 					it++;
@@ -569,16 +579,16 @@ private:
 			}
 			if(!parent) {
 				parent = new QTreeWidgetItem();
-				parent->setData(0, Qt::ItemDataRole::DisplayRole, domain);
+				parent->setData(0, Qt::DisplayRole, domain);
 				module_tree->addTopLevelItem(parent);
 				parent->setExpanded(true);
 			}
 			
 			module->tree_item = new QTreeWidgetItem();
-			module->tree_item->setData(0, Qt::ItemDataRole::DisplayRole, inst.topic.to_string().c_str());
-			module->tree_item->setData(1, Qt::ItemDataRole::UserRole, QVariant(qulonglong(inst.src_mac.value)));
+			module->tree_item->setData(0, Qt::DisplayRole, inst.topic.to_string().c_str());
+			module->tree_item->setData(1, Qt::UserRole, QVariant(qulonglong(inst.src_mac.value)));
 			parent->addChild(module->tree_item);
-			module_tree->sortItems(0, Qt::SortOrder::AscendingOrder);
+			module_tree->sortItems(0, Qt::AscendingOrder);
 			module_tree->update();
 		}
 		return *module;
@@ -622,14 +632,14 @@ private:
 		topic.publishers = new QTableWidget();
 		topic.publishers->setColumnCount(3);
 		topic.publishers->verticalHeader()->hide();
-		topic.publishers->setSelectionMode(QAbstractItemView::SelectionMode::NoSelection);
+		topic.publishers->setSelectionMode(QAbstractItemView::NoSelection);
 		topic.publishers->setHorizontalHeaderLabels(QStringList() << "Domain" << "Topic" << "Sent");
 		topic.pubsub_widget->addWidget(topic.publishers);
 		
 		topic.subscribers = new QTableWidget();
 		topic.subscribers->setColumnCount(3);
 		topic.subscribers->verticalHeader()->hide();
-		topic.subscribers->setSelectionMode(QAbstractItemView::SelectionMode::NoSelection);
+		topic.subscribers->setSelectionMode(QAbstractItemView::NoSelection);
 		topic.subscribers->setHorizontalHeaderLabels(QStringList() << "Domain" << "Topic" << "Received");
 		topic.pubsub_widget->addWidget(topic.subscribers);
 		topic_pubsub_stack->addWidget(topic.pubsub_widget);
@@ -639,7 +649,7 @@ private:
 		{
 			QTreeWidgetItemIterator it(topic_tree);
 			while(*it) {
-				if((*it)->parent() == 0 && (*it)->data(0, Qt::ItemDataRole::DisplayRole) == domain) {
+				if((*it)->parent() == 0 && (*it)->data(0, Qt::DisplayRole) == domain) {
 					parent = *it;
 				}
 				it++;
@@ -647,15 +657,15 @@ private:
 		}
 		if(!parent) {
 			parent = new QTreeWidgetItem();
-			parent->setData(0, Qt::ItemDataRole::DisplayRole, domain);
+			parent->setData(0, Qt::DisplayRole, domain);
 			topic_tree->addTopLevelItem(parent);
 			parent->setExpanded(true);
 		}
 		
 		topic.tree_item = new QTreeWidgetItem();
-		topic.tree_item->setData(0, Qt::ItemDataRole::DisplayRole, top.name.to_string().c_str());
+		topic.tree_item->setData(0, Qt::DisplayRole, top.name.to_string().c_str());
 		parent->addChild(topic.tree_item);
-		topic_tree->sortItems(0, Qt::SortOrder::AscendingOrder);
+		topic_tree->sortItems(0, Qt::AscendingOrder);
 		topic_tree->update();
 		return topic;
 	}

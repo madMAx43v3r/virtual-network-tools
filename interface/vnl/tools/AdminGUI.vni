@@ -6,7 +6,9 @@ object AdminGUI {
 	int target_port = 8916;
 	
 	int interval = 2000;				// update interval in ms
+	
 	int max_topic_interval = 200000;	// [us]
+	int max_array_size = 100;
 	
 	void handle(vnl.LogMsg sample);
 	void handle(vnl.info.RemoteInfo sample);

@@ -18,6 +18,7 @@ int AdminGUIBase::get_field_index(vnl::Hash32 _hash) const {
 		case 0x579173b0: return 3;
 		case 0xd129c896: return 4;
 		case 0xc526602e: return 5;
+		case 0xc7e1713a: return 6;
 		default: return -1;
 	}
 }
@@ -30,6 +31,7 @@ const char* AdminGUIBase::get_field_name(int _index) const {
 		case 3: return "target_port";
 		case 4: return "interval";
 		case 5: return "max_topic_interval";
+		case 6: return "max_array_size";
 		default: return 0;
 	}
 }
@@ -42,6 +44,7 @@ void AdminGUIBase::get_field(int _index, vnl::String& _str) const {
 		case 3: vnl::to_string(_str, target_port); break;
 		case 4: vnl::to_string(_str, interval); break;
 		case 5: vnl::to_string(_str, max_topic_interval); break;
+		case 6: vnl::to_string(_str, max_array_size); break;
 	}
 }
 
@@ -53,6 +56,7 @@ void AdminGUIBase::set_field(int _index, const vnl::String& _str) {
 		case 3: vnl::from_string(_str, target_port); break;
 		case 4: vnl::from_string(_str, interval); break;
 		case 5: vnl::from_string(_str, max_topic_interval); break;
+		case 6: vnl::from_string(_str, max_array_size); break;
 	}
 }
 
@@ -64,6 +68,7 @@ void AdminGUIBase::get_field(int _index, vnl::io::TypeOutput& _out) const {
 		case 3: vnl::write(_out, target_port); break;
 		case 4: vnl::write(_out, interval); break;
 		case 5: vnl::write(_out, max_topic_interval); break;
+		case 6: vnl::write(_out, max_array_size); break;
 		default: _out.putNull();
 	}
 }
@@ -76,6 +81,7 @@ void AdminGUIBase::set_field(int _index, vnl::io::TypeInput& _in) {
 		case 3: vnl::read(_in, target_port); break;
 		case 4: vnl::read(_in, interval); break;
 		case 5: vnl::read(_in, max_topic_interval); break;
+		case 6: vnl::read(_in, max_array_size); break;
 	}
 }
 
@@ -102,6 +108,12 @@ bool AdminGUIBase::vni_call(vnl::io::TypeInput& _in, uint32_t _hash, int _num_ar
 	case 0xc526602e: 
 		if(_num_args == 1) {
 			vnl::read(_in, max_topic_interval);
+			return true;
+		}
+		break;
+	case 0xc7e1713a: 
+		if(_num_args == 1) {
+			vnl::read(_in, max_array_size);
 			return true;
 		}
 		break;
@@ -132,6 +144,12 @@ bool AdminGUIBase::vni_const_call(vnl::io::TypeInput& _in, uint32_t _hash, int _
 	case 0xc526602e: 
 		if(_num_args == 0) {
 			vnl::write(_out, max_topic_interval);
+			return true;
+		}
+		break;
+	case 0xc7e1713a: 
+		if(_num_args == 0) {
+			vnl::write(_out, max_array_size);
 			return true;
 		}
 		break;

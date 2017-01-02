@@ -19,7 +19,7 @@ namespace tools {
 class AdminGUIBase : public vnl::Object {
 public:
 	static const uint32_t VNI_HASH = 0x1d8bdfc8;
-	static const uint32_t NUM_FIELDS = 6;
+	static const uint32_t NUM_FIELDS = 7;
 	
 	typedef vnl::Object Super;
 	
@@ -28,6 +28,7 @@ public:
 	int32_t target_port;
 	int32_t interval;
 	int32_t max_topic_interval;
+	int32_t max_array_size;
 	
 	AdminGUIBase(const vnl::String& domain_, const vnl::String& topic_)
 		:	vnl::Object::Object(domain_, topic_)
@@ -36,10 +37,12 @@ public:
 		target_port = 8916;
 		interval = 2000;
 		max_topic_interval = 200000;
+		max_array_size = 100;
 		vnl::read_config(domain_, topic_, "target_host", target_host);
 		vnl::read_config(domain_, topic_, "target_port", target_port);
 		vnl::read_config(domain_, topic_, "interval", interval);
 		vnl::read_config(domain_, topic_, "max_topic_interval", max_topic_interval);
+		vnl::read_config(domain_, topic_, "max_array_size", max_array_size);
 	}
 	
 	virtual uint32_t get_vni_hash() const { return VNI_HASH; }
@@ -77,6 +80,7 @@ protected:
 		_writer.set_target_port(target_port);
 		_writer.set_interval(interval);
 		_writer.set_max_topic_interval(max_topic_interval);
+		_writer.set_max_array_size(max_array_size);
 	}
 	
 };
