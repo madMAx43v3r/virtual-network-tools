@@ -514,7 +514,6 @@ private slots:
 			module.is_running = false;
 		}
 		vnl::Array<vnl::Instance> objects;
-		vnl::Array<vnl::info::TopicInfo> topic_info;
 		try {
 			objects = process.get_objects();
 		} catch (vnl::Exception& ex) {
@@ -534,6 +533,7 @@ private slots:
 	}
 	
 	void reset_all() {
+		current_topic = 0;
 		modules.clear();
 		topics.clear();
 		terminal->clear();
