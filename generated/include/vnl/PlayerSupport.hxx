@@ -18,7 +18,7 @@ namespace vnl {
 class PlayerBase : public vnl::Object {
 public:
 	static const uint32_t VNI_HASH = 0xe536451b;
-	static const uint32_t NUM_FIELDS = 9;
+	static const uint32_t NUM_FIELDS = 10;
 	
 	typedef vnl::Object Super;
 	
@@ -79,7 +79,8 @@ protected:
 	template<class W>
 	void write_fields(W& _writer) const {
 		_writer.set_vnl_log_level(vnl_log_level);
-		_writer.set_vnl_max_num_pending(vnl_max_num_pending);
+		_writer.set_vnl_msg_timeout(vnl_msg_timeout);
+		_writer.set_vnl_heartbeat_interval(vnl_heartbeat_interval);
 		_writer.set_filename(filename);
 		_writer.set_domain_blacklist(domain_blacklist);
 		_writer.set_topic_blacklist(topic_blacklist);

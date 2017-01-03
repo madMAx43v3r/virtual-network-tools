@@ -70,6 +70,7 @@ protected:
 		vnl::Instance instance;
 		QTreeWidgetItem* tree_item = 0;
 		QTextEdit* log_view = 0;
+		QTableWidget* config_table = 0;
 		bool is_running = true;
 	};
 	
@@ -85,9 +86,14 @@ protected:
 	
 	void main() {
 		add_input(tunnel);
-		process.set_fail(true);
-		process.set_timeout(1000);
-		add_client(process);
+		
+		process_client.set_fail(true);
+		process_client.set_timeout(200);
+		add_client(process_client);
+		
+		object_client.set_fail(true);
+		object_client.set_timeout(200);
+		add_client(object_client);
 		
 		add_client(tcp_client);
 		{
@@ -207,7 +213,10 @@ protected:
 		show();
 		application->exec();
 		tunnel.close();
-		tcp_client.exit();
+		tcp_client.set_fail(true);
+		try {
+			tcp_client.exit();
+		} catch(...) {}
 	}
 	
 	bool handle(vnl::Sample* sample) {
@@ -233,19 +242,19 @@ protected:
 			text += subs(sample.msg.to_string(), "\n", "<br>").c_str();
 			append_html(module->log_view, text);
 			
-			text = QString("[") + sample.topic.to_string().c_str() + "] " + text;
+			text = QString("[") + module->instance.topic.to_string().c_str() + "] " + text;
 			append_html(terminal, text);
 		}
 	}
 	
 	void handle(const vnl::info::RemoteInfo& sample) {
 		remote = sample;
-		process.set_address(remote.domain_name, "Process");
+		process_client.set_address(remote.domain_name, "Process");
 		tcp_client.publish(remote.domain_name, "Process");
 		
 		vnl::String process_domain;
 		try {
-			process_domain = process.get_private_domain();
+			process_domain = process_client.get_private_domain();
 		} catch(vnl::Exception& ex) {
 			log(ERROR).out << "process.get_private_domain() failed with " << ex.get_type_name() << vnl::endl;
 			return;
@@ -258,8 +267,8 @@ protected:
 		
 		vnl::info::TopicInfoList topic_info;
 		try {
-			type_info = process.get_type_info();
-			topic_info = process.get_topic_info();
+			type_info = process_client.get_type_info();
+			topic_info = process_client.get_topic_info();
 		} catch(vnl::Exception& ex) {
 			log(ERROR).out << "handle(const vnl::info::RemoteInfo&): Caught " << ex.get_type_name() << vnl::endl;
 			return;
@@ -483,6 +492,29 @@ private slots:
 			if(module) {
 				module_log_stack->setCurrentWidget(module->log_view);
 				module_log_stack->update();
+				module_config_stack->setCurrentWidget(module->config_table);
+				module_config_stack->update();
+				
+				if(module->is_running && module->instance.is_alive) {
+					object_client.set_address(module->instance.domain, module->instance.topic);
+					vnl::Map<vnl::String, vnl::String> config_map;
+					try {
+						config_map = object_client.get_config_map();
+					} catch (vnl::Exception& ex) {
+						log(ERROR).out << "setCurrentModule(): get_config_map() caught " << ex.get_type_name() << vnl::endl;
+					}
+					QMap<QString, QString> map;
+					for(auto& entry : config_map) {
+						map[entry.first.to_string().c_str()] = entry.second.to_string().c_str();
+					}
+					module->config_table->setRowCount(map.size());
+					int row = 0;
+					for(auto it = map.begin(); it != map.end(); ++it) {
+						set_cell_data(module->config_table, row, 0, it.key());
+						set_cell_data(module->config_table, row, 1, it.value());
+						row++;
+					}
+				}
 			}
 		}
 	}
@@ -526,9 +558,9 @@ private slots:
 		}
 		vnl::Array<vnl::Instance> objects;
 		try {
-			objects = process.get_objects();
+			objects = process_client.get_objects();
 		} catch (vnl::Exception& ex) {
-			log(ERROR).out << "update_view(): Caught " << ex.get_type_name() << vnl::endl;
+			log(ERROR).out << "update_view(): get_objects() caught " << ex.get_type_name() << vnl::endl;
 		}
 		for(vnl::Instance& inst : objects) {
 			module_t& module = get_module(inst);
@@ -561,10 +593,20 @@ private:
 		if(!module) {
 			module = &modules.push_back();
 			module->instance = inst;
+			
+			tcp_client.publish(inst.domain, inst.topic);
+			
 			module->log_view = new QTextEdit();
 			module->log_view->setReadOnly(true);
 			module->log_view->setLineWrapMode(QTextEdit::NoWrap);
 			module_log_stack->addWidget(module->log_view);
+			
+			module->config_table = new QTableWidget();
+			module->config_table->setColumnCount(3);
+			module->config_table->verticalHeader()->hide();
+			module->config_table->setSelectionMode(QAbstractItemView::NoSelection);
+			module->config_table->setHorizontalHeaderLabels(QStringList() << "Name" << "Value" << "Input");
+			module_config_stack->addWidget(module->config_table);
 			
 			QString domain = inst.domain.to_string().c_str();
 			QTreeWidgetItem* parent = 0;
@@ -677,13 +719,14 @@ private:
 		return QString().sprintf("%.3ld:%.2ld.%.3ld", time/min, (time/sec) % 60, (time/1000) % 1000);
 	}
 	
-	static QTableWidgetItem* set_cell_data(QTableWidget* table, int row, int col, const QVariant& value) {
+	static QTableWidgetItem* set_cell_data(QTableWidget* table, int row, int col, const QVariant& value, Qt::ItemFlags flags = Qt::ItemIsEnabled) {
 		QTableWidgetItem* item = table->item(row, col);
 		if(!item) {
 			item = new QTableWidgetItem();
 			table->setItem(row, col, item);
 		}
 		item->setData(0, value);
+		item->setFlags(flags);
 		return item;
 	}
 	
@@ -714,7 +757,8 @@ private:
 private:
 	QApplication* application;
 	vnl::TcpClientClient tcp_client;
-	vnl::ProcessClient process;
+	vnl::ProcessClient process_client;
+	vnl::ObjectClient object_client;
 	vnl::info::RemoteInfo remote;
 	Stream tunnel;
 	

@@ -29,6 +29,9 @@ void Instance::serialize(vnl::io::TypeOutput& _out) const {
 	_out.putHash(0x5190a58c); vnl::write(_out, domain);
 	_out.putHash(0xf68c6937); vnl::write(_out, topic);
 	_out.putHash(0x85aba286); vnl::write(_out, src_mac);
+	_out.putHash(0xb5065ea4); vnl::write(_out, heartbeat_interval);
+	_out.putHash(0x57723c04); vnl::write(_out, last_heartbeat);
+	_out.putHash(0xa2fb771f); vnl::write(_out, is_alive);
 }
 
 void Instance::deserialize(vnl::io::TypeInput& _in, int _size) {
@@ -40,6 +43,9 @@ void Instance::deserialize(vnl::io::TypeInput& _in, int _size) {
 			case 0x5190a58c: vnl::read(_in, domain); break;
 			case 0xf68c6937: vnl::read(_in, topic); break;
 			case 0x85aba286: vnl::read(_in, src_mac); break;
+			case 0xb5065ea4: vnl::read(_in, heartbeat_interval); break;
+			case 0x57723c04: vnl::read(_in, last_heartbeat); break;
+			case 0xa2fb771f: vnl::read(_in, is_alive); break;
 			default: _in.skip();
 		}
 	}
@@ -51,6 +57,9 @@ int Instance::get_field_index(vnl::Hash32 _hash) const {
 		case 0x5190a58c: return 1;
 		case 0xf68c6937: return 2;
 		case 0x85aba286: return 3;
+		case 0xb5065ea4: return 4;
+		case 0x57723c04: return 5;
+		case 0xa2fb771f: return 6;
 		default: return -1;
 	}
 }
@@ -61,6 +70,9 @@ const char* Instance::get_field_name(int _index) const {
 		case 1: return "domain";
 		case 2: return "topic";
 		case 3: return "src_mac";
+		case 4: return "heartbeat_interval";
+		case 5: return "last_heartbeat";
+		case 6: return "is_alive";
 		default: return 0;
 	}
 }
@@ -71,6 +83,9 @@ void Instance::get_field(int _index, vnl::String& _str) const {
 		case 1: vnl::to_string(_str, domain); break;
 		case 2: vnl::to_string(_str, topic); break;
 		case 3: vnl::to_string(_str, src_mac); break;
+		case 4: vnl::to_string(_str, heartbeat_interval); break;
+		case 5: vnl::to_string(_str, last_heartbeat); break;
+		case 6: vnl::to_string(_str, is_alive); break;
 	}
 }
 
@@ -80,6 +95,9 @@ void Instance::set_field(int _index, const vnl::String& _str) {
 		case 1: vnl::from_string(_str, domain); break;
 		case 2: vnl::from_string(_str, topic); break;
 		case 3: vnl::from_string(_str, src_mac); break;
+		case 4: vnl::from_string(_str, heartbeat_interval); break;
+		case 5: vnl::from_string(_str, last_heartbeat); break;
+		case 6: vnl::from_string(_str, is_alive); break;
 	}
 }
 
@@ -89,6 +107,9 @@ void Instance::get_field(int _index, vnl::io::TypeOutput& _out) const {
 		case 1: vnl::write(_out, domain); break;
 		case 2: vnl::write(_out, topic); break;
 		case 3: vnl::write(_out, src_mac); break;
+		case 4: vnl::write(_out, heartbeat_interval); break;
+		case 5: vnl::write(_out, last_heartbeat); break;
+		case 6: vnl::write(_out, is_alive); break;
 		default: _out.putNull();
 	}
 }
@@ -99,6 +120,9 @@ void Instance::set_field(int _index, vnl::io::TypeInput& _in) {
 		case 1: vnl::read(_in, domain); break;
 		case 2: vnl::read(_in, topic); break;
 		case 3: vnl::read(_in, src_mac); break;
+		case 4: vnl::read(_in, heartbeat_interval); break;
+		case 5: vnl::read(_in, last_heartbeat); break;
+		case 6: vnl::read(_in, is_alive); break;
 	}
 }
 

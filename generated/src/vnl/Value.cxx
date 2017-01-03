@@ -8,6 +8,7 @@
 #include <vnl/Exception.hxx>
 #include <vnl/Exit.hxx>
 #include <vnl/Header.hxx>
+#include <vnl/Heartbeat.hxx>
 #include <vnl/IOException.hxx>
 #include <vnl/Instance.hxx>
 #include <vnl/LogMsg.hxx>
@@ -37,6 +38,7 @@ vnl::Value* create(vnl::Hash32 hash) {
 		case 0xbe87903d: return vnl::create<vnl::Exception>();
 		case 0x3bd088b0: return vnl::create<vnl::Exit>();
 		case 0x52740af4: return vnl::create<vnl::Header>();
+		case 0xa262a675: return vnl::create<vnl::Heartbeat>();
 		case 0xabd5ff87: return vnl::create<vnl::IOException>();
 		case 0x67d48190: return vnl::create<vnl::Instance>();
 		case 0x9df3e6f5: return vnl::create<vnl::LogMsg>();
@@ -67,6 +69,7 @@ vnl::Array<vnl::String> get_class_names() {
 	res.push_back("vnl.Exception");
 	res.push_back("vnl.Exit");
 	res.push_back("vnl.Header");
+	res.push_back("vnl.Heartbeat");
 	res.push_back("vnl.IOException");
 	res.push_back("vnl.Instance");
 	res.push_back("vnl.LogMsg");
@@ -157,6 +160,19 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		}
 	}
 	{
+		vnl::info::Type& info = res["vnl.Heartbeat"];
+		info.hash = 0xa262a675;
+		info.name = "vnl.Heartbeat";
+		info.is_struct = true;
+		info.is_class = true;
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xd129c896;
+			field.name = "interval";
+			field.type = "int";
+		}
+	}
+	{
 		vnl::info::Type& info = res["vnl.IOException"];
 		info.hash = 0xabd5ff87;
 		info.name = "vnl.IOException";
@@ -193,6 +209,24 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 			field.name = "src_mac";
 			field.type = "vnl.Hash64";
 		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xb5065ea4;
+			field.name = "heartbeat_interval";
+			field.type = "int";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x57723c04;
+			field.name = "last_heartbeat";
+			field.type = "long";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xa2fb771f;
+			field.name = "is_alive";
+			field.type = "bool";
+		}
 	}
 	{
 		vnl::info::Type& info = res["vnl.LogMsg"];
@@ -211,18 +245,6 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 			field.hash = 0x85aba286;
 			field.name = "src_mac";
 			field.type = "vnl.Hash64";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.hash = 0x5190a58c;
-			field.name = "domain";
-			field.type = "vnl.String";
-		}
-		{
-			vnl::info::Field& field = *info.fields.push_back();
-			field.hash = 0xf68c6937;
-			field.name = "topic";
-			field.type = "vnl.String";
 		}
 		{
 			vnl::info::Field& field = *info.fields.push_back();

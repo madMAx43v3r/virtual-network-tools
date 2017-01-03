@@ -15,7 +15,7 @@ namespace vnl {
 class UdpServerBase : public vnl::Object {
 public:
 	static const uint32_t VNI_HASH = 0xce08dbee;
-	static const uint32_t NUM_FIELDS = 5;
+	static const uint32_t NUM_FIELDS = 6;
 	
 	typedef vnl::Object Super;
 	
@@ -61,7 +61,8 @@ protected:
 	template<class W>
 	void write_fields(W& _writer) const {
 		_writer.set_vnl_log_level(vnl_log_level);
-		_writer.set_vnl_max_num_pending(vnl_max_num_pending);
+		_writer.set_vnl_msg_timeout(vnl_msg_timeout);
+		_writer.set_vnl_heartbeat_interval(vnl_heartbeat_interval);
 		_writer.set_port(port);
 		_writer.set_send_buffer_size(send_buffer_size);
 		_writer.set_receive_buffer_size(receive_buffer_size);

@@ -18,7 +18,7 @@ namespace vnl {
 class ObjectBase : public vnl::Interface {
 public:
 	static const uint32_t VNI_HASH = 0x430e9bb0;
-	static const uint32_t NUM_FIELDS = 2;
+	static const uint32_t NUM_FIELDS = 3;
 	
 	typedef vnl::Interface Super;
 	
@@ -28,14 +28,17 @@ public:
 	static const int32_t DEBUG = 4;
 	
 	int32_t vnl_log_level;
-	int32_t vnl_max_num_pending;
+	int32_t vnl_msg_timeout;
+	int32_t vnl_heartbeat_interval;
 	
 	ObjectBase(const vnl::String& domain_, const vnl::String& topic_)
 	{
 		vnl_log_level = INFO;
-		vnl_max_num_pending = -1;
+		vnl_msg_timeout = 1000000;
+		vnl_heartbeat_interval = 1000000;
 		vnl::read_config(domain_, topic_, "vnl_log_level", vnl_log_level);
-		vnl::read_config(domain_, topic_, "vnl_max_num_pending", vnl_max_num_pending);
+		vnl::read_config(domain_, topic_, "vnl_msg_timeout", vnl_msg_timeout);
+		vnl::read_config(domain_, topic_, "vnl_heartbeat_interval", vnl_heartbeat_interval);
 	}
 	
 	virtual uint32_t get_vni_hash() const { return VNI_HASH; }
@@ -67,7 +70,8 @@ protected:
 	template<class W>
 	void write_fields(W& _writer) const {
 		_writer.set_vnl_log_level(vnl_log_level);
-		_writer.set_vnl_max_num_pending(vnl_max_num_pending);
+		_writer.set_vnl_msg_timeout(vnl_msg_timeout);
+		_writer.set_vnl_heartbeat_interval(vnl_heartbeat_interval);
 	}
 	
 };

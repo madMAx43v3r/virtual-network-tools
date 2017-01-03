@@ -15,7 +15,7 @@ namespace vnl {
 class DatabaseBase : public vnl::Object {
 public:
 	static const uint32_t VNI_HASH = 0x1a20923;
-	static const uint32_t NUM_FIELDS = 4;
+	static const uint32_t NUM_FIELDS = 5;
 	
 	typedef vnl::Object Super;
 	
@@ -53,7 +53,8 @@ protected:
 	template<class W>
 	void write_fields(W& _writer) const {
 		_writer.set_vnl_log_level(vnl_log_level);
-		_writer.set_vnl_max_num_pending(vnl_max_num_pending);
+		_writer.set_vnl_msg_timeout(vnl_msg_timeout);
+		_writer.set_vnl_heartbeat_interval(vnl_heartbeat_interval);
 		_writer.set_filename(filename);
 		_writer.set_ignore_errors(ignore_errors);
 	}

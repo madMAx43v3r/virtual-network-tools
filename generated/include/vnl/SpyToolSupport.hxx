@@ -15,7 +15,7 @@ namespace vnl {
 class SpyToolBase : public vnl::Object {
 public:
 	static const uint32_t VNI_HASH = 0x2d9d1f;
-	static const uint32_t NUM_FIELDS = 3;
+	static const uint32_t NUM_FIELDS = 4;
 	
 	typedef vnl::Object Super;
 	
@@ -52,7 +52,8 @@ protected:
 	template<class W>
 	void write_fields(W& _writer) const {
 		_writer.set_vnl_log_level(vnl_log_level);
-		_writer.set_vnl_max_num_pending(vnl_max_num_pending);
+		_writer.set_vnl_msg_timeout(vnl_msg_timeout);
+		_writer.set_vnl_heartbeat_interval(vnl_heartbeat_interval);
 		_writer.set_dump(dump);
 	}
 	

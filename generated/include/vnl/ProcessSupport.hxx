@@ -8,6 +8,7 @@
 #include <vnl/Array.h>
 #include <vnl/Exit.hxx>
 #include <vnl/Hash32.h>
+#include <vnl/Heartbeat.hxx>
 #include <vnl/Instance.hxx>
 #include <vnl/LogMsg.hxx>
 #include <vnl/Map.h>
@@ -25,19 +26,28 @@ namespace vnl {
 class ProcessBase : public vnl::Object {
 public:
 	static const uint32_t VNI_HASH = 0x46f438;
-	static const uint32_t NUM_FIELDS = 4;
+	static const uint32_t NUM_FIELDS = 8;
 	
 	typedef vnl::Object Super;
 	
 	
 	vnl::String name;
+	int32_t watchdog_interval;
+	int32_t update_interval;
+	int32_t stats_interval;
 	bool do_print_stats;
 	
 	ProcessBase(const vnl::String& domain_, const vnl::String& topic_)
 		:	vnl::Object::Object(domain_, topic_)
 	{
+		watchdog_interval = 100000;
+		update_interval = 1000000;
+		stats_interval = 10000000;
 		do_print_stats = true;
 		vnl::read_config(domain_, topic_, "name", name);
+		vnl::read_config(domain_, topic_, "watchdog_interval", watchdog_interval);
+		vnl::read_config(domain_, topic_, "update_interval", update_interval);
+		vnl::read_config(domain_, topic_, "stats_interval", stats_interval);
 		vnl::read_config(domain_, topic_, "do_print_stats", do_print_stats);
 	}
 	
@@ -67,6 +77,9 @@ protected:
 	virtual void handle(const vnl::Shutdown& event) {}
 	virtual vnl::Array<vnl::String > get_class_names() const = 0;
 	virtual void set_log_filter(const vnl::String& filter) = 0;
+	virtual void handle(const vnl::Heartbeat& event, const vnl::Packet& packet) { handle(event); }
+	virtual void handle(const vnl::Heartbeat& event, vnl::Basic* input) { handle(event); }
+	virtual void handle(const vnl::Heartbeat& event) {}
 	virtual void resume_log() = 0;
 	virtual vnl::Array<vnl::Instance > get_objects() const = 0;
 	virtual void handle(const vnl::LogMsg& event, const vnl::Packet& packet) { handle(event); }
@@ -82,8 +95,12 @@ protected:
 	template<class W>
 	void write_fields(W& _writer) const {
 		_writer.set_vnl_log_level(vnl_log_level);
-		_writer.set_vnl_max_num_pending(vnl_max_num_pending);
+		_writer.set_vnl_msg_timeout(vnl_msg_timeout);
+		_writer.set_vnl_heartbeat_interval(vnl_heartbeat_interval);
 		_writer.set_name(name);
+		_writer.set_watchdog_interval(watchdog_interval);
+		_writer.set_update_interval(update_interval);
+		_writer.set_stats_interval(stats_interval);
 		_writer.set_do_print_stats(do_print_stats);
 	}
 	

@@ -59,18 +59,27 @@ public:
 			_out.putHash(0x482df535);
 			vnl::write(_out, _value);
 		}
-		void set_vnl_max_num_pending(int32_t _value) {
+		void set_vnl_msg_timeout(int32_t _value) {
 			_out.putEntry(VNL_IO_CALL, 1);
-			_out.putHash(0xc30f0945);
+			_out.putHash(0x604b2647);
+			vnl::write(_out, _value);
+		}
+		void set_vnl_heartbeat_interval(int32_t _value) {
+			_out.putEntry(VNL_IO_CALL, 1);
+			_out.putHash(0xd26001ae);
 			vnl::write(_out, _value);
 		}
 		void get_vnl_log_level() {
 			_out.putEntry(VNL_IO_CONST_CALL, 0);
 			_out.putHash(0x482df535);
 		}
-		void get_vnl_max_num_pending() {
+		void get_vnl_msg_timeout() {
 			_out.putEntry(VNL_IO_CONST_CALL, 0);
-			_out.putHash(0xc30f0945);
+			_out.putHash(0x604b2647);
+		}
+		void get_vnl_heartbeat_interval() {
+			_out.putEntry(VNL_IO_CONST_CALL, 0);
+			_out.putHash(0xd26001ae);
 		}
 	protected:
 		vnl::io::TypeOutput& _out;
@@ -185,11 +194,25 @@ public:
 		}
 	}
 	
-	void set_vnl_max_num_pending(int32_t vnl_max_num_pending) {
+	void set_vnl_msg_timeout(int32_t vnl_msg_timeout) {
 		_buf.wrap(_data);
 		{
 			Writer _wr(_out);
-			_wr.set_vnl_max_num_pending(vnl_max_num_pending);
+			_wr.set_vnl_msg_timeout(vnl_msg_timeout);
+		}
+		vnl::Packet* _pkt = _call(vnl::Frame::CALL);
+		if(_pkt) {
+			_pkt->ack();
+		} else {
+			throw vnl::IOException();
+		}
+	}
+	
+	void set_vnl_heartbeat_interval(int32_t vnl_heartbeat_interval) {
+		_buf.wrap(_data);
+		{
+			Writer _wr(_out);
+			_wr.set_vnl_heartbeat_interval(vnl_heartbeat_interval);
 		}
 		vnl::Packet* _pkt = _call(vnl::Frame::CALL);
 		if(_pkt) {
@@ -216,11 +239,28 @@ public:
 		return _result;
 	}
 	
-	int32_t get_vnl_max_num_pending() {
+	int32_t get_vnl_msg_timeout() {
 		_buf.wrap(_data);
 		{
 			Writer _wr(_out);
-			_wr.get_vnl_max_num_pending();
+			_wr.get_vnl_msg_timeout();
+		}
+		vnl::Packet* _pkt = _call(vnl::Frame::CONST_CALL);
+		int32_t _result;
+		if(_pkt) {
+			vnl::read(_in, _result);
+			_pkt->ack();
+		} else {
+			throw vnl::IOException();
+		}
+		return _result;
+	}
+	
+	int32_t get_vnl_heartbeat_interval() {
+		_buf.wrap(_data);
+		{
+			Writer _wr(_out);
+			_wr.get_vnl_heartbeat_interval();
 		}
 		vnl::Packet* _pkt = _call(vnl::Frame::CONST_CALL);
 		int32_t _result;

@@ -16,13 +16,11 @@ namespace vnl {
 class LogMsg : public vnl::Value {
 public:
 	static const uint32_t VNI_HASH = 0x9df3e6f5;
-	static const uint32_t NUM_FIELDS = 5;
+	static const uint32_t NUM_FIELDS = 3;
 	
 	
 	int32_t level;
 	vnl::Hash64 src_mac;
-	vnl::String domain;
-	vnl::String topic;
 	vnl::String msg;
 	
 	LogMsg() {

@@ -19,7 +19,7 @@ template<class T>
 class TableBase : public vnl::Database {
 public:
 	static const uint32_t VNI_HASH = 0xbd71f457;
-	static const uint32_t NUM_FIELDS = 4;
+	static const uint32_t NUM_FIELDS = 5;
 	
 	typedef vnl::Database Super;
 	
@@ -56,7 +56,8 @@ protected:
 	template<class W>
 	void write_fields(W& _writer) const {
 		_writer.set_vnl_log_level(vnl_log_level);
-		_writer.set_vnl_max_num_pending(vnl_max_num_pending);
+		_writer.set_vnl_msg_timeout(vnl_msg_timeout);
+		_writer.set_vnl_heartbeat_interval(vnl_heartbeat_interval);
 		_writer.set_filename(filename);
 		_writer.set_ignore_errors(ignore_errors);
 	}
@@ -72,9 +73,10 @@ template<class T>
 int TableBase<T>::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		case 0x482df535: return 0;
-		case 0xc30f0945: return 1;
-		case 0xb60d3446: return 2;
-		case 0x2d7512a8: return 3;
+		case 0x604b2647: return 1;
+		case 0xd26001ae: return 2;
+		case 0xb60d3446: return 3;
+		case 0x2d7512a8: return 4;
 		default: return -1;
 	}
 }
@@ -83,9 +85,10 @@ template<class T>
 const char* TableBase<T>::get_field_name(int _index) const {
 	switch(_index) {
 		case 0: return "vnl_log_level";
-		case 1: return "vnl_max_num_pending";
-		case 2: return "filename";
-		case 3: return "ignore_errors";
+		case 1: return "vnl_msg_timeout";
+		case 2: return "vnl_heartbeat_interval";
+		case 3: return "filename";
+		case 4: return "ignore_errors";
 		default: return 0;
 	}
 }
@@ -94,9 +97,10 @@ template<class T>
 void TableBase<T>::get_field(int _index, vnl::String& _str) const {
 	switch(_index) {
 		case 0: vnl::to_string(_str, vnl_log_level); break;
-		case 1: vnl::to_string(_str, vnl_max_num_pending); break;
-		case 2: vnl::to_string(_str, filename); break;
-		case 3: vnl::to_string(_str, ignore_errors); break;
+		case 1: vnl::to_string(_str, vnl_msg_timeout); break;
+		case 2: vnl::to_string(_str, vnl_heartbeat_interval); break;
+		case 3: vnl::to_string(_str, filename); break;
+		case 4: vnl::to_string(_str, ignore_errors); break;
 	}
 }
 
@@ -104,9 +108,10 @@ template<class T>
 void TableBase<T>::set_field(int _index, const vnl::String& _str) {
 	switch(_index) {
 		case 0: vnl::from_string(_str, vnl_log_level); break;
-		case 1: vnl::from_string(_str, vnl_max_num_pending); break;
-		case 2: vnl::from_string(_str, filename); break;
-		case 3: vnl::from_string(_str, ignore_errors); break;
+		case 1: vnl::from_string(_str, vnl_msg_timeout); break;
+		case 2: vnl::from_string(_str, vnl_heartbeat_interval); break;
+		case 3: vnl::from_string(_str, filename); break;
+		case 4: vnl::from_string(_str, ignore_errors); break;
 	}
 }
 
@@ -114,9 +119,10 @@ template<class T>
 void TableBase<T>::get_field(int _index, vnl::io::TypeOutput& _out) const {
 	switch(_index) {
 		case 0: vnl::write(_out, vnl_log_level); break;
-		case 1: vnl::write(_out, vnl_max_num_pending); break;
-		case 2: vnl::write(_out, filename); break;
-		case 3: vnl::write(_out, ignore_errors); break;
+		case 1: vnl::write(_out, vnl_msg_timeout); break;
+		case 2: vnl::write(_out, vnl_heartbeat_interval); break;
+		case 3: vnl::write(_out, filename); break;
+		case 4: vnl::write(_out, ignore_errors); break;
 		default: _out.putNull();
 	}
 }
@@ -125,9 +131,10 @@ template<class T>
 void TableBase<T>::set_field(int _index, vnl::io::TypeInput& _in) {
 	switch(_index) {
 		case 0: vnl::read(_in, vnl_log_level); break;
-		case 1: vnl::read(_in, vnl_max_num_pending); break;
-		case 2: vnl::read(_in, filename); break;
-		case 3: vnl::read(_in, ignore_errors); break;
+		case 1: vnl::read(_in, vnl_msg_timeout); break;
+		case 2: vnl::read(_in, vnl_heartbeat_interval); break;
+		case 3: vnl::read(_in, filename); break;
+		case 4: vnl::read(_in, ignore_errors); break;
 	}
 }
 

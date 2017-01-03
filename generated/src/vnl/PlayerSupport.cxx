@@ -12,14 +12,15 @@ const uint32_t PlayerBase::NUM_FIELDS;
 int PlayerBase::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		case 0x482df535: return 0;
-		case 0xc30f0945: return 1;
-		case 0xb60d3446: return 2;
-		case 0xa9decee6: return 3;
-		case 0xca73652e: return 4;
-		case 0x5902c26f: return 5;
-		case 0x3cc6f24e: return 6;
-		case 0x51558795: return 7;
-		case 0xd129c896: return 8;
+		case 0x604b2647: return 1;
+		case 0xd26001ae: return 2;
+		case 0xb60d3446: return 3;
+		case 0xa9decee6: return 4;
+		case 0xca73652e: return 5;
+		case 0x5902c26f: return 6;
+		case 0x3cc6f24e: return 7;
+		case 0x51558795: return 8;
+		case 0xd129c896: return 9;
 		default: return -1;
 	}
 }
@@ -27,14 +28,15 @@ int PlayerBase::get_field_index(vnl::Hash32 _hash) const {
 const char* PlayerBase::get_field_name(int _index) const {
 	switch(_index) {
 		case 0: return "vnl_log_level";
-		case 1: return "vnl_max_num_pending";
-		case 2: return "filename";
-		case 3: return "domain_blacklist";
-		case 4: return "topic_blacklist";
-		case 5: return "autostart";
-		case 6: return "autoloop";
-		case 7: return "autoshutdown";
-		case 8: return "interval";
+		case 1: return "vnl_msg_timeout";
+		case 2: return "vnl_heartbeat_interval";
+		case 3: return "filename";
+		case 4: return "domain_blacklist";
+		case 5: return "topic_blacklist";
+		case 6: return "autostart";
+		case 7: return "autoloop";
+		case 8: return "autoshutdown";
+		case 9: return "interval";
 		default: return 0;
 	}
 }
@@ -42,42 +44,45 @@ const char* PlayerBase::get_field_name(int _index) const {
 void PlayerBase::get_field(int _index, vnl::String& _str) const {
 	switch(_index) {
 		case 0: vnl::to_string(_str, vnl_log_level); break;
-		case 1: vnl::to_string(_str, vnl_max_num_pending); break;
-		case 2: vnl::to_string(_str, filename); break;
-		case 3: vnl::to_string(_str, domain_blacklist); break;
-		case 4: vnl::to_string(_str, topic_blacklist); break;
-		case 5: vnl::to_string(_str, autostart); break;
-		case 6: vnl::to_string(_str, autoloop); break;
-		case 7: vnl::to_string(_str, autoshutdown); break;
-		case 8: vnl::to_string(_str, interval); break;
+		case 1: vnl::to_string(_str, vnl_msg_timeout); break;
+		case 2: vnl::to_string(_str, vnl_heartbeat_interval); break;
+		case 3: vnl::to_string(_str, filename); break;
+		case 4: vnl::to_string(_str, domain_blacklist); break;
+		case 5: vnl::to_string(_str, topic_blacklist); break;
+		case 6: vnl::to_string(_str, autostart); break;
+		case 7: vnl::to_string(_str, autoloop); break;
+		case 8: vnl::to_string(_str, autoshutdown); break;
+		case 9: vnl::to_string(_str, interval); break;
 	}
 }
 
 void PlayerBase::set_field(int _index, const vnl::String& _str) {
 	switch(_index) {
 		case 0: vnl::from_string(_str, vnl_log_level); break;
-		case 1: vnl::from_string(_str, vnl_max_num_pending); break;
-		case 2: vnl::from_string(_str, filename); break;
-		case 3: vnl::from_string(_str, domain_blacklist); break;
-		case 4: vnl::from_string(_str, topic_blacklist); break;
-		case 5: vnl::from_string(_str, autostart); break;
-		case 6: vnl::from_string(_str, autoloop); break;
-		case 7: vnl::from_string(_str, autoshutdown); break;
-		case 8: vnl::from_string(_str, interval); break;
+		case 1: vnl::from_string(_str, vnl_msg_timeout); break;
+		case 2: vnl::from_string(_str, vnl_heartbeat_interval); break;
+		case 3: vnl::from_string(_str, filename); break;
+		case 4: vnl::from_string(_str, domain_blacklist); break;
+		case 5: vnl::from_string(_str, topic_blacklist); break;
+		case 6: vnl::from_string(_str, autostart); break;
+		case 7: vnl::from_string(_str, autoloop); break;
+		case 8: vnl::from_string(_str, autoshutdown); break;
+		case 9: vnl::from_string(_str, interval); break;
 	}
 }
 
 void PlayerBase::get_field(int _index, vnl::io::TypeOutput& _out) const {
 	switch(_index) {
 		case 0: vnl::write(_out, vnl_log_level); break;
-		case 1: vnl::write(_out, vnl_max_num_pending); break;
-		case 2: vnl::write(_out, filename); break;
-		case 3: vnl::write(_out, domain_blacklist); break;
-		case 4: vnl::write(_out, topic_blacklist); break;
-		case 5: vnl::write(_out, autostart); break;
-		case 6: vnl::write(_out, autoloop); break;
-		case 7: vnl::write(_out, autoshutdown); break;
-		case 8: vnl::write(_out, interval); break;
+		case 1: vnl::write(_out, vnl_msg_timeout); break;
+		case 2: vnl::write(_out, vnl_heartbeat_interval); break;
+		case 3: vnl::write(_out, filename); break;
+		case 4: vnl::write(_out, domain_blacklist); break;
+		case 5: vnl::write(_out, topic_blacklist); break;
+		case 6: vnl::write(_out, autostart); break;
+		case 7: vnl::write(_out, autoloop); break;
+		case 8: vnl::write(_out, autoshutdown); break;
+		case 9: vnl::write(_out, interval); break;
 		default: _out.putNull();
 	}
 }
@@ -85,14 +90,15 @@ void PlayerBase::get_field(int _index, vnl::io::TypeOutput& _out) const {
 void PlayerBase::set_field(int _index, vnl::io::TypeInput& _in) {
 	switch(_index) {
 		case 0: vnl::read(_in, vnl_log_level); break;
-		case 1: vnl::read(_in, vnl_max_num_pending); break;
-		case 2: vnl::read(_in, filename); break;
-		case 3: vnl::read(_in, domain_blacklist); break;
-		case 4: vnl::read(_in, topic_blacklist); break;
-		case 5: vnl::read(_in, autostart); break;
-		case 6: vnl::read(_in, autoloop); break;
-		case 7: vnl::read(_in, autoshutdown); break;
-		case 8: vnl::read(_in, interval); break;
+		case 1: vnl::read(_in, vnl_msg_timeout); break;
+		case 2: vnl::read(_in, vnl_heartbeat_interval); break;
+		case 3: vnl::read(_in, filename); break;
+		case 4: vnl::read(_in, domain_blacklist); break;
+		case 5: vnl::read(_in, topic_blacklist); break;
+		case 6: vnl::read(_in, autostart); break;
+		case 7: vnl::read(_in, autoloop); break;
+		case 8: vnl::read(_in, autoshutdown); break;
+		case 9: vnl::read(_in, interval); break;
 	}
 }
 

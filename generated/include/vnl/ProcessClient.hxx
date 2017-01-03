@@ -8,6 +8,7 @@
 #include <vnl/Array.h>
 #include <vnl/Exit.hxx>
 #include <vnl/Hash32.h>
+#include <vnl/Heartbeat.hxx>
 #include <vnl/Instance.hxx>
 #include <vnl/LogMsg.hxx>
 #include <vnl/Map.h>
@@ -77,6 +78,21 @@ public:
 			_out.putHash(0x539b7130);
 			vnl::write(_out, _value);
 		}
+		void set_watchdog_interval(int32_t _value) {
+			_out.putEntry(VNL_IO_CALL, 1);
+			_out.putHash(0x498bb8f5);
+			vnl::write(_out, _value);
+		}
+		void set_update_interval(int32_t _value) {
+			_out.putEntry(VNL_IO_CALL, 1);
+			_out.putHash(0xd04a8e2b);
+			vnl::write(_out, _value);
+		}
+		void set_stats_interval(int32_t _value) {
+			_out.putEntry(VNL_IO_CALL, 1);
+			_out.putHash(0x3a0f0e4b);
+			vnl::write(_out, _value);
+		}
 		void set_do_print_stats(bool _value) {
 			_out.putEntry(VNL_IO_CALL, 1);
 			_out.putHash(0x36eb5937);
@@ -85,6 +101,18 @@ public:
 		void get_name() {
 			_out.putEntry(VNL_IO_CONST_CALL, 0);
 			_out.putHash(0x539b7130);
+		}
+		void get_watchdog_interval() {
+			_out.putEntry(VNL_IO_CONST_CALL, 0);
+			_out.putHash(0x498bb8f5);
+		}
+		void get_update_interval() {
+			_out.putEntry(VNL_IO_CONST_CALL, 0);
+			_out.putHash(0xd04a8e2b);
+		}
+		void get_stats_interval() {
+			_out.putEntry(VNL_IO_CONST_CALL, 0);
+			_out.putHash(0x3a0f0e4b);
 		}
 		void get_do_print_stats() {
 			_out.putEntry(VNL_IO_CONST_CALL, 0);
@@ -248,6 +276,48 @@ public:
 		}
 	}
 	
+	void set_watchdog_interval(int32_t watchdog_interval) {
+		_buf.wrap(_data);
+		{
+			Writer _wr(_out);
+			_wr.set_watchdog_interval(watchdog_interval);
+		}
+		vnl::Packet* _pkt = _call(vnl::Frame::CALL);
+		if(_pkt) {
+			_pkt->ack();
+		} else {
+			throw vnl::IOException();
+		}
+	}
+	
+	void set_update_interval(int32_t update_interval) {
+		_buf.wrap(_data);
+		{
+			Writer _wr(_out);
+			_wr.set_update_interval(update_interval);
+		}
+		vnl::Packet* _pkt = _call(vnl::Frame::CALL);
+		if(_pkt) {
+			_pkt->ack();
+		} else {
+			throw vnl::IOException();
+		}
+	}
+	
+	void set_stats_interval(int32_t stats_interval) {
+		_buf.wrap(_data);
+		{
+			Writer _wr(_out);
+			_wr.set_stats_interval(stats_interval);
+		}
+		vnl::Packet* _pkt = _call(vnl::Frame::CALL);
+		if(_pkt) {
+			_pkt->ack();
+		} else {
+			throw vnl::IOException();
+		}
+	}
+	
 	void set_do_print_stats(bool do_print_stats) {
 		_buf.wrap(_data);
 		{
@@ -270,6 +340,57 @@ public:
 		}
 		vnl::Packet* _pkt = _call(vnl::Frame::CONST_CALL);
 		vnl::String _result;
+		if(_pkt) {
+			vnl::read(_in, _result);
+			_pkt->ack();
+		} else {
+			throw vnl::IOException();
+		}
+		return _result;
+	}
+	
+	int32_t get_watchdog_interval() {
+		_buf.wrap(_data);
+		{
+			Writer _wr(_out);
+			_wr.get_watchdog_interval();
+		}
+		vnl::Packet* _pkt = _call(vnl::Frame::CONST_CALL);
+		int32_t _result;
+		if(_pkt) {
+			vnl::read(_in, _result);
+			_pkt->ack();
+		} else {
+			throw vnl::IOException();
+		}
+		return _result;
+	}
+	
+	int32_t get_update_interval() {
+		_buf.wrap(_data);
+		{
+			Writer _wr(_out);
+			_wr.get_update_interval();
+		}
+		vnl::Packet* _pkt = _call(vnl::Frame::CONST_CALL);
+		int32_t _result;
+		if(_pkt) {
+			vnl::read(_in, _result);
+			_pkt->ack();
+		} else {
+			throw vnl::IOException();
+		}
+		return _result;
+	}
+	
+	int32_t get_stats_interval() {
+		_buf.wrap(_data);
+		{
+			Writer _wr(_out);
+			_wr.get_stats_interval();
+		}
+		vnl::Packet* _pkt = _call(vnl::Frame::CONST_CALL);
+		int32_t _result;
 		if(_pkt) {
 			vnl::read(_in, _result);
 			_pkt->ack();

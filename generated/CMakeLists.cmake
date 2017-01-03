@@ -9,6 +9,7 @@ ADD_LIBRARY(vni STATIC
 	src/vnl/Exception.cxx
 	src/vnl/Exit.cxx
 	src/vnl/Header.cxx
+	src/vnl/Heartbeat.cxx
 	src/vnl/IOException.cxx
 	src/vnl/Instance.cxx
 	src/vnl/LogMsg.cxx

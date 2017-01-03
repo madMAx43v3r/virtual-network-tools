@@ -16,7 +16,8 @@ const int32_t ObjectBase::DEBUG;
 int ObjectBase::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		case 0x482df535: return 0;
-		case 0xc30f0945: return 1;
+		case 0x604b2647: return 1;
+		case 0xd26001ae: return 2;
 		default: return -1;
 	}
 }
@@ -24,7 +25,8 @@ int ObjectBase::get_field_index(vnl::Hash32 _hash) const {
 const char* ObjectBase::get_field_name(int _index) const {
 	switch(_index) {
 		case 0: return "vnl_log_level";
-		case 1: return "vnl_max_num_pending";
+		case 1: return "vnl_msg_timeout";
+		case 2: return "vnl_heartbeat_interval";
 		default: return 0;
 	}
 }
@@ -32,21 +34,24 @@ const char* ObjectBase::get_field_name(int _index) const {
 void ObjectBase::get_field(int _index, vnl::String& _str) const {
 	switch(_index) {
 		case 0: vnl::to_string(_str, vnl_log_level); break;
-		case 1: vnl::to_string(_str, vnl_max_num_pending); break;
+		case 1: vnl::to_string(_str, vnl_msg_timeout); break;
+		case 2: vnl::to_string(_str, vnl_heartbeat_interval); break;
 	}
 }
 
 void ObjectBase::set_field(int _index, const vnl::String& _str) {
 	switch(_index) {
 		case 0: vnl::from_string(_str, vnl_log_level); break;
-		case 1: vnl::from_string(_str, vnl_max_num_pending); break;
+		case 1: vnl::from_string(_str, vnl_msg_timeout); break;
+		case 2: vnl::from_string(_str, vnl_heartbeat_interval); break;
 	}
 }
 
 void ObjectBase::get_field(int _index, vnl::io::TypeOutput& _out) const {
 	switch(_index) {
 		case 0: vnl::write(_out, vnl_log_level); break;
-		case 1: vnl::write(_out, vnl_max_num_pending); break;
+		case 1: vnl::write(_out, vnl_msg_timeout); break;
+		case 2: vnl::write(_out, vnl_heartbeat_interval); break;
 		default: _out.putNull();
 	}
 }
@@ -54,7 +59,8 @@ void ObjectBase::get_field(int _index, vnl::io::TypeOutput& _out) const {
 void ObjectBase::set_field(int _index, vnl::io::TypeInput& _in) {
 	switch(_index) {
 		case 0: vnl::read(_in, vnl_log_level); break;
-		case 1: vnl::read(_in, vnl_max_num_pending); break;
+		case 1: vnl::read(_in, vnl_msg_timeout); break;
+		case 2: vnl::read(_in, vnl_heartbeat_interval); break;
 	}
 }
 
@@ -66,9 +72,15 @@ bool ObjectBase::vni_call(vnl::io::TypeInput& _in, uint32_t _hash, int _num_args
 			return true;
 		}
 		break;
-	case 0xc30f0945: 
+	case 0x604b2647: 
 		if(_num_args == 1) {
-			vnl::read(_in, vnl_max_num_pending);
+			vnl::read(_in, vnl_msg_timeout);
+			return true;
+		}
+		break;
+	case 0xd26001ae: 
+		if(_num_args == 1) {
+			vnl::read(_in, vnl_heartbeat_interval);
 			return true;
 		}
 		break;
@@ -110,9 +122,15 @@ bool ObjectBase::vni_const_call(vnl::io::TypeInput& _in, uint32_t _hash, int _nu
 			return true;
 		}
 		break;
-	case 0xc30f0945: 
+	case 0x604b2647: 
 		if(_num_args == 0) {
-			vnl::write(_out, vnl_max_num_pending);
+			vnl::write(_out, vnl_msg_timeout);
+			return true;
+		}
+		break;
+	case 0xd26001ae: 
+		if(_num_args == 0) {
+			vnl::write(_out, vnl_heartbeat_interval);
 			return true;
 		}
 		break;

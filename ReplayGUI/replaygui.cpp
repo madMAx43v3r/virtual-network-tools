@@ -15,7 +15,6 @@ int main(int argc, char** argv) {
 	
 	{
 		vnl::Player* module = new vnl::Player(vnl::local_domain_name, "Player");
-		module->vnl_max_num_pending = 1000;
 		module->interval = 100000;
 		vnl::spawn(module);
 	}
