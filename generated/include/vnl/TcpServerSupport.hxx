@@ -64,7 +64,6 @@ public:
 	
 protected:
 	virtual void unsubscribe(const vnl::String& domain, const vnl::String& topic) = 0;
-	virtual void unsubscribe_all() = 0;
 	virtual void subscribe(const vnl::String& domain, const vnl::String& topic) = 0;
 	virtual void publish(const vnl::String& domain, const vnl::String& topic) = 0;
 	virtual void unpublish(const vnl::String& domain, const vnl::String& topic) = 0;

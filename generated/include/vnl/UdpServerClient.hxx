@@ -35,10 +35,6 @@ public:
 			vnl::write(_out, domain);
 			vnl::write(_out, topic);
 		}
-		void unsubscribe_all() {
-			_out.putEntry(VNL_IO_CALL, 0);
-			_out.putHash(0x14ffa0f1);
-		}
 		void subscribe(const vnl::String& domain, const vnl::String& topic) {
 			_out.putEntry(VNL_IO_CALL, 2);
 			_out.putHash(0x3bb5d48f);
@@ -109,20 +105,6 @@ public:
 		{
 			Writer _wr(_out);
 			_wr.unsubscribe(domain, topic);
-		}
-		vnl::Packet* _pkt = _call(vnl::Frame::CALL);
-		if(_pkt) {
-			_pkt->ack();
-		} else {
-			throw vnl::IOException();
-		}
-	}
-	
-	void unsubscribe_all() {
-		_buf.wrap(_data);
-		{
-			Writer _wr(_out);
-			_wr.unsubscribe_all();
 		}
 		vnl::Packet* _pkt = _call(vnl::Frame::CALL);
 		if(_pkt) {

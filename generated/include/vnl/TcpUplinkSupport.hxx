@@ -53,7 +53,6 @@ protected:
 	virtual void handle(const vnl::Topic& sample, const vnl::Packet& packet) { handle(sample); }
 	virtual void handle(const vnl::Topic& sample, vnl::Basic* input) { handle(sample); }
 	virtual void handle(const vnl::Topic& sample) {}
-	virtual void unsubscribe_all() = 0;
 	virtual void subscribe(const vnl::String& domain, const vnl::String& topic) = 0;
 	virtual void reset() = 0;
 	virtual void publish(const vnl::String& domain, const vnl::String& topic) = 0;

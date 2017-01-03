@@ -104,13 +104,7 @@ protected:
 		add_client(object_client);
 		
 		add_client(tcp_client);
-		{
-			vnl::TcpClient* module = new vnl::TcpClient(vnl::local_domain_name, "TcpClient");
-			module->endpoint = target_host;
-			module->port = target_port;
-			subscribe(module->get_my_private_domain(), "remote_info");
-			tcp_client = vnl::spawn(module);
-		}
+		setup_client();
 		
 		setWindowTitle(QCoreApplication::applicationName());
 		{
@@ -533,10 +527,14 @@ protected:
 	}
 	
 	void setup_client() {
-		tcp_client.unsubscribe_all();
-		tcp_client.set_endpoint(target_host);
-		tcp_client.set_port(target_port);
-		tcp_client.reconnect();
+		if(!tcp_client.get_address().is_null()) {
+			tcp_client.exit();
+		}
+		vnl::TcpClient* module = new vnl::TcpClient(vnl::local_domain_name, "TcpClient");
+		module->endpoint = target_host;
+		module->port = target_port;
+		subscribe(module->get_my_private_domain(), "remote_info");
+		tcp_client = vnl::spawn(module);
 	}
 	
 signals:

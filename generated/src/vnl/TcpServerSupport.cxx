@@ -158,17 +158,6 @@ bool TcpServerBase::vni_call(vnl::io::TypeInput& _in, uint32_t _hash, int _num_a
 			return true;
 		}
 		break;
-	case 0x14ffa0f1: 
-		switch(_num_args) {
-			case 0: {
-				if(!_in.error()) {
-					unsubscribe_all();
-					return true;
-				}
-			}
-			break;
-		}
-		break;
 	case 0x3bb5d48f: 
 		switch(_num_args) {
 			case 2: {

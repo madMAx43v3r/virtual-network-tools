@@ -146,17 +146,6 @@ bool TcpClientBase::vni_call(vnl::io::TypeInput& _in, uint32_t _hash, int _num_a
 			return true;
 		}
 		break;
-	case 0x20b6491: 
-		switch(_num_args) {
-			case 0: {
-				if(!_in.error()) {
-					reconnect();
-					return true;
-				}
-			}
-			break;
-		}
-		break;
 	}
 	return Super::vni_call(_in, _hash, _num_args);
 }
