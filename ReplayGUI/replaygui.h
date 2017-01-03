@@ -33,18 +33,19 @@ public:
 		:	ReplayGUIBase(domain, "ReplayGUI"),
 			application(app), slider(0), do_hold(false)
 	{
+		setWindowIcon(QIcon::fromTheme("multimedia-player"));
 	}
 	
 	virtual ~ReplayGUI() {}
 	
 protected:
 	void main(vnl::Engine* engine) {
-		player.set_fail(true);
-		player.set_timeout(100);
 		player.set_address(vnl::local_domain_name, "Player");
 		player.connect(engine);
 		
 		subscribe(player.get_private_domain(), "player_status");
+		player.set_fail(true);
+		player.set_timeout(100);
 		
 		setWindowTitle(QCoreApplication::applicationName());
 		{
@@ -180,38 +181,54 @@ private slots:
 	void open() {
 		QString file_name = QFileDialog::getOpenFileName(this, tr("Open File"));
 		if(file_name.size()) {
-			player.open(file_name.toStdString());
+			try {
+				player.open(file_name.toStdString());
+			} catch(...) {}
 		}
 	}
 	
 	void scan() {
-		player.scan();
+		try {
+			player.scan();
+		} catch(...) {}
 	}
 	
 	void reset() {
-		player.reset();
+		try {
+			player.reset();
+		} catch(...) {}
 	}
 	
 	void stop() {
-		player.stop();
+		try {
+			player.stop();
+		} catch(...) {}
 	}
 	
 	void play() {
-		player.play();
+		try {
+			player.play();
+		} catch(...) {}
 	}
 	
 	void pause() {
-		player.pause();
+		try {
+			player.pause();
+		} catch(...) {}
 	}
 	
 	void seek_to(int action) {
 		float pos = slider->sliderPosition()/1000.;
 		log(INFO).out << "Seeking to " << pos << "% ..." << vnl::endl;
-		player.seek_rel(pos);
+		try {
+			player.seek_rel(pos);
+		} catch(...) {}
 	}
 	
 	void set_autoloop(int state) {
-		player.set_autoloop(state == Qt::Checked);
+		try {
+			player.set_autoloop(state == Qt::Checked);
+		} catch(...) {}
 	}
 	
 	void hold_on() {
