@@ -144,8 +144,7 @@ protected:
 		QTabWidget* pager = new QTabWidget();
 		{
 			terminal = new QTextEdit();
-			terminal->setReadOnly(true);
-			terminal->setLineWrapMode(QTextEdit::NoWrap);
+			setup_text_edit(terminal);
 			pager->addTab(terminal, QIcon::fromTheme("utilities-terminal"), "Terminal");
 		}
 		{
@@ -253,11 +252,11 @@ protected:
 			QString text;
 			switch(sample.level) {
 			case DEBUG: text += "DEBUG: "; break;
-			case INFO: text += "<font color=blue>INFO:</font> "; break;
-			case WARN: text += "<font color=orange>WARN:</font> "; break;
-			case ERROR: text += "<font color=red>ERROR:</font> "; break;
+			case INFO: text += "INFO: "; break;
+			case WARN: text += "WARN: "; break;
+			case ERROR: text += "ERROR: "; break;
 			}
-			text += subs(sample.msg.to_string(), "\n", "<br>").c_str();
+			text += sample.msg.to_string().c_str();
 			append_html(module->log_view, text);
 			
 			text = QString("[") + module->instance.topic.to_string().c_str() + "] " + text;
@@ -694,8 +693,7 @@ private:
 			tcp_client.publish(inst.domain, inst.topic);
 			
 			module->log_view = new QTextEdit();
-			module->log_view->setReadOnly(true);
-			module->log_view->setLineWrapMode(QTextEdit::NoWrap);
+			setup_text_edit(module->log_view);
 			module_log_stack->addWidget(module->log_view);
 			
 			module->config_table = new QTableWidget();
@@ -826,7 +824,7 @@ private:
 		return QString().sprintf("%.3ld:%.2ld.%.3ld", time/min, (time/sec) % 60, (time/1000) % 1000);
 	}
 	
-	static QTableWidgetItem* set_cell_data(QTableWidget* table, int row, int col, const QVariant& value, Qt::ItemFlags flags = Qt::ItemIsEnabled) {
+	QTableWidgetItem* set_cell_data(QTableWidget* table, int row, int col, const QVariant& value, Qt::ItemFlags flags = Qt::ItemIsEnabled) {
 		QTableWidgetItem* item = table->item(row, col);
 		if(!item) {
 			item = new QTableWidgetItem();
@@ -837,7 +835,7 @@ private:
 		return item;
 	}
 	
-	static void resize_table(QTableWidget* table, int padding = 10, int min_width = 80) {
+	void resize_table(QTableWidget* table, int padding = 10, int min_width = 80) {
 		table->resizeColumnsToContents();
 		for(int i = 0; i < table->columnCount(); ++i) {
 			int size = table->columnWidth(i) + padding;
@@ -846,19 +844,29 @@ private:
 		}
 	}
 	
-	static void append_html(QTextEdit* widget, QString text) {
+	void append_html(QTextEdit* widget, QString text) {
 		int old_scrollbar_value = widget->verticalScrollBar()->value();
 		bool is_scrolled_down = old_scrollbar_value == widget->verticalScrollBar()->maximum();
 		QTextCursor tmp = widget->textCursor();
+		setUpdatesEnabled(false);
 		widget->moveCursor(QTextCursor::End);
-		widget->insertHtml(text);
+		widget->insertPlainText(text);
 		widget->setTextCursor(tmp);
 		if(is_scrolled_down) {
 			widget->verticalScrollBar()->setValue(widget->verticalScrollBar()->maximum());
 		} else {
 			widget->verticalScrollBar()->setValue(old_scrollbar_value);
 		}
+		setUpdatesEnabled(true);
 		widget->update();
+	}
+	
+	void setup_text_edit(QTextEdit* widget) {
+		widget->setAcceptRichText(false);
+		widget->setContextMenuPolicy(Qt::NoContextMenu);
+		widget->setReadOnly(true);
+		widget->setUndoRedoEnabled(false);
+		widget->setLineWrapMode(QTextEdit::NoWrap);
 	}
 	
 private:
