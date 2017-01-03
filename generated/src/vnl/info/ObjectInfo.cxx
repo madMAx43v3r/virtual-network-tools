@@ -33,6 +33,8 @@ void ObjectInfo::serialize(vnl::io::TypeOutput& _out) const {
 	_out.putHash(0x7f0e60e); vnl::write(_out, num_msg_received);
 	_out.putHash(0xa065ff2d); vnl::write(_out, num_msg_dropped);
 	_out.putHash(0xce25565); vnl::write(_out, engine);
+	_out.putHash(0xa637ecaf); vnl::write(_out, input_channels);
+	_out.putHash(0x420d74); vnl::write(_out, output_channels);
 }
 
 void ObjectInfo::deserialize(vnl::io::TypeInput& _in, int _size) {
@@ -47,6 +49,8 @@ void ObjectInfo::deserialize(vnl::io::TypeInput& _in, int _size) {
 			case 0x7f0e60e: vnl::read(_in, num_msg_received); break;
 			case 0xa065ff2d: vnl::read(_in, num_msg_dropped); break;
 			case 0xce25565: vnl::read(_in, engine); break;
+			case 0xa637ecaf: vnl::read(_in, input_channels); break;
+			case 0x420d74: vnl::read(_in, output_channels); break;
 			default: _in.skip();
 		}
 	}
@@ -61,6 +65,8 @@ int ObjectInfo::get_field_index(vnl::Hash32 _hash) const {
 		case 0x7f0e60e: return 4;
 		case 0xa065ff2d: return 5;
 		case 0xce25565: return 6;
+		case 0xa637ecaf: return 7;
+		case 0x420d74: return 8;
 		default: return -1;
 	}
 }
@@ -74,6 +80,8 @@ const char* ObjectInfo::get_field_name(int _index) const {
 		case 4: return "num_msg_received";
 		case 5: return "num_msg_dropped";
 		case 6: return "engine";
+		case 7: return "input_channels";
+		case 8: return "output_channels";
 		default: return 0;
 	}
 }
@@ -87,6 +95,8 @@ void ObjectInfo::get_field(int _index, vnl::String& _str) const {
 		case 4: vnl::to_string(_str, num_msg_received); break;
 		case 5: vnl::to_string(_str, num_msg_dropped); break;
 		case 6: vnl::to_string(_str, engine); break;
+		case 7: vnl::to_string(_str, input_channels); break;
+		case 8: vnl::to_string(_str, output_channels); break;
 	}
 }
 
@@ -99,6 +109,8 @@ void ObjectInfo::set_field(int _index, const vnl::String& _str) {
 		case 4: vnl::from_string(_str, num_msg_received); break;
 		case 5: vnl::from_string(_str, num_msg_dropped); break;
 		case 6: vnl::from_string(_str, engine); break;
+		case 7: vnl::from_string(_str, input_channels); break;
+		case 8: vnl::from_string(_str, output_channels); break;
 	}
 }
 
@@ -111,6 +123,8 @@ void ObjectInfo::get_field(int _index, vnl::io::TypeOutput& _out) const {
 		case 4: vnl::write(_out, num_msg_received); break;
 		case 5: vnl::write(_out, num_msg_dropped); break;
 		case 6: vnl::write(_out, engine); break;
+		case 7: vnl::write(_out, input_channels); break;
+		case 8: vnl::write(_out, output_channels); break;
 		default: _out.putNull();
 	}
 }
@@ -124,6 +138,8 @@ void ObjectInfo::set_field(int _index, vnl::io::TypeInput& _in) {
 		case 4: vnl::read(_in, num_msg_received); break;
 		case 5: vnl::read(_in, num_msg_dropped); break;
 		case 6: vnl::read(_in, engine); break;
+		case 7: vnl::read(_in, input_channels); break;
+		case 8: vnl::read(_in, output_channels); break;
 	}
 }
 

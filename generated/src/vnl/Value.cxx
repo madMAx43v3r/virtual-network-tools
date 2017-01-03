@@ -513,6 +513,18 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 			field.name = "engine";
 			field.type = "vnl.Hash64";
 		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xa637ecaf;
+			field.name = "input_channels";
+			field.type = "vnl.Map";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x420d74;
+			field.name = "output_channels";
+			field.type = "vnl.Map";
+		}
 	}
 	{
 		vnl::info::Type& info = res["vnl.info.Parameter"];
