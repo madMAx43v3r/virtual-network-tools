@@ -8,6 +8,8 @@
 #ifndef INCLUDE_ADMINGUI_H_
 #define INCLUDE_ADMINGUI_H_
 
+#include <fstream>
+
 #include <vnl/TcpClient.h>
 #include <vnl/ThreadEngine.h>
 
@@ -68,7 +70,11 @@ public:
 	virtual ~AdminGUI() {}
 	
 protected:
-	struct module_t {
+	struct base_t {
+		virtual ~base_t() {}
+	};
+	
+	struct module_t : public base_t {
 		vnl::Instance instance;
 		QTreeWidgetItem* tree_item = 0;
 		QTextEdit* log_view = 0;
@@ -76,7 +82,7 @@ protected:
 		bool is_running = true;
 	};
 	
-	struct topic_t {
+	struct topic_t : public base_t {
 		vnl::Topic topic;
 		vnl::Address address;
 		QTreeWidgetItem* tree_item = 0;
@@ -292,6 +298,33 @@ protected:
 	}
 	
 	void handle(const vnl::info::TopicInfoList& sample) {
+		std::ofstream out(remote.domain_name.to_string() + "_graph.dot", std::ofstream::out | std::ofstream::trunc);
+		out << "digraph " << remote.domain_name.to_string() << " {" << std::endl;
+		
+		vnl::Map<vnl::String, vnl::Map<vnl::Hash64, base_t*> > cluster_map;
+		for(topic_t& entry : topics) {
+			cluster_map[entry.topic.domain][entry.topic.name] = &entry;
+		}
+		for(module_t& entry : modules) {
+			cluster_map[entry.instance.domain][entry.instance.src_mac] = &entry;
+		}
+		for(auto& entry : cluster_map) {
+			out << "  subgraph \"cluster_" << entry.first << "\" {" << std::endl;
+			out << "    style=filled;" << std::endl << "    color=lightgrey;" << std::endl;
+			out << "    label = \"" << entry.first << "\";" << std::endl;
+			for(auto& elem : entry.second) {
+				topic_t* topic = dynamic_cast<topic_t*>(elem.second);
+				module_t* module = dynamic_cast<module_t*>(elem.second);
+				if(topic) {
+					out << "    \"" << topic->topic.domain << "." << topic->topic.name << "\" [label=\"" << topic->topic.name << "\"];" << std::endl;
+				}
+				if(module) {
+					out << "    \"" << module->instance.domain << "." << module->instance.topic << "\" [label=\"" << module->instance.topic << "\", shape=box];" << std::endl;
+				}
+			}
+			out << "  }" << std::endl;
+		}
+		
 		int row = 0;
 		topic_overview->setRowCount(sample.topics.size());
 		for(const vnl::info::TopicInfo& info : sample.topics) {
@@ -307,6 +340,7 @@ protected:
 			for(auto& entry : info.publishers) {
 				module_t* module = get_module(entry.first);
 				if(module && module->is_running) {
+					out << "  \"" << topic.topic.domain << "." << topic.topic.name << "\" -> \"" << module->instance.domain << "." << module->instance.topic << "\"" << std::endl;
 					set_cell_data(topic.publishers, r, 0, module->instance.domain.to_string().c_str());
 					set_cell_data(topic.publishers, r, 1, module->instance.topic.to_string().c_str());
 					set_cell_data(topic.publishers, r, 2, qlonglong(entry.second));
@@ -323,6 +357,7 @@ protected:
 			for(auto& entry : info.subscribers) {
 				module_t* module = get_module(entry.first);
 				if(module && module->is_running) {
+					out << "  \"" << module->instance.domain << "." << module->instance.topic << "\" -> \"" << topic.topic.domain << "." << topic.topic.name << "\"" << std::endl;
 					set_cell_data(topic.subscribers, r, 0, module->instance.domain.to_string().c_str());
 					set_cell_data(topic.subscribers, r, 1, module->instance.topic.to_string().c_str());
 					set_cell_data(topic.subscribers, r, 2, qlonglong(entry.second));
@@ -343,10 +378,14 @@ protected:
 			
 			row++;
 		}
+		
 		resize_table(topic_overview);
 		topic_overview->sortByColumn(1, Qt::AscendingOrder);
 		topic_overview->sortByColumn(0, Qt::AscendingOrder);
 		topic_overview->update();
+		
+		out << "}" << std::endl;
+		out.close();
 	}
 	
 	void dump_sample(vnl::Sample* sample) {

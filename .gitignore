@@ -35,4 +35,6 @@
 /installs
 
 *.dat
+*.dot
+*.svg
 
