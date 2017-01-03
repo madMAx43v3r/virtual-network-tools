@@ -16,12 +16,15 @@ int TcpClientBase::get_field_index(vnl::Hash32 _hash) const {
 		case 0xd26001ae: return 2;
 		case 0x55f7671e: return 3;
 		case 0x1f5839d4: return 4;
-		case 0x2dc3f0d0: return 5;
-		case 0x13e7a893: return 6;
-		case 0x56a15978: return 7;
-		case 0x4bbaccde: return 8;
-		case 0xfd6e8f27: return 9;
-		case 0x998b692c: return 10;
+		case 0x7d63bf0a: return 5;
+		case 0xce66f455: return 6;
+		case 0x60ca0d4f: return 7;
+		case 0x2dc3f0d0: return 8;
+		case 0x13e7a893: return 9;
+		case 0x56a15978: return 10;
+		case 0x4bbaccde: return 11;
+		case 0xfd6e8f27: return 12;
+		case 0x998b692c: return 13;
 		default: return -1;
 	}
 }
@@ -33,12 +36,15 @@ const char* TcpClientBase::get_field_name(int _index) const {
 		case 2: return "vnl_heartbeat_interval";
 		case 3: return "error_interval";
 		case 4: return "are_connected";
-		case 5: return "endpoint";
-		case 6: return "port";
-		case 7: return "autoclose";
-		case 8: return "tcp_nodelay";
-		case 9: return "send_buffer_size";
-		case 10: return "receive_buffer_size";
+		case 5: return "num_read";
+		case 6: return "num_write";
+		case 7: return "num_flush";
+		case 8: return "endpoint";
+		case 9: return "port";
+		case 10: return "autoclose";
+		case 11: return "tcp_nodelay";
+		case 12: return "send_buffer_size";
+		case 13: return "receive_buffer_size";
 		default: return 0;
 	}
 }
@@ -50,12 +56,15 @@ void TcpClientBase::get_field(int _index, vnl::String& _str) const {
 		case 2: vnl::to_string(_str, vnl_heartbeat_interval); break;
 		case 3: vnl::to_string(_str, error_interval); break;
 		case 4: vnl::to_string(_str, are_connected); break;
-		case 5: vnl::to_string(_str, endpoint); break;
-		case 6: vnl::to_string(_str, port); break;
-		case 7: vnl::to_string(_str, autoclose); break;
-		case 8: vnl::to_string(_str, tcp_nodelay); break;
-		case 9: vnl::to_string(_str, send_buffer_size); break;
-		case 10: vnl::to_string(_str, receive_buffer_size); break;
+		case 5: vnl::to_string(_str, num_read); break;
+		case 6: vnl::to_string(_str, num_write); break;
+		case 7: vnl::to_string(_str, num_flush); break;
+		case 8: vnl::to_string(_str, endpoint); break;
+		case 9: vnl::to_string(_str, port); break;
+		case 10: vnl::to_string(_str, autoclose); break;
+		case 11: vnl::to_string(_str, tcp_nodelay); break;
+		case 12: vnl::to_string(_str, send_buffer_size); break;
+		case 13: vnl::to_string(_str, receive_buffer_size); break;
 	}
 }
 
@@ -66,12 +75,15 @@ void TcpClientBase::set_field(int _index, const vnl::String& _str) {
 		case 2: vnl::from_string(_str, vnl_heartbeat_interval); break;
 		case 3: vnl::from_string(_str, error_interval); break;
 		case 4: vnl::from_string(_str, are_connected); break;
-		case 5: vnl::from_string(_str, endpoint); break;
-		case 6: vnl::from_string(_str, port); break;
-		case 7: vnl::from_string(_str, autoclose); break;
-		case 8: vnl::from_string(_str, tcp_nodelay); break;
-		case 9: vnl::from_string(_str, send_buffer_size); break;
-		case 10: vnl::from_string(_str, receive_buffer_size); break;
+		case 5: vnl::from_string(_str, num_read); break;
+		case 6: vnl::from_string(_str, num_write); break;
+		case 7: vnl::from_string(_str, num_flush); break;
+		case 8: vnl::from_string(_str, endpoint); break;
+		case 9: vnl::from_string(_str, port); break;
+		case 10: vnl::from_string(_str, autoclose); break;
+		case 11: vnl::from_string(_str, tcp_nodelay); break;
+		case 12: vnl::from_string(_str, send_buffer_size); break;
+		case 13: vnl::from_string(_str, receive_buffer_size); break;
 	}
 }
 
@@ -82,12 +94,15 @@ void TcpClientBase::get_field(int _index, vnl::io::TypeOutput& _out) const {
 		case 2: vnl::write(_out, vnl_heartbeat_interval); break;
 		case 3: vnl::write(_out, error_interval); break;
 		case 4: vnl::write(_out, are_connected); break;
-		case 5: vnl::write(_out, endpoint); break;
-		case 6: vnl::write(_out, port); break;
-		case 7: vnl::write(_out, autoclose); break;
-		case 8: vnl::write(_out, tcp_nodelay); break;
-		case 9: vnl::write(_out, send_buffer_size); break;
-		case 10: vnl::write(_out, receive_buffer_size); break;
+		case 5: vnl::write(_out, num_read); break;
+		case 6: vnl::write(_out, num_write); break;
+		case 7: vnl::write(_out, num_flush); break;
+		case 8: vnl::write(_out, endpoint); break;
+		case 9: vnl::write(_out, port); break;
+		case 10: vnl::write(_out, autoclose); break;
+		case 11: vnl::write(_out, tcp_nodelay); break;
+		case 12: vnl::write(_out, send_buffer_size); break;
+		case 13: vnl::write(_out, receive_buffer_size); break;
 		default: _out.putNull();
 	}
 }
@@ -99,12 +114,15 @@ void TcpClientBase::set_field(int _index, vnl::io::TypeInput& _in) {
 		case 2: vnl::read(_in, vnl_heartbeat_interval); break;
 		case 3: vnl::read(_in, error_interval); break;
 		case 4: vnl::read(_in, are_connected); break;
-		case 5: vnl::read(_in, endpoint); break;
-		case 6: vnl::read(_in, port); break;
-		case 7: vnl::read(_in, autoclose); break;
-		case 8: vnl::read(_in, tcp_nodelay); break;
-		case 9: vnl::read(_in, send_buffer_size); break;
-		case 10: vnl::read(_in, receive_buffer_size); break;
+		case 5: vnl::read(_in, num_read); break;
+		case 6: vnl::read(_in, num_write); break;
+		case 7: vnl::read(_in, num_flush); break;
+		case 8: vnl::read(_in, endpoint); break;
+		case 9: vnl::read(_in, port); break;
+		case 10: vnl::read(_in, autoclose); break;
+		case 11: vnl::read(_in, tcp_nodelay); break;
+		case 12: vnl::read(_in, send_buffer_size); break;
+		case 13: vnl::read(_in, receive_buffer_size); break;
 	}
 }
 

@@ -73,6 +73,21 @@ public:
 			_out.putHash(0x1f5839d4);
 			vnl::write(_out, _value);
 		}
+		void set_num_read(int64_t _value) {
+			_out.putEntry(VNL_IO_CALL, 1);
+			_out.putHash(0x7d63bf0a);
+			vnl::write(_out, _value);
+		}
+		void set_num_write(int64_t _value) {
+			_out.putEntry(VNL_IO_CALL, 1);
+			_out.putHash(0xce66f455);
+			vnl::write(_out, _value);
+		}
+		void set_num_flush(int64_t _value) {
+			_out.putEntry(VNL_IO_CALL, 1);
+			_out.putHash(0x60ca0d4f);
+			vnl::write(_out, _value);
+		}
 		void get_error_interval() {
 			_out.putEntry(VNL_IO_CONST_CALL, 0);
 			_out.putHash(0x55f7671e);
@@ -80,6 +95,18 @@ public:
 		void get_are_connected() {
 			_out.putEntry(VNL_IO_CONST_CALL, 0);
 			_out.putHash(0x1f5839d4);
+		}
+		void get_num_read() {
+			_out.putEntry(VNL_IO_CONST_CALL, 0);
+			_out.putHash(0x7d63bf0a);
+		}
+		void get_num_write() {
+			_out.putEntry(VNL_IO_CONST_CALL, 0);
+			_out.putHash(0xce66f455);
+		}
+		void get_num_flush() {
+			_out.putEntry(VNL_IO_CONST_CALL, 0);
+			_out.putHash(0x60ca0d4f);
 		}
 	protected:
 		vnl::io::TypeOutput& _out;
@@ -216,6 +243,48 @@ public:
 		}
 	}
 	
+	void set_num_read(int64_t num_read) {
+		_buf.wrap(_data);
+		{
+			Writer _wr(_out);
+			_wr.set_num_read(num_read);
+		}
+		vnl::Packet* _pkt = _call(vnl::Frame::CALL);
+		if(_pkt) {
+			_pkt->ack();
+		} else {
+			throw vnl::IOException();
+		}
+	}
+	
+	void set_num_write(int64_t num_write) {
+		_buf.wrap(_data);
+		{
+			Writer _wr(_out);
+			_wr.set_num_write(num_write);
+		}
+		vnl::Packet* _pkt = _call(vnl::Frame::CALL);
+		if(_pkt) {
+			_pkt->ack();
+		} else {
+			throw vnl::IOException();
+		}
+	}
+	
+	void set_num_flush(int64_t num_flush) {
+		_buf.wrap(_data);
+		{
+			Writer _wr(_out);
+			_wr.set_num_flush(num_flush);
+		}
+		vnl::Packet* _pkt = _call(vnl::Frame::CALL);
+		if(_pkt) {
+			_pkt->ack();
+		} else {
+			throw vnl::IOException();
+		}
+	}
+	
 	int32_t get_error_interval() {
 		_buf.wrap(_data);
 		{
@@ -241,6 +310,57 @@ public:
 		}
 		vnl::Packet* _pkt = _call(vnl::Frame::CONST_CALL);
 		bool _result;
+		if(_pkt) {
+			vnl::read(_in, _result);
+			_pkt->ack();
+		} else {
+			throw vnl::IOException();
+		}
+		return _result;
+	}
+	
+	int64_t get_num_read() {
+		_buf.wrap(_data);
+		{
+			Writer _wr(_out);
+			_wr.get_num_read();
+		}
+		vnl::Packet* _pkt = _call(vnl::Frame::CONST_CALL);
+		int64_t _result;
+		if(_pkt) {
+			vnl::read(_in, _result);
+			_pkt->ack();
+		} else {
+			throw vnl::IOException();
+		}
+		return _result;
+	}
+	
+	int64_t get_num_write() {
+		_buf.wrap(_data);
+		{
+			Writer _wr(_out);
+			_wr.get_num_write();
+		}
+		vnl::Packet* _pkt = _call(vnl::Frame::CONST_CALL);
+		int64_t _result;
+		if(_pkt) {
+			vnl::read(_in, _result);
+			_pkt->ack();
+		} else {
+			throw vnl::IOException();
+		}
+		return _result;
+	}
+	
+	int64_t get_num_flush() {
+		_buf.wrap(_data);
+		{
+			Writer _wr(_out);
+			_wr.get_num_flush();
+		}
+		vnl::Packet* _pkt = _call(vnl::Frame::CONST_CALL);
+		int64_t _result;
 		if(_pkt) {
 			vnl::read(_in, _result);
 			_pkt->ack();

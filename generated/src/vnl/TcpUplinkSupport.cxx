@@ -16,6 +16,9 @@ int TcpUplinkBase::get_field_index(vnl::Hash32 _hash) const {
 		case 0xd26001ae: return 2;
 		case 0x55f7671e: return 3;
 		case 0x1f5839d4: return 4;
+		case 0x7d63bf0a: return 5;
+		case 0xce66f455: return 6;
+		case 0x60ca0d4f: return 7;
 		default: return -1;
 	}
 }
@@ -27,6 +30,9 @@ const char* TcpUplinkBase::get_field_name(int _index) const {
 		case 2: return "vnl_heartbeat_interval";
 		case 3: return "error_interval";
 		case 4: return "are_connected";
+		case 5: return "num_read";
+		case 6: return "num_write";
+		case 7: return "num_flush";
 		default: return 0;
 	}
 }
@@ -38,6 +44,9 @@ void TcpUplinkBase::get_field(int _index, vnl::String& _str) const {
 		case 2: vnl::to_string(_str, vnl_heartbeat_interval); break;
 		case 3: vnl::to_string(_str, error_interval); break;
 		case 4: vnl::to_string(_str, are_connected); break;
+		case 5: vnl::to_string(_str, num_read); break;
+		case 6: vnl::to_string(_str, num_write); break;
+		case 7: vnl::to_string(_str, num_flush); break;
 	}
 }
 
@@ -48,6 +57,9 @@ void TcpUplinkBase::set_field(int _index, const vnl::String& _str) {
 		case 2: vnl::from_string(_str, vnl_heartbeat_interval); break;
 		case 3: vnl::from_string(_str, error_interval); break;
 		case 4: vnl::from_string(_str, are_connected); break;
+		case 5: vnl::from_string(_str, num_read); break;
+		case 6: vnl::from_string(_str, num_write); break;
+		case 7: vnl::from_string(_str, num_flush); break;
 	}
 }
 
@@ -58,6 +70,9 @@ void TcpUplinkBase::get_field(int _index, vnl::io::TypeOutput& _out) const {
 		case 2: vnl::write(_out, vnl_heartbeat_interval); break;
 		case 3: vnl::write(_out, error_interval); break;
 		case 4: vnl::write(_out, are_connected); break;
+		case 5: vnl::write(_out, num_read); break;
+		case 6: vnl::write(_out, num_write); break;
+		case 7: vnl::write(_out, num_flush); break;
 		default: _out.putNull();
 	}
 }
@@ -69,6 +84,9 @@ void TcpUplinkBase::set_field(int _index, vnl::io::TypeInput& _in) {
 		case 2: vnl::read(_in, vnl_heartbeat_interval); break;
 		case 3: vnl::read(_in, error_interval); break;
 		case 4: vnl::read(_in, are_connected); break;
+		case 5: vnl::read(_in, num_read); break;
+		case 6: vnl::read(_in, num_write); break;
+		case 7: vnl::read(_in, num_flush); break;
 	}
 }
 
@@ -83,6 +101,24 @@ bool TcpUplinkBase::vni_call(vnl::io::TypeInput& _in, uint32_t _hash, int _num_a
 	case 0x1f5839d4: 
 		if(_num_args == 1) {
 			vnl::read(_in, are_connected);
+			return true;
+		}
+		break;
+	case 0x7d63bf0a: 
+		if(_num_args == 1) {
+			vnl::read(_in, num_read);
+			return true;
+		}
+		break;
+	case 0xce66f455: 
+		if(_num_args == 1) {
+			vnl::read(_in, num_write);
+			return true;
+		}
+		break;
+	case 0x60ca0d4f: 
+		if(_num_args == 1) {
+			vnl::read(_in, num_flush);
 			return true;
 		}
 		break;
@@ -172,6 +208,24 @@ bool TcpUplinkBase::vni_const_call(vnl::io::TypeInput& _in, uint32_t _hash, int 
 	case 0x1f5839d4: 
 		if(_num_args == 0) {
 			vnl::write(_out, are_connected);
+			return true;
+		}
+		break;
+	case 0x7d63bf0a: 
+		if(_num_args == 0) {
+			vnl::write(_out, num_read);
+			return true;
+		}
+		break;
+	case 0xce66f455: 
+		if(_num_args == 0) {
+			vnl::write(_out, num_write);
+			return true;
+		}
+		break;
+	case 0x60ca0d4f: 
+		if(_num_args == 0) {
+			vnl::write(_out, num_flush);
 			return true;
 		}
 		break;
