@@ -22,6 +22,7 @@
 #include <vnl/Topic.hxx>
 #include <vnl/info/Field.hxx>
 #include <vnl/info/Method.hxx>
+#include <vnl/info/ObjectInfo.hxx>
 #include <vnl/info/Parameter.hxx>
 #include <vnl/info/PlayerStatus.hxx>
 #include <vnl/info/RemoteInfo.hxx>
@@ -52,6 +53,7 @@ vnl::Value* create(vnl::Hash32 hash) {
 		case 0xddc3d187: return vnl::create<vnl::Topic>();
 		case 0xd52524d4: return vnl::create<vnl::info::Field>();
 		case 0x1b510753: return vnl::create<vnl::info::Method>();
+		case 0x6400b0b3: return vnl::create<vnl::info::ObjectInfo>();
 		case 0xf5e3f3b6: return vnl::create<vnl::info::Parameter>();
 		case 0xf9baa92e: return vnl::create<vnl::info::PlayerStatus>();
 		case 0x7aa64297: return vnl::create<vnl::info::RemoteInfo>();
@@ -83,6 +85,7 @@ vnl::Array<vnl::String> get_class_names() {
 	res.push_back("vnl.Topic");
 	res.push_back("vnl.info.Field");
 	res.push_back("vnl.info.Method");
+	res.push_back("vnl.info.ObjectInfo");
 	res.push_back("vnl.info.Parameter");
 	res.push_back("vnl.info.PlayerStatus");
 	res.push_back("vnl.info.RemoteInfo");
@@ -176,6 +179,12 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 			field.hash = 0xd129c896;
 			field.name = "interval";
 			field.type = "int";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xcaacc145;
+			field.name = "info";
+			field.type = "vnl.info.ObjectInfo";
 		}
 	}
 	{
@@ -454,6 +463,55 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 			field.hash = 0x3f42b528;
 			field.name = "params";
 			field.type = "vnl.List";
+		}
+	}
+	{
+		vnl::info::Type& info = res["vnl.info.ObjectInfo"];
+		info.hash = 0x6400b0b3;
+		info.name = "vnl.info.ObjectInfo";
+		info.is_struct = true;
+		info.is_class = true;
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xaf3e4ff0;
+			field.name = "time";
+			field.type = "long";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xa5c8937c;
+			field.name = "spawn_time";
+			field.type = "long";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x7fd711c;
+			field.name = "num_cycles";
+			field.type = "long";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xd6d6fb05;
+			field.name = "num_msg_sent";
+			field.type = "long";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x7f0e60e;
+			field.name = "num_msg_received";
+			field.type = "long";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xa065ff2d;
+			field.name = "num_msg_dropped";
+			field.type = "long";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xce25565;
+			field.name = "engine";
+			field.type = "vnl.Hash64";
 		}
 	}
 	{

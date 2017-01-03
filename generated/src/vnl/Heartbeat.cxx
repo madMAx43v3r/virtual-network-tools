@@ -27,6 +27,7 @@ void Heartbeat::serialize(vnl::io::TypeOutput& _out) const {
 	_out.putHash(VNI_HASH);
 	_out.putHash(0x85aba286); vnl::write(_out, src_mac);
 	_out.putHash(0xd129c896); vnl::write(_out, interval);
+	_out.putHash(0xcaacc145); vnl::write(_out, info);
 }
 
 void Heartbeat::deserialize(vnl::io::TypeInput& _in, int _size) {
@@ -36,6 +37,7 @@ void Heartbeat::deserialize(vnl::io::TypeInput& _in, int _size) {
 		switch(_hash) {
 			case 0x85aba286: vnl::read(_in, src_mac); break;
 			case 0xd129c896: vnl::read(_in, interval); break;
+			case 0xcaacc145: vnl::read(_in, info); break;
 			default: _in.skip();
 		}
 	}
@@ -45,6 +47,7 @@ int Heartbeat::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		case 0x85aba286: return 0;
 		case 0xd129c896: return 1;
+		case 0xcaacc145: return 2;
 		default: return -1;
 	}
 }
@@ -53,6 +56,7 @@ const char* Heartbeat::get_field_name(int _index) const {
 	switch(_index) {
 		case 0: return "src_mac";
 		case 1: return "interval";
+		case 2: return "info";
 		default: return 0;
 	}
 }
@@ -61,6 +65,7 @@ void Heartbeat::get_field(int _index, vnl::String& _str) const {
 	switch(_index) {
 		case 0: vnl::to_string(_str, src_mac); break;
 		case 1: vnl::to_string(_str, interval); break;
+		case 2: vnl::to_string(_str, info); break;
 	}
 }
 
@@ -68,6 +73,7 @@ void Heartbeat::set_field(int _index, const vnl::String& _str) {
 	switch(_index) {
 		case 0: vnl::from_string(_str, src_mac); break;
 		case 1: vnl::from_string(_str, interval); break;
+		case 2: vnl::from_string(_str, info); break;
 	}
 }
 
@@ -75,6 +81,7 @@ void Heartbeat::get_field(int _index, vnl::io::TypeOutput& _out) const {
 	switch(_index) {
 		case 0: vnl::write(_out, src_mac); break;
 		case 1: vnl::write(_out, interval); break;
+		case 2: vnl::write(_out, info); break;
 		default: _out.putNull();
 	}
 }
@@ -83,6 +90,7 @@ void Heartbeat::set_field(int _index, vnl::io::TypeInput& _in) {
 	switch(_index) {
 		case 0: vnl::read(_in, src_mac); break;
 		case 1: vnl::read(_in, interval); break;
+		case 2: vnl::read(_in, info); break;
 	}
 }
 

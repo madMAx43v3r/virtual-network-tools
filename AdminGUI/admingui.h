@@ -16,7 +16,6 @@
 #include <vnl/TcpClientClient.hxx>
 #include <vnl/ProcessClient.hxx>
 #include <vnl/tools/AdminGUISupport.hxx>
-#include <vnl/info/TopicInfoList.hxx>
 
 #include <QApplication>
 #include <QWidget>
@@ -76,6 +75,7 @@ protected:
 	
 	struct module_t : public base_t {
 		vnl::Instance instance;
+		vnl::info::ObjectInfo info;
 		QTreeWidgetItem* tree_item = 0;
 		QTextEdit* log_view = 0;
 		QTableWidget* config_table = 0;
@@ -96,11 +96,11 @@ protected:
 		add_input(tunnel);
 		
 		process_client.set_fail(true);
-		process_client.set_timeout(200);
+		process_client.set_timeout(500);
 		add_client(process_client);
 		
 		object_client.set_fail(true);
-		object_client.set_timeout(200);
+		object_client.set_timeout(500);
 		add_client(object_client);
 		
 		add_client(tcp_client);
@@ -166,6 +166,19 @@ protected:
 			
 			QTabWidget* sub_pager = new QTabWidget();
 			
+			module_overview = new QTableWidget();
+			module_overview->setColumnCount(6);
+			module_overview->verticalHeader()->hide();
+			module_overview->setSelectionMode(QAbstractItemView::NoSelection);
+			module_overview->setHorizontalHeaderLabels(QStringList() << "Domain" << "Topic" << "Sent" << "Received" << "Dropped" << "Cycle Time");
+			module_overview->horizontalHeaderItem(0)->setIcon(QIcon::fromTheme("folder"));
+			module_overview->horizontalHeaderItem(1)->setIcon(QIcon::fromTheme("text-x-generic"));
+			module_overview->horizontalHeaderItem(2)->setIcon(QIcon::fromTheme("go-up"));
+			module_overview->horizontalHeaderItem(3)->setIcon(QIcon::fromTheme("go-down"));
+			module_overview->horizontalHeaderItem(4)->setIcon(QIcon::fromTheme("edit-delete"));
+			module_overview->horizontalHeaderItem(5)->setIcon(QIcon::fromTheme("media-playlist-repeat"));
+			sub_pager->addTab(module_overview, QIcon::fromTheme("user-desktop"), "Overview");
+			
 			module_log_stack = new QStackedWidget();
 			sub_pager->addTab(module_log_stack, QIcon::fromTheme("utilities-terminal"), "Log Output");
 			
@@ -202,15 +215,12 @@ protected:
 			topic_overview->horizontalHeaderItem(3)->setIcon(QIcon::fromTheme("go-down"));
 			topic_overview->horizontalHeaderItem(4)->setIcon(QIcon::fromTheme("media-playlist-repeat"));
 			topic_overview->horizontalHeaderItem(5)->setIcon(QIcon::fromTheme("user-available"));
-			splitter->addWidget(topic_overview);
 			sub_pager->addTab(topic_overview, QIcon::fromTheme("user-desktop"), "Overview");
 			
 			topic_dump_stack = new QStackedWidget();
-			splitter->addWidget(topic_dump_stack);
 			sub_pager->addTab(topic_dump_stack, QIcon::fromTheme("modem"), "Sample View");
 			
 			topic_pubsub_stack = new QStackedWidget();
-			splitter->addWidget(topic_pubsub_stack);
 			sub_pager->addTab(topic_pubsub_stack, QIcon::fromTheme("network-transmit-receive"), "Publishers / Subscribers");
 				
 			splitter->addWidget(sub_pager);
@@ -261,6 +271,13 @@ protected:
 		}
 	}
 	
+	void handle(const vnl::Heartbeat& sample) {
+		module_t* module = get_module(sample.src_mac);
+		if(module) {
+			module->info = sample.info;
+		}
+	}
+	
 	void handle(const vnl::info::RemoteInfo& sample) {
 		remote = sample;
 		process_client.set_address(remote.domain_name, "Process");
@@ -275,8 +292,10 @@ protected:
 		}
 		
 		tcp_client.subscribe(remote.domain_name, "vnl.log");
+		tcp_client.subscribe(remote.domain_name, "vnl.heartbeat");
 		tcp_client.subscribe(process_domain, "topic_info");
 		subscribe(remote.domain_name, "vnl.log");
+		subscribe(remote.domain_name, "vnl.heartbeat");
 		subscribe(process_domain, "topic_info");
 		
 		vnl::info::TopicInfoList topic_info;
@@ -333,7 +352,7 @@ protected:
 			set_cell_data(topic_overview, row, 1, info.topic.name.to_string().c_str());
 			set_cell_data(topic_overview, row, 2, qlonglong(info.send_counter));
 			set_cell_data(topic_overview, row, 3, qlonglong(info.receive_counter));
-			set_cell_data(topic_overview, row, 4, QString::number(float(info.last_time-info.first_time)/(info.send_counter-1)/1e3, 103, 4) + " ms");
+			set_cell_data(topic_overview, row, 4, QString::number(double(info.last_time-info.first_time)/(info.send_counter-1)/1e3, 103, 4) + " ms");
 			set_cell_data(topic_overview, row, 5, QString::number((sample.time-info.last_time)/1000000) + " s");
 			
 			int r = 0;
@@ -554,21 +573,21 @@ private slots:
 					vnl::Map<vnl::String, vnl::String> config_map;
 					try {
 						config_map = object_client.get_config_map();
+						QMap<QString, QString> map;
+						for(auto& entry : config_map) {
+							map[entry.first.to_string().c_str()] = entry.second.to_string().c_str();
+						}
+						module->config_table->setRowCount(map.size());
+						int row = 0;
+						for(auto it = map.begin(); it != map.end(); ++it) {
+							set_cell_data(module->config_table, row, 0, it.key());
+							set_cell_data(module->config_table, row, 1, it.value());
+							row++;
+						}
+						resize_table(module->config_table);
 					} catch (vnl::Exception& ex) {
 						log(ERROR).out << "setCurrentModule(): get_config_map() caught " << ex.get_type_name() << vnl::endl;
 					}
-					QMap<QString, QString> map;
-					for(auto& entry : config_map) {
-						map[entry.first.to_string().c_str()] = entry.second.to_string().c_str();
-					}
-					module->config_table->setRowCount(map.size());
-					int row = 0;
-					for(auto it = map.begin(); it != map.end(); ++it) {
-						set_cell_data(module->config_table, row, 0, it.key());
-						set_cell_data(module->config_table, row, 1, it.value());
-						row++;
-					}
-					resize_table(module->config_table);
 				}
 			}
 		}
@@ -608,16 +627,22 @@ private slots:
 			setWindowTitle(QCoreApplication::applicationName());
 			return;
 		}
+		
 		for(module_t& module : modules) {
 			module.is_running = false;
 			module.tree_item->setIcon(0, QIcon::fromTheme("user-offline"));
 		}
+		
 		vnl::Array<vnl::Instance> objects;
 		try {
 			objects = process_client.get_objects();
 		} catch (vnl::Exception& ex) {
 			log(ERROR).out << "update_view(): get_objects() caught " << ex.get_type_name() << vnl::endl;
+			return;
 		}
+		
+		int row = 0;
+		module_overview->setRowCount(objects.size());
 		for(vnl::Instance& inst : objects) {
 			module_t& module = get_module(inst);
 			module.instance = inst;
@@ -627,7 +652,19 @@ private slots:
 			} else {
 				module.tree_item->setIcon(0, QIcon::fromTheme("user-away"));
 			}
+			set_cell_data(module_overview, row, 0, module.instance.domain.to_string().c_str());
+			set_cell_data(module_overview, row, 1, module.instance.topic.to_string().c_str());
+			set_cell_data(module_overview, row, 2, qlonglong(module.info.num_msg_sent));
+			set_cell_data(module_overview, row, 3, qlonglong(module.info.num_msg_received));
+			set_cell_data(module_overview, row, 4, QString::number(module.info.num_msg_dropped)
+				+ " (" + QString::number(100*double(module.info.num_msg_dropped)/(module.info.num_msg_received+1), 103, 2) + "%)");
+			set_cell_data(module_overview, row, 5, QString::number(double(module.info.time-module.info.spawn_time)/module.info.num_cycles/1e3, 103, 4) + " ms");
+			row++;
 		}
+		resize_table(module_overview);
+		module_overview->sortByColumn(1, Qt::AscendingOrder);
+		module_overview->sortByColumn(0, Qt::AscendingOrder);
+		module_overview->update();
 	}
 	
 	void poll_messages() {
@@ -841,6 +878,7 @@ private:
 	QTreeWidget* topic_tree = 0;
 	
 	vnl::Array<module_t> modules;
+	QTableWidget* module_overview = 0;
 	QStackedWidget* module_log_stack = 0;
 	QStackedWidget* module_config_stack = 0;
 	

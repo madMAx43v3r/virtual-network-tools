@@ -183,6 +183,7 @@ bool AdminGUIBase::vni_const_call(vnl::io::TypeInput& _in, uint32_t _hash, int _
 
 bool AdminGUIBase::handle_switch(vnl::Value* _sample, vnl::Packet* _packet) {
 	switch(_sample->get_vni_hash()) {
+	case 0xa262a675: handle(*((vnl::Heartbeat*)_sample), *_packet); return true;
 	case 0x9df3e6f5: handle(*((vnl::LogMsg*)_sample), *_packet); return true;
 	case 0x7aa64297: handle(*((vnl::info::RemoteInfo*)_sample), *_packet); return true;
 	case 0xdc558ad: handle(*((vnl::info::TopicInfoList*)_sample), *_packet); return true;
@@ -192,6 +193,7 @@ bool AdminGUIBase::handle_switch(vnl::Value* _sample, vnl::Packet* _packet) {
 
 bool AdminGUIBase::handle_switch(vnl::Value* _sample, vnl::Basic* _input) {
 	switch(_sample->get_vni_hash()) {
+	case 0xa262a675: handle(*((vnl::Heartbeat*)_sample), _input); return true;
 	case 0x9df3e6f5: handle(*((vnl::LogMsg*)_sample), _input); return true;
 	case 0x7aa64297: handle(*((vnl::info::RemoteInfo*)_sample), _input); return true;
 	case 0xdc558ad: handle(*((vnl::info::TopicInfoList*)_sample), _input); return true;
