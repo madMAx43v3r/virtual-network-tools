@@ -312,29 +312,16 @@ protected:
 	void handle(const vnl::info::TopicInfoList& sample) {
 		std::ofstream out(remote.domain_name.to_string() + "_graph.dot", std::ofstream::out | std::ofstream::trunc);
 		out << "digraph " << remote.domain_name.to_string() << " {" << std::endl;
+		out << "  concentrate=true;" << std::endl;
 		
-		vnl::Map<vnl::String, vnl::Map<vnl::Hash64, base_t*> > cluster_map;
 		for(topic_t& entry : topics) {
-			cluster_map[entry.topic.domain][entry.topic.name] = &entry;
-		}
-		for(module_t& entry : modules) {
-			cluster_map[entry.instance.domain][entry.instance.src_mac] = &entry;
-		}
-		for(auto& entry : cluster_map) {
-			out << "  subgraph \"cluster_" << entry.first << "\" {" << std::endl;
-			out << "    style=filled;" << std::endl << "    color=lightgrey;" << std::endl;
-			out << "    label = \"" << entry.first << "\";" << std::endl;
-			for(auto& elem : entry.second) {
-				topic_t* topic = dynamic_cast<topic_t*>(elem.second);
-				module_t* module = dynamic_cast<module_t*>(elem.second);
-				if(topic) {
-					out << "    \"" << topic->topic.domain << "." << topic->topic.name << "\" [label=\"" << topic->topic.name << "\"];" << std::endl;
-				}
-				if(module) {
-					out << "    \"" << module->instance.domain << "." << module->instance.topic << "\" [label=\"" << module->instance.topic << "\", shape=box];" << std::endl;
-				}
+			if(entry.topic.domain != remote.domain_name) {
+				out << "  \"" << entry.topic.domain << "." << entry.topic.name << "\" [];" << std::endl;
 			}
-			out << "  }" << std::endl;
+		}
+		out << std::endl;
+		for(module_t& entry : modules) {
+			out << "  \"" << entry.instance.domain << "." << entry.instance.topic << "\" [label=\"" << entry.instance.topic << "\", style=filled, fillcolor=lightgrey, shape=box];" << std::endl;
 		}
 		
 		int row = 0;
@@ -352,7 +339,9 @@ protected:
 			for(auto& entry : info.publishers) {
 				module_t* module = get_module(entry.first);
 				if(module && module->is_running) {
-					out << "  \"" << topic.topic.domain << "." << topic.topic.name << "\" -> \"" << module->instance.domain << "." << module->instance.topic << "\"" << std::endl;
+					if(topic.topic.domain != remote.domain_name) {
+						out << "  \"" << topic.topic.domain << "." << topic.topic.name << "\" -> \"" << module->instance.domain << "." << module->instance.topic << "\" [color=blue3]" << std::endl;
+					}
 					set_cell_data(topic.publishers, r, 0, module->instance.domain.to_string().c_str());
 					set_cell_data(topic.publishers, r, 1, module->instance.topic.to_string().c_str());
 					set_cell_data(topic.publishers, r, 2, qlonglong(entry.second));
@@ -369,7 +358,9 @@ protected:
 			for(auto& entry : info.subscribers) {
 				module_t* module = get_module(entry.first);
 				if(module && module->is_running) {
-					out << "  \"" << module->instance.domain << "." << module->instance.topic << "\" -> \"" << topic.topic.domain << "." << topic.topic.name << "\"" << std::endl;
+					if(topic.topic.domain != remote.domain_name) {
+						out << "  \"" << module->instance.domain << "." << module->instance.topic << "\" -> \"" << topic.topic.domain << "." << topic.topic.name << "\" [color=red3]" << std::endl;
+					}
 					set_cell_data(topic.subscribers, r, 0, module->instance.domain.to_string().c_str());
 					set_cell_data(topic.subscribers, r, 1, module->instance.topic.to_string().c_str());
 					set_cell_data(topic.subscribers, r, 2, qlonglong(entry.second));
@@ -388,6 +379,7 @@ protected:
 				topic.tree_item->setIcon(0, QIcon::fromTheme("user-available"));
 			}
 			
+			out << std::endl;
 			row++;
 		}
 		
