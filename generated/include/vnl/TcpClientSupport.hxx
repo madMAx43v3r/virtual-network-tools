@@ -15,7 +15,7 @@ namespace vnl {
 class TcpClientBase : public vnl::TcpUplink {
 public:
 	static const uint32_t VNI_HASH = 0x48989db4;
-	static const uint32_t NUM_FIELDS = 13;
+	static const uint32_t NUM_FIELDS = 11;
 	
 	typedef vnl::TcpUplink Super;
 	
@@ -68,10 +68,8 @@ protected:
 		_writer.set_vnl_log_level(vnl_log_level);
 		_writer.set_vnl_msg_timeout(vnl_msg_timeout);
 		_writer.set_vnl_heartbeat_interval(vnl_heartbeat_interval);
-		_writer.set_send_timeout(send_timeout);
 		_writer.set_error_interval(error_interval);
 		_writer.set_are_connected(are_connected);
-		_writer.set_num_drop(num_drop);
 		_writer.set_endpoint(endpoint);
 		_writer.set_port(port);
 		_writer.set_autoclose(autoclose);

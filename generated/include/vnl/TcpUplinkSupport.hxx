@@ -17,27 +17,21 @@ namespace vnl {
 class TcpUplinkBase : public vnl::Object {
 public:
 	static const uint32_t VNI_HASH = 0xb681b3d8;
-	static const uint32_t NUM_FIELDS = 7;
+	static const uint32_t NUM_FIELDS = 5;
 	
 	typedef vnl::Object Super;
 	
 	
-	int32_t send_timeout;
 	int32_t error_interval;
 	bool are_connected;
-	int64_t num_drop;
 	
 	TcpUplinkBase(const vnl::String& domain_, const vnl::String& topic_)
 		:	vnl::Object::Object(domain_, topic_)
 	{
-		send_timeout = -1;
 		error_interval = 1000000;
 		are_connected = false;
-		num_drop = 0;
-		vnl::read_config(domain_, topic_, "send_timeout", send_timeout);
 		vnl::read_config(domain_, topic_, "error_interval", error_interval);
 		vnl::read_config(domain_, topic_, "are_connected", are_connected);
-		vnl::read_config(domain_, topic_, "num_drop", num_drop);
 	}
 	
 	virtual uint32_t get_vni_hash() const { return VNI_HASH; }
@@ -76,10 +70,8 @@ protected:
 		_writer.set_vnl_log_level(vnl_log_level);
 		_writer.set_vnl_msg_timeout(vnl_msg_timeout);
 		_writer.set_vnl_heartbeat_interval(vnl_heartbeat_interval);
-		_writer.set_send_timeout(send_timeout);
 		_writer.set_error_interval(error_interval);
 		_writer.set_are_connected(are_connected);
-		_writer.set_num_drop(num_drop);
 	}
 	
 };

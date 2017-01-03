@@ -79,11 +79,6 @@ public:
 			_out.putHash(0x8d249a50);
 			vnl::write(_out, _value);
 		}
-		void set_send_timeout(int32_t _value) {
-			_out.putEntry(VNL_IO_CALL, 1);
-			_out.putHash(0x279e615d);
-			vnl::write(_out, _value);
-		}
 		void set_tcp_keepalive(bool _value) {
 			_out.putEntry(VNL_IO_CALL, 1);
 			_out.putHash(0x195f7b11);
@@ -119,10 +114,6 @@ public:
 		void get_accept_queue() {
 			_out.putEntry(VNL_IO_CONST_CALL, 0);
 			_out.putHash(0x8d249a50);
-		}
-		void get_send_timeout() {
-			_out.putEntry(VNL_IO_CONST_CALL, 0);
-			_out.putHash(0x279e615d);
 		}
 		void get_tcp_keepalive() {
 			_out.putEntry(VNL_IO_CONST_CALL, 0);
@@ -286,20 +277,6 @@ public:
 		}
 	}
 	
-	void set_send_timeout(int32_t send_timeout) {
-		_buf.wrap(_data);
-		{
-			Writer _wr(_out);
-			_wr.set_send_timeout(send_timeout);
-		}
-		vnl::Packet* _pkt = _call(vnl::Frame::CALL);
-		if(_pkt) {
-			_pkt->ack();
-		} else {
-			throw vnl::IOException();
-		}
-	}
-	
 	void set_tcp_keepalive(bool tcp_keepalive) {
 		_buf.wrap(_data);
 		{
@@ -412,23 +389,6 @@ public:
 		{
 			Writer _wr(_out);
 			_wr.get_accept_queue();
-		}
-		vnl::Packet* _pkt = _call(vnl::Frame::CONST_CALL);
-		int32_t _result;
-		if(_pkt) {
-			vnl::read(_in, _result);
-			_pkt->ack();
-		} else {
-			throw vnl::IOException();
-		}
-		return _result;
-	}
-	
-	int32_t get_send_timeout() {
-		_buf.wrap(_data);
-		{
-			Writer _wr(_out);
-			_wr.get_send_timeout();
 		}
 		vnl::Packet* _pkt = _call(vnl::Frame::CONST_CALL);
 		int32_t _result;

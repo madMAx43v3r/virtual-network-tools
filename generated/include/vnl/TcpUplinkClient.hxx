@@ -67,11 +67,6 @@ public:
 			vnl::write(_out, domain);
 			vnl::write(_out, topic);
 		}
-		void set_send_timeout(int32_t _value) {
-			_out.putEntry(VNL_IO_CALL, 1);
-			_out.putHash(0x279e615d);
-			vnl::write(_out, _value);
-		}
 		void set_error_interval(int32_t _value) {
 			_out.putEntry(VNL_IO_CALL, 1);
 			_out.putHash(0x55f7671e);
@@ -82,15 +77,6 @@ public:
 			_out.putHash(0x1f5839d4);
 			vnl::write(_out, _value);
 		}
-		void set_num_drop(int64_t _value) {
-			_out.putEntry(VNL_IO_CALL, 1);
-			_out.putHash(0x5e24337a);
-			vnl::write(_out, _value);
-		}
-		void get_send_timeout() {
-			_out.putEntry(VNL_IO_CONST_CALL, 0);
-			_out.putHash(0x279e615d);
-		}
 		void get_error_interval() {
 			_out.putEntry(VNL_IO_CONST_CALL, 0);
 			_out.putHash(0x55f7671e);
@@ -98,10 +84,6 @@ public:
 		void get_are_connected() {
 			_out.putEntry(VNL_IO_CONST_CALL, 0);
 			_out.putHash(0x1f5839d4);
-		}
-		void get_num_drop() {
-			_out.putEntry(VNL_IO_CONST_CALL, 0);
-			_out.putHash(0x5e24337a);
 		}
 	protected:
 		vnl::io::TypeOutput& _out;
@@ -224,20 +206,6 @@ public:
 		}
 	}
 	
-	void set_send_timeout(int32_t send_timeout) {
-		_buf.wrap(_data);
-		{
-			Writer _wr(_out);
-			_wr.set_send_timeout(send_timeout);
-		}
-		vnl::Packet* _pkt = _call(vnl::Frame::CALL);
-		if(_pkt) {
-			_pkt->ack();
-		} else {
-			throw vnl::IOException();
-		}
-	}
-	
 	void set_error_interval(int32_t error_interval) {
 		_buf.wrap(_data);
 		{
@@ -266,37 +234,6 @@ public:
 		}
 	}
 	
-	void set_num_drop(int64_t num_drop) {
-		_buf.wrap(_data);
-		{
-			Writer _wr(_out);
-			_wr.set_num_drop(num_drop);
-		}
-		vnl::Packet* _pkt = _call(vnl::Frame::CALL);
-		if(_pkt) {
-			_pkt->ack();
-		} else {
-			throw vnl::IOException();
-		}
-	}
-	
-	int32_t get_send_timeout() {
-		_buf.wrap(_data);
-		{
-			Writer _wr(_out);
-			_wr.get_send_timeout();
-		}
-		vnl::Packet* _pkt = _call(vnl::Frame::CONST_CALL);
-		int32_t _result;
-		if(_pkt) {
-			vnl::read(_in, _result);
-			_pkt->ack();
-		} else {
-			throw vnl::IOException();
-		}
-		return _result;
-	}
-	
 	int32_t get_error_interval() {
 		_buf.wrap(_data);
 		{
@@ -322,23 +259,6 @@ public:
 		}
 		vnl::Packet* _pkt = _call(vnl::Frame::CONST_CALL);
 		bool _result;
-		if(_pkt) {
-			vnl::read(_in, _result);
-			_pkt->ack();
-		} else {
-			throw vnl::IOException();
-		}
-		return _result;
-	}
-	
-	int64_t get_num_drop() {
-		_buf.wrap(_data);
-		{
-			Writer _wr(_out);
-			_wr.get_num_drop();
-		}
-		vnl::Packet* _pkt = _call(vnl::Frame::CONST_CALL);
-		int64_t _result;
 		if(_pkt) {
 			vnl::read(_in, _result);
 			_pkt->ack();

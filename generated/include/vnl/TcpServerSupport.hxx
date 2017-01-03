@@ -17,7 +17,7 @@ namespace vnl {
 class TcpServerBase : public vnl::Object {
 public:
 	static const uint32_t VNI_HASH = 0x2d8a645f;
-	static const uint32_t NUM_FIELDS = 12;
+	static const uint32_t NUM_FIELDS = 11;
 	
 	typedef vnl::Object Super;
 	
@@ -26,7 +26,6 @@ public:
 	int32_t error_interval;
 	vnl::Array<vnl::Topic > export_topics;
 	int32_t accept_queue;
-	int32_t send_timeout;
 	bool tcp_keepalive;
 	bool tcp_nodelay;
 	int32_t send_buffer_size;
@@ -38,7 +37,6 @@ public:
 		port = 8916;
 		error_interval = 1000000;
 		accept_queue = 10;
-		send_timeout = -1;
 		tcp_keepalive = true;
 		tcp_nodelay = true;
 		send_buffer_size = 1048576;
@@ -47,7 +45,6 @@ public:
 		vnl::read_config(domain_, topic_, "error_interval", error_interval);
 		vnl::read_config(domain_, topic_, "export_topics", export_topics);
 		vnl::read_config(domain_, topic_, "accept_queue", accept_queue);
-		vnl::read_config(domain_, topic_, "send_timeout", send_timeout);
 		vnl::read_config(domain_, topic_, "tcp_keepalive", tcp_keepalive);
 		vnl::read_config(domain_, topic_, "tcp_nodelay", tcp_nodelay);
 		vnl::read_config(domain_, topic_, "send_buffer_size", send_buffer_size);
@@ -86,7 +83,6 @@ protected:
 		_writer.set_error_interval(error_interval);
 		_writer.set_export_topics(export_topics);
 		_writer.set_accept_queue(accept_queue);
-		_writer.set_send_timeout(send_timeout);
 		_writer.set_tcp_keepalive(tcp_keepalive);
 		_writer.set_tcp_nodelay(tcp_nodelay);
 		_writer.set_send_buffer_size(send_buffer_size);

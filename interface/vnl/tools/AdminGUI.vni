@@ -8,6 +8,7 @@ object AdminGUI {
 	int interval = 2000;				// update interval in ms
 	
 	int max_topic_interval = 200000;	// [us]
+	int topic_timeout = 3000000;		// [us]
 	int max_array_size = 100;
 	
 	void handle(vnl.LogMsg sample);

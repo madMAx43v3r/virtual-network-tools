@@ -167,6 +167,12 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		info.is_class = true;
 		{
 			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x85aba286;
+			field.name = "src_mac";
+			field.type = "vnl.Hash64";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
 			field.hash = 0xd129c896;
 			field.name = "interval";
 			field.type = "int";

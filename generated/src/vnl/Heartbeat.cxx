@@ -25,6 +25,7 @@ void Heartbeat::destroy() {
 void Heartbeat::serialize(vnl::io::TypeOutput& _out) const {
 	_out.putEntry(VNL_IO_CLASS, NUM_FIELDS);
 	_out.putHash(VNI_HASH);
+	_out.putHash(0x85aba286); vnl::write(_out, src_mac);
 	_out.putHash(0xd129c896); vnl::write(_out, interval);
 }
 
@@ -33,6 +34,7 @@ void Heartbeat::deserialize(vnl::io::TypeInput& _in, int _size) {
 		uint32_t _hash = 0;
 		_in.getHash(_hash);
 		switch(_hash) {
+			case 0x85aba286: vnl::read(_in, src_mac); break;
 			case 0xd129c896: vnl::read(_in, interval); break;
 			default: _in.skip();
 		}
@@ -41,40 +43,46 @@ void Heartbeat::deserialize(vnl::io::TypeInput& _in, int _size) {
 
 int Heartbeat::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
-		case 0xd129c896: return 0;
+		case 0x85aba286: return 0;
+		case 0xd129c896: return 1;
 		default: return -1;
 	}
 }
 
 const char* Heartbeat::get_field_name(int _index) const {
 	switch(_index) {
-		case 0: return "interval";
+		case 0: return "src_mac";
+		case 1: return "interval";
 		default: return 0;
 	}
 }
 
 void Heartbeat::get_field(int _index, vnl::String& _str) const {
 	switch(_index) {
-		case 0: vnl::to_string(_str, interval); break;
+		case 0: vnl::to_string(_str, src_mac); break;
+		case 1: vnl::to_string(_str, interval); break;
 	}
 }
 
 void Heartbeat::set_field(int _index, const vnl::String& _str) {
 	switch(_index) {
-		case 0: vnl::from_string(_str, interval); break;
+		case 0: vnl::from_string(_str, src_mac); break;
+		case 1: vnl::from_string(_str, interval); break;
 	}
 }
 
 void Heartbeat::get_field(int _index, vnl::io::TypeOutput& _out) const {
 	switch(_index) {
-		case 0: vnl::write(_out, interval); break;
+		case 0: vnl::write(_out, src_mac); break;
+		case 1: vnl::write(_out, interval); break;
 		default: _out.putNull();
 	}
 }
 
 void Heartbeat::set_field(int _index, vnl::io::TypeInput& _in) {
 	switch(_index) {
-		case 0: vnl::read(_in, interval); break;
+		case 0: vnl::read(_in, src_mac); break;
+		case 1: vnl::read(_in, interval); break;
 	}
 }
 

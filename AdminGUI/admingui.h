@@ -39,6 +39,7 @@
 #include <QScrollBar>
 #include <QTableWidget>
 #include <QHeaderView>
+#include <QKeyEvent>
 #include <QTreeWidgetItemIterator>
 
 
@@ -61,6 +62,7 @@ public:
 	AdminGUI(vnl::String domain, QApplication* app)
 		:	AdminGUIBase(domain, "AdminGUI"), application(app)
 	{
+		setWindowIcon(QIcon::fromTheme("modem"));
 	}
 	
 	virtual ~AdminGUI() {}
@@ -100,9 +102,9 @@ protected:
 			vnl::TcpClient* module = new vnl::TcpClient(vnl::local_domain_name, "TcpClient");
 			module->endpoint = target_host;
 			module->port = target_port;
+			subscribe(module->get_my_private_domain(), "remote_info");
 			tcp_client = vnl::spawn(module);
 		}
-		subscribe(tcp_client.get_private_domain(), "remote_info");
 		
 		setWindowTitle(QCoreApplication::applicationName());
 		{
@@ -144,7 +146,7 @@ protected:
 			terminal = new QTextEdit();
 			terminal->setReadOnly(true);
 			terminal->setLineWrapMode(QTextEdit::NoWrap);
-			pager->addTab(terminal, "Terminal");
+			pager->addTab(terminal, QIcon::fromTheme("utilities-terminal"), "Terminal");
 		}
 		{
 			QSplitter* splitter = new QSplitter();
@@ -159,17 +161,17 @@ protected:
 			QTabWidget* sub_pager = new QTabWidget();
 			
 			module_log_stack = new QStackedWidget();
-			sub_pager->addTab(module_log_stack, "Log Output");
+			sub_pager->addTab(module_log_stack, QIcon::fromTheme("utilities-terminal"), "Log Output");
 			
 			module_config_stack = new QStackedWidget();
-			sub_pager->addTab(module_config_stack, "Configuration");
+			sub_pager->addTab(module_config_stack, QIcon::fromTheme("document-properties"), "Configuration");
 			
 			splitter->addWidget(sub_pager);
 			QList<int> sizes;
 			sizes << 300 << 900;
 			splitter->setSizes(sizes);
 			
-			pager->addTab(splitter, "Modules");
+			pager->addTab(splitter, QIcon::fromTheme("computer"), "Modules");
 		}
 		{
 			QSplitter* splitter = new QSplitter();
@@ -188,23 +190,29 @@ protected:
 			topic_overview->verticalHeader()->hide();
 			topic_overview->setSelectionMode(QAbstractItemView::NoSelection);
 			topic_overview->setHorizontalHeaderLabels(QStringList() << "Domain" << "Topic" << "Sent" << "Received" << "Cycle Time" << "Last Seen");
+			topic_overview->horizontalHeaderItem(0)->setIcon(QIcon::fromTheme("folder"));
+			topic_overview->horizontalHeaderItem(1)->setIcon(QIcon::fromTheme("text-x-generic"));
+			topic_overview->horizontalHeaderItem(2)->setIcon(QIcon::fromTheme("go-up"));
+			topic_overview->horizontalHeaderItem(3)->setIcon(QIcon::fromTheme("go-down"));
+			topic_overview->horizontalHeaderItem(4)->setIcon(QIcon::fromTheme("media-playlist-repeat"));
+			topic_overview->horizontalHeaderItem(5)->setIcon(QIcon::fromTheme("user-available"));
 			splitter->addWidget(topic_overview);
-			sub_pager->addTab(topic_overview, "Overview");
+			sub_pager->addTab(topic_overview, QIcon::fromTheme("user-desktop"), "Overview");
 			
 			topic_dump_stack = new QStackedWidget();
 			splitter->addWidget(topic_dump_stack);
-			sub_pager->addTab(topic_dump_stack, "Sample View");
+			sub_pager->addTab(topic_dump_stack, QIcon::fromTheme("modem"), "Sample View");
 			
 			topic_pubsub_stack = new QStackedWidget();
 			splitter->addWidget(topic_pubsub_stack);
-			sub_pager->addTab(topic_pubsub_stack, "Publishers / Subscribers");
+			sub_pager->addTab(topic_pubsub_stack, QIcon::fromTheme("network-transmit-receive"), "Publishers / Subscribers");
 				
 			splitter->addWidget(sub_pager);
 			QList<int> sizes;
 			sizes << 300 << 900;
 			splitter->setSizes(sizes);
 			
-			pager->addTab(splitter, "Topics");
+			pager->addTab(splitter, QIcon::fromTheme("applications-internet"), "Topics");
 		}
 		vbox->addWidget(pager);
 		
@@ -327,6 +335,12 @@ protected:
 			topic.subscribers->sortByColumn(0, Qt::AscendingOrder);
 			topic.subscribers->update();
 			
+			if(sample.time - info.last_time > topic_timeout) {
+				topic.tree_item->setIcon(0, QIcon::fromTheme("user-offline"));
+			} else {
+				topic.tree_item->setIcon(0, QIcon::fromTheme("user-available"));
+			}
+			
 			row++;
 		}
 		resize_table(topic_overview);
@@ -349,6 +363,7 @@ protected:
 		buf.flip();
 		
 		QTreeWidgetItem* item = new QTreeWidgetItem(QStringList(QString("Sample")));
+		item->setIcon(0, QIcon::fromTheme("folder"));
 		vnl::io::TypeInput in(&buf);
 		dump_sample(in, item, 0);
 		current_topic->dump_tree->addTopLevelItem(item);
@@ -364,7 +379,7 @@ protected:
 		uint32_t hash = 0;
 		switch(id) {
 		case VNL_IO_BOOL: {
-			parent->setData(0, Qt::DisplayRole, parent->data(0, Qt::DisplayRole).toString() + ":  " + (size == VNL_IO_TRUE ? "true" : "false"));
+			parent->setData(0, Qt::DisplayRole, parent->data(0, Qt::DisplayRole).toString() + ":    " + (size == VNL_IO_TRUE ? "true" : "false"));
 			break;
 		}
 		case VNL_IO_INTEGER: {
@@ -377,27 +392,27 @@ protected:
 						symbol = sym.to_string().c_str();
 					}
 				}
-				parent->setData(0, Qt::DisplayRole, parent->data(0, Qt::DisplayRole).toString() + ":  " + symbol);
+				parent->setData(0, Qt::DisplayRole, parent->data(0, Qt::DisplayRole).toString() + ":    " + symbol);
 			} else {
-				parent->setData(0, Qt::DisplayRole, parent->data(0, Qt::DisplayRole).toString() + ":  " + QString::number(value));
+				parent->setData(0, Qt::DisplayRole, parent->data(0, Qt::DisplayRole).toString() + ":    " + QString::number(value));
 			}
 			break;
 		}
 		case VNL_IO_REAL: {
 			double value;
 			in.readValue(value, id, size);
-			parent->setData(0, Qt::DisplayRole, parent->data(0, Qt::DisplayRole).toString() + ":  " + QString::number(value));
+			parent->setData(0, Qt::DisplayRole, parent->data(0, Qt::DisplayRole).toString() + ":    " + QString::number(value));
 			break;
 		}
 		case VNL_IO_BINARY: {
 			in.skip(id, size);
-			parent->setData(0, Qt::DisplayRole, parent->data(0, Qt::DisplayRole).toString() + ":  Binary of " + QString::number(size) + " bytes");
+			parent->setData(0, Qt::DisplayRole, parent->data(0, Qt::DisplayRole).toString() + ":    Binary of " + QString::number(size) + " bytes");
 			break;
 		}
 		case VNL_IO_STRING: {
 			vnl::String value;
 			in.readString(value, size);
-			parent->setData(0, Qt::DisplayRole, parent->data(0, Qt::DisplayRole).toString() + ":  \"" + value.to_string().c_str() + "\"");
+			parent->setData(0, Qt::DisplayRole, parent->data(0, Qt::DisplayRole).toString() + ":    \"" + value.to_string().c_str() + "\"");
 			break;
 		}
 		case VNL_IO_ARRAY: {
@@ -514,6 +529,7 @@ private slots:
 						set_cell_data(module->config_table, row, 1, it.value());
 						row++;
 					}
+					resize_table(module->config_table);
 				}
 			}
 		}
@@ -555,6 +571,7 @@ private slots:
 		}
 		for(module_t& module : modules) {
 			module.is_running = false;
+			module.tree_item->setIcon(0, QIcon::fromTheme("user-offline"));
 		}
 		vnl::Array<vnl::Instance> objects;
 		try {
@@ -564,7 +581,13 @@ private slots:
 		}
 		for(vnl::Instance& inst : objects) {
 			module_t& module = get_module(inst);
+			module.instance = inst;
 			module.is_running = true;
+			if(module.instance.is_alive) {
+				module.tree_item->setIcon(0, QIcon::fromTheme("user-available"));
+			} else {
+				module.tree_item->setIcon(0, QIcon::fromTheme("user-away"));
+			}
 		}
 	}
 	
@@ -602,10 +625,12 @@ private:
 			module_log_stack->addWidget(module->log_view);
 			
 			module->config_table = new QTableWidget();
-			module->config_table->setColumnCount(3);
+			module->config_table->setColumnCount(2);
 			module->config_table->verticalHeader()->hide();
 			module->config_table->setSelectionMode(QAbstractItemView::NoSelection);
-			module->config_table->setHorizontalHeaderLabels(QStringList() << "Name" << "Value" << "Input");
+			module->config_table->setHorizontalHeaderLabels(QStringList() << "Name" << "Value");
+			module->config_table->horizontalHeaderItem(0)->setIcon(QIcon::fromTheme("text-x-generic"));
+			module->config_table->horizontalHeaderItem(1)->setIcon(QIcon::fromTheme("text-x-generic"));
 			module_config_stack->addWidget(module->config_table);
 			
 			QString domain = inst.domain.to_string().c_str();
@@ -622,6 +647,7 @@ private:
 			if(!parent) {
 				parent = new QTreeWidgetItem();
 				parent->setData(0, Qt::DisplayRole, domain);
+				parent->setIcon(0, QIcon::fromTheme("folder"));
 				module_tree->addTopLevelItem(parent);
 				parent->setExpanded(true);
 			}
@@ -676,6 +702,9 @@ private:
 		topic.publishers->verticalHeader()->hide();
 		topic.publishers->setSelectionMode(QAbstractItemView::NoSelection);
 		topic.publishers->setHorizontalHeaderLabels(QStringList() << "Domain" << "Topic" << "Sent");
+		topic.publishers->horizontalHeaderItem(0)->setIcon(QIcon::fromTheme("folder"));
+		topic.publishers->horizontalHeaderItem(1)->setIcon(QIcon::fromTheme("text-x-generic"));
+		topic.publishers->horizontalHeaderItem(2)->setIcon(QIcon::fromTheme("go-up"));
 		topic.pubsub_widget->addWidget(topic.publishers);
 		
 		topic.subscribers = new QTableWidget();
@@ -683,6 +712,9 @@ private:
 		topic.subscribers->verticalHeader()->hide();
 		topic.subscribers->setSelectionMode(QAbstractItemView::NoSelection);
 		topic.subscribers->setHorizontalHeaderLabels(QStringList() << "Domain" << "Topic" << "Received");
+		topic.subscribers->horizontalHeaderItem(0)->setIcon(QIcon::fromTheme("folder"));
+		topic.subscribers->horizontalHeaderItem(1)->setIcon(QIcon::fromTheme("text-x-generic"));
+		topic.subscribers->horizontalHeaderItem(2)->setIcon(QIcon::fromTheme("go-down"));
 		topic.pubsub_widget->addWidget(topic.subscribers);
 		topic_pubsub_stack->addWidget(topic.pubsub_widget);
 		
@@ -700,6 +732,7 @@ private:
 		if(!parent) {
 			parent = new QTreeWidgetItem();
 			parent->setData(0, Qt::DisplayRole, domain);
+			parent->setIcon(0, QIcon::fromTheme("folder"));
 			topic_tree->addTopLevelItem(parent);
 			parent->setExpanded(true);
 		}

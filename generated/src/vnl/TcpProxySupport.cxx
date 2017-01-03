@@ -14,10 +14,8 @@ int TcpProxyBase::get_field_index(vnl::Hash32 _hash) const {
 		case 0x482df535: return 0;
 		case 0x604b2647: return 1;
 		case 0xd26001ae: return 2;
-		case 0x279e615d: return 3;
-		case 0x55f7671e: return 4;
-		case 0x1f5839d4: return 5;
-		case 0x5e24337a: return 6;
+		case 0x55f7671e: return 3;
+		case 0x1f5839d4: return 4;
 		default: return -1;
 	}
 }
@@ -27,10 +25,8 @@ const char* TcpProxyBase::get_field_name(int _index) const {
 		case 0: return "vnl_log_level";
 		case 1: return "vnl_msg_timeout";
 		case 2: return "vnl_heartbeat_interval";
-		case 3: return "send_timeout";
-		case 4: return "error_interval";
-		case 5: return "are_connected";
-		case 6: return "num_drop";
+		case 3: return "error_interval";
+		case 4: return "are_connected";
 		default: return 0;
 	}
 }
@@ -40,10 +36,8 @@ void TcpProxyBase::get_field(int _index, vnl::String& _str) const {
 		case 0: vnl::to_string(_str, vnl_log_level); break;
 		case 1: vnl::to_string(_str, vnl_msg_timeout); break;
 		case 2: vnl::to_string(_str, vnl_heartbeat_interval); break;
-		case 3: vnl::to_string(_str, send_timeout); break;
-		case 4: vnl::to_string(_str, error_interval); break;
-		case 5: vnl::to_string(_str, are_connected); break;
-		case 6: vnl::to_string(_str, num_drop); break;
+		case 3: vnl::to_string(_str, error_interval); break;
+		case 4: vnl::to_string(_str, are_connected); break;
 	}
 }
 
@@ -52,10 +46,8 @@ void TcpProxyBase::set_field(int _index, const vnl::String& _str) {
 		case 0: vnl::from_string(_str, vnl_log_level); break;
 		case 1: vnl::from_string(_str, vnl_msg_timeout); break;
 		case 2: vnl::from_string(_str, vnl_heartbeat_interval); break;
-		case 3: vnl::from_string(_str, send_timeout); break;
-		case 4: vnl::from_string(_str, error_interval); break;
-		case 5: vnl::from_string(_str, are_connected); break;
-		case 6: vnl::from_string(_str, num_drop); break;
+		case 3: vnl::from_string(_str, error_interval); break;
+		case 4: vnl::from_string(_str, are_connected); break;
 	}
 }
 
@@ -64,10 +56,8 @@ void TcpProxyBase::get_field(int _index, vnl::io::TypeOutput& _out) const {
 		case 0: vnl::write(_out, vnl_log_level); break;
 		case 1: vnl::write(_out, vnl_msg_timeout); break;
 		case 2: vnl::write(_out, vnl_heartbeat_interval); break;
-		case 3: vnl::write(_out, send_timeout); break;
-		case 4: vnl::write(_out, error_interval); break;
-		case 5: vnl::write(_out, are_connected); break;
-		case 6: vnl::write(_out, num_drop); break;
+		case 3: vnl::write(_out, error_interval); break;
+		case 4: vnl::write(_out, are_connected); break;
 		default: _out.putNull();
 	}
 }
@@ -77,10 +67,8 @@ void TcpProxyBase::set_field(int _index, vnl::io::TypeInput& _in) {
 		case 0: vnl::read(_in, vnl_log_level); break;
 		case 1: vnl::read(_in, vnl_msg_timeout); break;
 		case 2: vnl::read(_in, vnl_heartbeat_interval); break;
-		case 3: vnl::read(_in, send_timeout); break;
-		case 4: vnl::read(_in, error_interval); break;
-		case 5: vnl::read(_in, are_connected); break;
-		case 6: vnl::read(_in, num_drop); break;
+		case 3: vnl::read(_in, error_interval); break;
+		case 4: vnl::read(_in, are_connected); break;
 	}
 }
 
