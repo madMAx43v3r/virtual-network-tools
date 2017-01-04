@@ -19,6 +19,8 @@ int TcpProxyBase::get_field_index(vnl::Hash32 _hash) const {
 		case 0x7d63bf0a: return 5;
 		case 0xce66f455: return 6;
 		case 0x60ca0d4f: return 7;
+		case 0x668ecf71: return 8;
+		case 0x9112770d: return 9;
 		default: return -1;
 	}
 }
@@ -33,6 +35,8 @@ const char* TcpProxyBase::get_field_name(int _index) const {
 		case 5: return "num_read";
 		case 6: return "num_write";
 		case 7: return "num_flush";
+		case 8: return "num_bytes_read";
+		case 9: return "num_bytes_write";
 		default: return 0;
 	}
 }
@@ -47,6 +51,8 @@ void TcpProxyBase::get_field(int _index, vnl::String& _str) const {
 		case 5: vnl::to_string(_str, num_read); break;
 		case 6: vnl::to_string(_str, num_write); break;
 		case 7: vnl::to_string(_str, num_flush); break;
+		case 8: vnl::to_string(_str, num_bytes_read); break;
+		case 9: vnl::to_string(_str, num_bytes_write); break;
 	}
 }
 
@@ -60,6 +66,8 @@ void TcpProxyBase::set_field(int _index, const vnl::String& _str) {
 		case 5: vnl::from_string(_str, num_read); break;
 		case 6: vnl::from_string(_str, num_write); break;
 		case 7: vnl::from_string(_str, num_flush); break;
+		case 8: vnl::from_string(_str, num_bytes_read); break;
+		case 9: vnl::from_string(_str, num_bytes_write); break;
 	}
 }
 
@@ -73,6 +81,8 @@ void TcpProxyBase::get_field(int _index, vnl::io::TypeOutput& _out) const {
 		case 5: vnl::write(_out, num_read); break;
 		case 6: vnl::write(_out, num_write); break;
 		case 7: vnl::write(_out, num_flush); break;
+		case 8: vnl::write(_out, num_bytes_read); break;
+		case 9: vnl::write(_out, num_bytes_write); break;
 		default: _out.putNull();
 	}
 }
@@ -87,6 +97,8 @@ void TcpProxyBase::set_field(int _index, vnl::io::TypeInput& _in) {
 		case 5: vnl::read(_in, num_read); break;
 		case 6: vnl::read(_in, num_write); break;
 		case 7: vnl::read(_in, num_flush); break;
+		case 8: vnl::read(_in, num_bytes_read); break;
+		case 9: vnl::read(_in, num_bytes_write); break;
 	}
 }
 

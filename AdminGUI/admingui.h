@@ -535,24 +535,21 @@ protected:
 			type = type_info.find(hash);
 			/* no break */
 		case VNL_IO_STRUCT:
-			if(!type) {
+			if(type) {
+				parent->setData(0, Qt::DisplayRole, parent->data(0, Qt::DisplayRole).toString() + "  (" + type->name.to_string().c_str() + ")");
+			} else {
 				parent->setData(0, Qt::DisplayRole, parent->data(0, Qt::DisplayRole).toString() + "  (Class 0x" + QString::number(hash, 16) + ")");
-				if(hash) {
-					in.skip(id, size, hash);
-				} else {
-					in.skip(id, size);
-				}
-				return;
 			}
-			parent->setData(0, Qt::DisplayRole, parent->data(0, Qt::DisplayRole).toString() + "  (" + type->name.to_string().c_str() + ")");
 			for(int i = 0; i < size; ++i) {
 				uint32_t field_hash;
 				in.getHash(field_hash);
 				vnl::info::Field* field = 0;
-				for(vnl::info::Field& f : type->fields) {
-					if(f.hash == field_hash) {
-						field = &f;
-						break;
+				if(type) {
+					for(vnl::info::Field& f : type->fields) {
+						if(f.hash == field_hash) {
+							field = &f;
+							break;
+						}
 					}
 				}
 				QString line;

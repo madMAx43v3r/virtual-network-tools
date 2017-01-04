@@ -14,7 +14,7 @@ namespace vnl {
 class TcpProxyBase : public vnl::TcpUplink {
 public:
 	static const uint32_t VNI_HASH = 0x33de85dc;
-	static const uint32_t NUM_FIELDS = 8;
+	static const uint32_t NUM_FIELDS = 10;
 	
 	typedef vnl::TcpUplink Super;
 	
@@ -53,6 +53,8 @@ protected:
 		_writer.set_num_read(num_read);
 		_writer.set_num_write(num_write);
 		_writer.set_num_flush(num_flush);
+		_writer.set_num_bytes_read(num_bytes_read);
+		_writer.set_num_bytes_write(num_bytes_write);
 	}
 	
 };

@@ -18,7 +18,7 @@ namespace vnl {
 class TcpUplinkBase : public vnl::Object {
 public:
 	static const uint32_t VNI_HASH = 0xb681b3d8;
-	static const uint32_t NUM_FIELDS = 8;
+	static const uint32_t NUM_FIELDS = 10;
 	
 	typedef vnl::Object Super;
 	
@@ -28,6 +28,8 @@ public:
 	int64_t num_read;
 	int64_t num_write;
 	int64_t num_flush;
+	int64_t num_bytes_read;
+	int64_t num_bytes_write;
 	
 	TcpUplinkBase(const vnl::String& domain_, const vnl::String& topic_)
 		:	vnl::Object::Object(domain_, topic_)
@@ -37,11 +39,15 @@ public:
 		num_read = 0;
 		num_write = 0;
 		num_flush = 0;
+		num_bytes_read = 0;
+		num_bytes_write = 0;
 		vnl::read_config(domain_, topic_, "error_interval", error_interval);
 		vnl::read_config(domain_, topic_, "are_connected", are_connected);
 		vnl::read_config(domain_, topic_, "num_read", num_read);
 		vnl::read_config(domain_, topic_, "num_write", num_write);
 		vnl::read_config(domain_, topic_, "num_flush", num_flush);
+		vnl::read_config(domain_, topic_, "num_bytes_read", num_bytes_read);
+		vnl::read_config(domain_, topic_, "num_bytes_write", num_bytes_write);
 	}
 	
 	virtual uint32_t get_vni_hash() const { return VNI_HASH; }
@@ -85,6 +91,8 @@ protected:
 		_writer.set_num_read(num_read);
 		_writer.set_num_write(num_write);
 		_writer.set_num_flush(num_flush);
+		_writer.set_num_bytes_read(num_bytes_read);
+		_writer.set_num_bytes_write(num_bytes_write);
 	}
 	
 };

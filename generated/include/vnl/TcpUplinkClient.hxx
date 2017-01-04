@@ -94,6 +94,16 @@ public:
 			_out.putHash(0x60ca0d4f);
 			vnl::write(_out, _value);
 		}
+		void set_num_bytes_read(int64_t _value) {
+			_out.putEntry(VNL_IO_CALL, 1);
+			_out.putHash(0x668ecf71);
+			vnl::write(_out, _value);
+		}
+		void set_num_bytes_write(int64_t _value) {
+			_out.putEntry(VNL_IO_CALL, 1);
+			_out.putHash(0x9112770d);
+			vnl::write(_out, _value);
+		}
 		void get_error_interval() {
 			_out.putEntry(VNL_IO_CONST_CALL, 0);
 			_out.putHash(0x55f7671e);
@@ -113,6 +123,14 @@ public:
 		void get_num_flush() {
 			_out.putEntry(VNL_IO_CONST_CALL, 0);
 			_out.putHash(0x60ca0d4f);
+		}
+		void get_num_bytes_read() {
+			_out.putEntry(VNL_IO_CONST_CALL, 0);
+			_out.putHash(0x668ecf71);
+		}
+		void get_num_bytes_write() {
+			_out.putEntry(VNL_IO_CONST_CALL, 0);
+			_out.putHash(0x9112770d);
 		}
 	protected:
 		vnl::io::TypeOutput& _out;
@@ -305,6 +323,34 @@ public:
 		}
 	}
 	
+	void set_num_bytes_read(int64_t num_bytes_read) {
+		_buf.wrap(_data);
+		{
+			Writer _wr(_out);
+			_wr.set_num_bytes_read(num_bytes_read);
+		}
+		vnl::Packet* _pkt = _call(vnl::Frame::CALL);
+		if(_pkt) {
+			_pkt->ack();
+		} else {
+			throw vnl::IOException();
+		}
+	}
+	
+	void set_num_bytes_write(int64_t num_bytes_write) {
+		_buf.wrap(_data);
+		{
+			Writer _wr(_out);
+			_wr.set_num_bytes_write(num_bytes_write);
+		}
+		vnl::Packet* _pkt = _call(vnl::Frame::CALL);
+		if(_pkt) {
+			_pkt->ack();
+		} else {
+			throw vnl::IOException();
+		}
+	}
+	
 	int32_t get_error_interval() {
 		_buf.wrap(_data);
 		{
@@ -378,6 +424,40 @@ public:
 		{
 			Writer _wr(_out);
 			_wr.get_num_flush();
+		}
+		vnl::Packet* _pkt = _call(vnl::Frame::CONST_CALL);
+		int64_t _result;
+		if(_pkt) {
+			vnl::read(_in, _result);
+			_pkt->ack();
+		} else {
+			throw vnl::IOException();
+		}
+		return _result;
+	}
+	
+	int64_t get_num_bytes_read() {
+		_buf.wrap(_data);
+		{
+			Writer _wr(_out);
+			_wr.get_num_bytes_read();
+		}
+		vnl::Packet* _pkt = _call(vnl::Frame::CONST_CALL);
+		int64_t _result;
+		if(_pkt) {
+			vnl::read(_in, _result);
+			_pkt->ack();
+		} else {
+			throw vnl::IOException();
+		}
+		return _result;
+	}
+	
+	int64_t get_num_bytes_write() {
+		_buf.wrap(_data);
+		{
+			Writer _wr(_out);
+			_wr.get_num_bytes_write();
 		}
 		vnl::Packet* _pkt = _call(vnl::Frame::CONST_CALL);
 		int64_t _result;
