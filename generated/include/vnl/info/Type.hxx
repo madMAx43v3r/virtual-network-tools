@@ -10,6 +10,7 @@
 #include <vnl/Value.hxx>
 #include <vnl/info/Field.hxx>
 #include <vnl/info/Method.hxx>
+#include <vnl/info/TypeName.hxx>
 
 #include <vnl/Type.hxx>
 
@@ -20,11 +21,12 @@ namespace info {
 class Type : public vnl::Value {
 public:
 	static const uint32_t VNI_HASH = 0xbde99c40;
-	static const uint32_t NUM_FIELDS = 10;
+	static const uint32_t NUM_FIELDS = 11;
 	
 	
 	vnl::Hash32 hash;
 	vnl::String name;
+	vnl::info::TypeName super;
 	bool is_struct;
 	bool is_class;
 	bool is_enum;

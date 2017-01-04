@@ -323,6 +323,7 @@ protected:
 		for(module_t& entry : modules) {
 			out << "  \"" << entry.instance.domain << "." << entry.instance.topic << "\" [label=\"" << entry.instance.topic << "\", style=filled, fillcolor=lightgrey, shape=box];" << std::endl;
 		}
+		out << std::endl;
 		
 		int row = 0;
 		topic_overview->setRowCount(sample.topics.size());
@@ -408,7 +409,7 @@ protected:
 		QTreeWidgetItem* item = new QTreeWidgetItem(QStringList(QString("Sample")));
 		item->setIcon(0, QIcon::fromTheme("folder"));
 		vnl::io::TypeInput in(&buf);
-		dump_sample(in, item, 0);
+		dump_sample(in, item);
 		current_topic->dump_tree->addTopLevelItem(item);
 		current_topic->dump_tree->update();
 		
@@ -416,7 +417,7 @@ protected:
 		last_topic_dump = now;
 	}
 	
-	void dump_sample(vnl::io::TypeInput& in, QTreeWidgetItem* parent, vnl::info::Type* type) {
+	void dump_sample(vnl::io::TypeInput& in, QTreeWidgetItem* parent, vnl::info::Type* type = 0, vnl::info::TypeName* type_name = 0) {
 		int size = 0;
 		int id = in.getEntry(size);
 		uint32_t hash = 0;
@@ -459,17 +460,39 @@ protected:
 			break;
 		}
 		case VNL_IO_ARRAY: {
-			parent->setData(0, Qt::DisplayRole, parent->data(0, Qt::DisplayRole).toString() + "  (Array of size " + QString::number(size) + ")");
-			for(int i = 0; i < size; ++i) {
-				if(i < max_array_size) {
-					QTreeWidgetItem* item = new QTreeWidgetItem(QStringList(QString("[") + QString::number(i) + "]"));
-					dump_sample(in, item, 0);
-					parent->addChild(item);
-				} else {
-					if(i == max_array_size) {
-						parent->addChild(new QTreeWidgetItem(QStringList(QString("..."))));
+			vnl::info::Type* type_A = (type_name && type_name->generics.size() >= 1) ? type_info.find(type_name->generics[0]) : 0;
+			vnl::info::Type* type_B = (type_name && type_name->generics.size() >= 2) ? type_info.find(type_name->generics[1]) : 0;
+			if(type_name && type_name->name == "vnl.Map" && size % 2 == 0) {
+				parent->setData(0, Qt::DisplayRole, parent->data(0, Qt::DisplayRole).toString() + "  (Map of size " + QString::number(size/2) + ")");
+				for(int i = 0; i < size; i += 2) {
+					if(i < max_array_size) {
+						QTreeWidgetItem* item = new QTreeWidgetItem(QStringList(QString("[") + QString::number(i/2) + "]  Key"));
+						dump_sample(in, item, type_A);
+						parent->addChild(item);
+						item = new QTreeWidgetItem(QStringList(QString("[") + QString::number(i/2) + "]  Value"));
+						dump_sample(in, item, type_B);
+						parent->addChild(item);
+					} else {
+						if(i == max_array_size) {
+							parent->addChild(new QTreeWidgetItem(QStringList(QString("..."))));
+						}
+						in.skip();
+						in.skip();
 					}
-					in.skip();
+				}
+			} else {
+				parent->setData(0, Qt::DisplayRole, parent->data(0, Qt::DisplayRole).toString() + "  (Array of size " + QString::number(size) + ")");
+				for(int i = 0; i < size; ++i) {
+					if(i < max_array_size) {
+						QTreeWidgetItem* item = new QTreeWidgetItem(QStringList(QString("[") + QString::number(i) + "]"));
+						dump_sample(in, item, type_A);
+						parent->addChild(item);
+					} else {
+						if(i == max_array_size) {
+							parent->addChild(new QTreeWidgetItem(QStringList(QString("..."))));
+						}
+						in.skip();
+					}
 				}
 			}
 			break;
@@ -501,14 +524,16 @@ protected:
 				}
 				QString line;
 				vnl::info::Type* field_type = 0;
+				vnl::info::TypeName* field_type_name = 0;
 				if(field) {
 					line = field->name.to_string().c_str();
-					field_type = type_info.find(field->type);
+					field_type = type_info.find(field->type.hash);
+					field_type_name = &field->type;
 				} else {
 					line = "0x" + QString::number(field_hash, 16);
 				}
 				QTreeWidgetItem* item = new QTreeWidgetItem(QStringList(line));
-				dump_sample(in, item, field_type);
+				dump_sample(in, item, field_type, field_type_name);
 				parent->addChild(item);
 			}
 			break;

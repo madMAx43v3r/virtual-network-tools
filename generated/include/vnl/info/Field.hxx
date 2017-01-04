@@ -7,6 +7,7 @@
 #include <vnl/Hash32.h>
 #include <vnl/String.h>
 #include <vnl/Value.hxx>
+#include <vnl/info/TypeName.hxx>
 
 #include <vnl/Type.hxx>
 
@@ -23,7 +24,7 @@ public:
 	vnl::Hash32 hash;
 	vnl::String name;
 	vnl::String value;
-	vnl::String type;
+	vnl::info::TypeName type;
 	
 	Field() {
 	}

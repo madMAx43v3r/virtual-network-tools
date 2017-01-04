@@ -9,6 +9,7 @@
 #include <vnl/String.h>
 #include <vnl/Value.hxx>
 #include <vnl/info/Parameter.hxx>
+#include <vnl/info/TypeName.hxx>
 
 #include <vnl/Type.hxx>
 
@@ -19,15 +20,17 @@ namespace info {
 class Method : public vnl::Value {
 public:
 	static const uint32_t VNI_HASH = 0x1b510753;
-	static const uint32_t NUM_FIELDS = 4;
+	static const uint32_t NUM_FIELDS = 5;
 	
 	
 	vnl::Hash32 hash;
 	vnl::String name;
-	vnl::String type;
+	vnl::info::TypeName type;
+	bool is_const;
 	vnl::List<vnl::info::Parameter > params;
 	
 	Method() {
+		is_const = 0;
 	}
 	
 	static Method* create();
