@@ -332,6 +332,9 @@ protected:
 		out << std::endl;
 		for(module_t& module : modules) {
 			for(auto& client : module.info.clients) {
+				if(client.first == object_client.get_mac()) {
+					continue;
+				}
 				module_t* source = find_module(client.first);
 				if(!source) {
 					source = find_module(client.second.proxy);
