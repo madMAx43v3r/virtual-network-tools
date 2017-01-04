@@ -5,11 +5,13 @@ object AdminGUI {
 	String target_host = "localhost";
 	int target_port = 8916;
 	
-	int interval = 1000;				// update interval in ms
+	int update_interval = 1000;				// update interval in ms
 	
-	int max_topic_interval = 200000;	// [us]
-	int topic_timeout = 3000000;		// [us]
+	int sample_window = 1000000;	// [us]
+	int max_sample_rate = 5;		// [1/s]
 	int max_array_size = 100;
+	
+	int topic_timeout = 3000000;		// [us]
 	
 	void handle(vnl.LogMsg sample);
 	void handle(vnl.Heartbeat sample);

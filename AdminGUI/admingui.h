@@ -115,7 +115,7 @@ protected:
 		{
 			QTimer* timer = new QTimer(this);
 			connect(timer, SIGNAL(timeout()), this, SLOT(update_view()));
-			timer->start(interval);
+			timer->start(update_interval);
 		}
 		
 		QVBoxLayout* vbox = new QVBoxLayout();
@@ -247,7 +247,7 @@ protected:
 	}
 	
 	void handle(const vnl::LogMsg& sample) {
-		module_t* module = get_module(sample.src_mac);
+		module_t* module = find_module(sample.src_mac);
 		if(module) {
 			QString text;
 			switch(sample.level) {
@@ -265,7 +265,7 @@ protected:
 	}
 	
 	void handle(const vnl::Heartbeat& sample) {
-		module_t* module = get_module(sample.src_mac);
+		module_t* module = find_module(sample.src_mac);
 		if(module) {
 			module->info = sample.info;
 			for(auto& entry : sample.info.input_channels) {
@@ -332,9 +332,9 @@ protected:
 		out << std::endl;
 		for(module_t& module : modules) {
 			for(auto& client : module.info.clients) {
-				module_t* source = get_module(client.first);
+				module_t* source = find_module(client.first);
 				if(!source) {
-					source = get_module(client.second.proxy);
+					source = find_module(client.second.proxy);
 				}
 				if(source) {
 					out << "  \"" << source->instance.domain << "." << source->instance.topic << "\" -> \"" << module.instance.domain << "." << module.instance.topic << "\" [color=green3]" << std::endl;
@@ -356,7 +356,7 @@ protected:
 			
 			int r = 0;
 			for(auto& entry : info.publishers) {
-				module_t* module = get_module(entry.first);
+				module_t* module = find_module(entry.first);
 				if(module && module->is_running) {
 					if(topic.topic.domain != remote.domain_name) {
 						out << "  \"" << topic.topic.domain << "." << topic.topic.name << "\" -> \"" << module->instance.domain << "." << module->instance.topic << "\" [color=blue3]" << std::endl;
@@ -368,14 +368,14 @@ protected:
 				}
 			}
 			topic.publishers->setRowCount(r);
-			resize_table(topic.publishers);
 			topic.publishers->sortByColumn(1, Qt::AscendingOrder);
 			topic.publishers->sortByColumn(0, Qt::AscendingOrder);
+			resize_table(topic.publishers);
 			topic.publishers->update();
 			
 			r = 0;
 			for(auto& entry : info.subscribers) {
-				module_t* module = get_module(entry.first);
+				module_t* module = find_module(entry.first);
 				if(module && module->is_running) {
 					if(topic.topic.domain != remote.domain_name) {
 						out << "  \"" << module->instance.domain << "." << module->instance.topic << "\" -> \"" << topic.topic.domain << "." << topic.topic.name << "\" [color=red3]" << std::endl;
@@ -387,9 +387,9 @@ protected:
 				}
 			}
 			topic.subscribers->setRowCount(r);
-			resize_table(topic.subscribers);
 			topic.subscribers->sortByColumn(1, Qt::AscendingOrder);
 			topic.subscribers->sortByColumn(0, Qt::AscendingOrder);
+			resize_table(topic.subscribers);
 			topic.subscribers->update();
 			
 			if(sample.time - info.last_time > topic_timeout) {
@@ -402,9 +402,9 @@ protected:
 			row++;
 		}
 		
-		resize_table(topic_overview);
 		topic_overview->sortByColumn(1, Qt::AscendingOrder);
 		topic_overview->sortByColumn(0, Qt::AscendingOrder);
+		resize_table(topic_overview);
 		topic_overview->update();
 		
 		out << "}" << std::endl;
@@ -413,7 +413,13 @@ protected:
 	
 	void dump_sample(vnl::Sample* sample) {
 		int64_t now = vnl::currentTimeMicros();
-		if(now - last_topic_dump < max_topic_interval) {
+		if(!current_sample_window) {
+			current_sample_window = now;
+		} else if(now - current_sample_window > sample_window) {
+			current_sample_window += sample_window;
+			current_sample_count = 0;
+		}
+		if(current_sample_count >= max_sample_rate * sample_window/1e6) {
 			return;
 		}
 		
@@ -430,9 +436,8 @@ protected:
 		dump_sample(in, item);
 		current_topic->dump_tree->addTopLevelItem(item);
 		current_topic->dump_tree->update();
-		
 		data->free_all();
-		last_topic_dump = now;
+		current_sample_count++;
 	}
 	
 	void dump_sample(vnl::io::TypeInput& in, QTreeWidgetItem* parent, vnl::info::Type* type = 0, vnl::info::TypeName* type_name = 0) {
@@ -593,7 +598,7 @@ private slots:
 		QTreeWidgetItem* item = selection.first();
 		if(item && item->parent()) {
 			QVariant mac = item->data(1, Qt::ItemDataRole::UserRole);
-			module_t* module = get_module(mac.toULongLong());
+			module_t* module = find_module(mac.toULongLong());
 			if(module) {
 				module_log_stack->setCurrentWidget(module->log_view);
 				module_log_stack->update();
@@ -693,9 +698,9 @@ private slots:
 			set_cell_data(module_overview, row, 5, QString::number(double(module.info.time-module.info.spawn_time)/module.info.num_cycles/1e3, 103, 4) + " ms");
 			row++;
 		}
-		resize_table(module_overview);
 		module_overview->sortByColumn(1, Qt::AscendingOrder);
 		module_overview->sortByColumn(0, Qt::AscendingOrder);
+		resize_table(module_overview);
 		module_overview->update();
 	}
 	
@@ -721,8 +726,25 @@ private slots:
 	}
 	
 private:
+	module_t* find_module(uint64_t src_mac) {
+		for(module_t& module : modules) {
+			if(module.instance.src_mac == src_mac) {
+				return &module;
+			}
+		}
+		module_t** p_module = input_channel_map.find(src_mac);
+		if(p_module) {
+			return *p_module;
+		}
+		p_module = output_channel_map.find(src_mac);
+		if(p_module) {
+			return *p_module;
+		}
+		return 0;
+	}
+	
 	module_t& get_module(const vnl::Instance& inst) {
-		module_t* module = get_module(inst.src_mac);
+		module_t* module = find_module(inst.src_mac);
 		if(!module) {
 			module = &modules.push_back();
 			module->instance = inst;
@@ -769,23 +791,6 @@ private:
 			module_tree->update();
 		}
 		return *module;
-	}
-	
-	module_t* get_module(uint64_t src_mac) {
-		for(module_t& module : modules) {
-			if(module.instance.src_mac == src_mac) {
-				return &module;
-			}
-		}
-		module_t** p_module = input_channel_map.find(src_mac);
-		if(p_module) {
-			return *p_module;
-		}
-		p_module = output_channel_map.find(src_mac);
-		if(p_module) {
-			return *p_module;
-		}
-		return 0;
 	}
 	
 	topic_t* find_topic(const vnl::Topic& top) {
@@ -942,7 +947,8 @@ private:
 	
 	bool do_capture = true;
 	topic_t* current_topic = 0;
-	int64_t last_topic_dump = 0;
+	int64_t current_sample_window = 0;
+	int current_sample_count = 0;
 	
 };
 

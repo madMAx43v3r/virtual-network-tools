@@ -44,24 +44,29 @@ public:
 			_out.putHash(0x579173b0);
 			vnl::write(_out, _value);
 		}
-		void set_interval(int32_t _value) {
+		void set_update_interval(int32_t _value) {
 			_out.putEntry(VNL_IO_CALL, 1);
-			_out.putHash(0xd129c896);
+			_out.putHash(0xd04a8e2b);
 			vnl::write(_out, _value);
 		}
-		void set_max_topic_interval(int32_t _value) {
+		void set_sample_window(int32_t _value) {
 			_out.putEntry(VNL_IO_CALL, 1);
-			_out.putHash(0xc526602e);
+			_out.putHash(0xae47992f);
 			vnl::write(_out, _value);
 		}
-		void set_topic_timeout(int32_t _value) {
+		void set_max_sample_rate(int32_t _value) {
 			_out.putEntry(VNL_IO_CALL, 1);
-			_out.putHash(0x817bada2);
+			_out.putHash(0xf6f2233d);
 			vnl::write(_out, _value);
 		}
 		void set_max_array_size(int32_t _value) {
 			_out.putEntry(VNL_IO_CALL, 1);
 			_out.putHash(0xc7e1713a);
+			vnl::write(_out, _value);
+		}
+		void set_topic_timeout(int32_t _value) {
+			_out.putEntry(VNL_IO_CALL, 1);
+			_out.putHash(0x817bada2);
 			vnl::write(_out, _value);
 		}
 		void get_target_host() {
@@ -72,21 +77,25 @@ public:
 			_out.putEntry(VNL_IO_CONST_CALL, 0);
 			_out.putHash(0x579173b0);
 		}
-		void get_interval() {
+		void get_update_interval() {
 			_out.putEntry(VNL_IO_CONST_CALL, 0);
-			_out.putHash(0xd129c896);
+			_out.putHash(0xd04a8e2b);
 		}
-		void get_max_topic_interval() {
+		void get_sample_window() {
 			_out.putEntry(VNL_IO_CONST_CALL, 0);
-			_out.putHash(0xc526602e);
+			_out.putHash(0xae47992f);
 		}
-		void get_topic_timeout() {
+		void get_max_sample_rate() {
 			_out.putEntry(VNL_IO_CONST_CALL, 0);
-			_out.putHash(0x817bada2);
+			_out.putHash(0xf6f2233d);
 		}
 		void get_max_array_size() {
 			_out.putEntry(VNL_IO_CONST_CALL, 0);
 			_out.putHash(0xc7e1713a);
+		}
+		void get_topic_timeout() {
+			_out.putEntry(VNL_IO_CONST_CALL, 0);
+			_out.putHash(0x817bada2);
 		}
 	protected:
 		vnl::io::TypeOutput& _out;
@@ -136,11 +145,11 @@ public:
 		}
 	}
 	
-	void set_interval(int32_t interval) {
+	void set_update_interval(int32_t update_interval) {
 		_buf.wrap(_data);
 		{
 			Writer _wr(_out);
-			_wr.set_interval(interval);
+			_wr.set_update_interval(update_interval);
 		}
 		vnl::Packet* _pkt = _call(vnl::Frame::CALL);
 		if(_pkt) {
@@ -150,11 +159,11 @@ public:
 		}
 	}
 	
-	void set_max_topic_interval(int32_t max_topic_interval) {
+	void set_sample_window(int32_t sample_window) {
 		_buf.wrap(_data);
 		{
 			Writer _wr(_out);
-			_wr.set_max_topic_interval(max_topic_interval);
+			_wr.set_sample_window(sample_window);
 		}
 		vnl::Packet* _pkt = _call(vnl::Frame::CALL);
 		if(_pkt) {
@@ -164,11 +173,11 @@ public:
 		}
 	}
 	
-	void set_topic_timeout(int32_t topic_timeout) {
+	void set_max_sample_rate(int32_t max_sample_rate) {
 		_buf.wrap(_data);
 		{
 			Writer _wr(_out);
-			_wr.set_topic_timeout(topic_timeout);
+			_wr.set_max_sample_rate(max_sample_rate);
 		}
 		vnl::Packet* _pkt = _call(vnl::Frame::CALL);
 		if(_pkt) {
@@ -183,6 +192,20 @@ public:
 		{
 			Writer _wr(_out);
 			_wr.set_max_array_size(max_array_size);
+		}
+		vnl::Packet* _pkt = _call(vnl::Frame::CALL);
+		if(_pkt) {
+			_pkt->ack();
+		} else {
+			throw vnl::IOException();
+		}
+	}
+	
+	void set_topic_timeout(int32_t topic_timeout) {
+		_buf.wrap(_data);
+		{
+			Writer _wr(_out);
+			_wr.set_topic_timeout(topic_timeout);
 		}
 		vnl::Packet* _pkt = _call(vnl::Frame::CALL);
 		if(_pkt) {
@@ -226,11 +249,11 @@ public:
 		return _result;
 	}
 	
-	int32_t get_interval() {
+	int32_t get_update_interval() {
 		_buf.wrap(_data);
 		{
 			Writer _wr(_out);
-			_wr.get_interval();
+			_wr.get_update_interval();
 		}
 		vnl::Packet* _pkt = _call(vnl::Frame::CONST_CALL);
 		int32_t _result;
@@ -243,11 +266,11 @@ public:
 		return _result;
 	}
 	
-	int32_t get_max_topic_interval() {
+	int32_t get_sample_window() {
 		_buf.wrap(_data);
 		{
 			Writer _wr(_out);
-			_wr.get_max_topic_interval();
+			_wr.get_sample_window();
 		}
 		vnl::Packet* _pkt = _call(vnl::Frame::CONST_CALL);
 		int32_t _result;
@@ -260,11 +283,11 @@ public:
 		return _result;
 	}
 	
-	int32_t get_topic_timeout() {
+	int32_t get_max_sample_rate() {
 		_buf.wrap(_data);
 		{
 			Writer _wr(_out);
-			_wr.get_topic_timeout();
+			_wr.get_max_sample_rate();
 		}
 		vnl::Packet* _pkt = _call(vnl::Frame::CONST_CALL);
 		int32_t _result;
@@ -282,6 +305,23 @@ public:
 		{
 			Writer _wr(_out);
 			_wr.get_max_array_size();
+		}
+		vnl::Packet* _pkt = _call(vnl::Frame::CONST_CALL);
+		int32_t _result;
+		if(_pkt) {
+			vnl::read(_in, _result);
+			_pkt->ack();
+		} else {
+			throw vnl::IOException();
+		}
+		return _result;
+	}
+	
+	int32_t get_topic_timeout() {
+		_buf.wrap(_data);
+		{
+			Writer _wr(_out);
+			_wr.get_topic_timeout();
 		}
 		vnl::Packet* _pkt = _call(vnl::Frame::CONST_CALL);
 		int32_t _result;
