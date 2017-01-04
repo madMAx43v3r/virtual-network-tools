@@ -521,6 +521,13 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		info.super.name = "vnl.Value";
 		{
 			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x4fcb9162;
+			field.name = "proxy";
+			field.type.hash = 0x50f8702d;
+			field.type.name = "vnl.Hash64";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
 			field.hash = 0xe451aab2;
 			field.name = "num_requests";
 			field.type.hash = 0x19d39da3;

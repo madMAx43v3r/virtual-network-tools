@@ -26,6 +26,7 @@ void ClientInfo::destroy() {
 void ClientInfo::serialize(vnl::io::TypeOutput& _out) const {
 	_out.putEntry(VNL_IO_CLASS, NUM_FIELDS);
 	_out.putHash(VNI_HASH);
+	_out.putHash(0x4fcb9162); vnl::write(_out, proxy);
 	_out.putHash(0xe451aab2); vnl::write(_out, num_requests);
 	_out.putHash(0xb5a0f43c); vnl::write(_out, num_errors);
 }
@@ -35,6 +36,7 @@ void ClientInfo::deserialize(vnl::io::TypeInput& _in, int _size) {
 		uint32_t _hash = 0;
 		_in.getHash(_hash);
 		switch(_hash) {
+			case 0x4fcb9162: vnl::read(_in, proxy); break;
 			case 0xe451aab2: vnl::read(_in, num_requests); break;
 			case 0xb5a0f43c: vnl::read(_in, num_errors); break;
 			default: _in.skip();
@@ -44,46 +46,52 @@ void ClientInfo::deserialize(vnl::io::TypeInput& _in, int _size) {
 
 int ClientInfo::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
-		case 0xe451aab2: return 0;
-		case 0xb5a0f43c: return 1;
+		case 0x4fcb9162: return 0;
+		case 0xe451aab2: return 1;
+		case 0xb5a0f43c: return 2;
 		default: return -1;
 	}
 }
 
 const char* ClientInfo::get_field_name(int _index) const {
 	switch(_index) {
-		case 0: return "num_requests";
-		case 1: return "num_errors";
+		case 0: return "proxy";
+		case 1: return "num_requests";
+		case 2: return "num_errors";
 		default: return 0;
 	}
 }
 
 void ClientInfo::get_field(int _index, vnl::String& _str) const {
 	switch(_index) {
-		case 0: vnl::to_string(_str, num_requests); break;
-		case 1: vnl::to_string(_str, num_errors); break;
+		case 0: vnl::to_string(_str, proxy); break;
+		case 1: vnl::to_string(_str, num_requests); break;
+		case 2: vnl::to_string(_str, num_errors); break;
 	}
 }
 
 void ClientInfo::set_field(int _index, const vnl::String& _str) {
 	switch(_index) {
-		case 0: vnl::from_string(_str, num_requests); break;
-		case 1: vnl::from_string(_str, num_errors); break;
+		case 0: vnl::from_string(_str, proxy); break;
+		case 1: vnl::from_string(_str, num_requests); break;
+		case 2: vnl::from_string(_str, num_errors); break;
 	}
 }
 
 void ClientInfo::get_field(int _index, vnl::io::TypeOutput& _out) const {
 	switch(_index) {
-		case 0: vnl::write(_out, num_requests); break;
-		case 1: vnl::write(_out, num_errors); break;
+		case 0: vnl::write(_out, proxy); break;
+		case 1: vnl::write(_out, num_requests); break;
+		case 2: vnl::write(_out, num_errors); break;
 		default: _out.putNull();
 	}
 }
 
 void ClientInfo::set_field(int _index, vnl::io::TypeInput& _in) {
 	switch(_index) {
-		case 0: vnl::read(_in, num_requests); break;
-		case 1: vnl::read(_in, num_errors); break;
+		case 0: vnl::read(_in, proxy); break;
+		case 1: vnl::read(_in, num_requests); break;
+		case 2: vnl::read(_in, num_errors); break;
 	}
 }
 

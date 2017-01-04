@@ -318,7 +318,7 @@ protected:
 	void handle(const vnl::info::TopicInfoList& sample) {
 		std::ofstream out(remote.domain_name.to_string() + "_graph.dot", std::ofstream::out | std::ofstream::trunc);
 		out << "digraph " << remote.domain_name.to_string() << " {" << std::endl;
-		out << "  concentrate=true;" << std::endl;
+		out << "  concentrate = true;" << std::endl << std::endl;
 		
 		for(topic_t& entry : topics) {
 			if(entry.topic.domain != remote.domain_name) {
@@ -328,6 +328,18 @@ protected:
 		out << std::endl;
 		for(module_t& entry : modules) {
 			out << "  \"" << entry.instance.domain << "." << entry.instance.topic << "\" [label=\"" << entry.instance.topic << "\", style=filled, fillcolor=lightgrey, shape=box];" << std::endl;
+		}
+		out << std::endl;
+		for(module_t& module : modules) {
+			for(auto& client : module.info.clients) {
+				module_t* source = get_module(client.first);
+				if(!source) {
+					source = get_module(client.second.proxy);
+				}
+				if(source) {
+					out << "  \"" << source->instance.domain << "." << source->instance.topic << "\" -> \"" << module.instance.domain << "." << module.instance.topic << "\" [color=green3]" << std::endl;
+				}
+			}
 		}
 		out << std::endl;
 		
