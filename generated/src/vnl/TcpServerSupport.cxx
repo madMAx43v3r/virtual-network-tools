@@ -188,6 +188,19 @@ bool TcpServerBase::vni_call(vnl::io::TypeInput& _in, uint32_t _hash, int _num_a
 			break;
 		}
 		break;
+	case 0x983c173d: 
+		switch(_num_args) {
+			case 1: {
+				vnl::Address addr;
+				vnl::read(_in, addr);
+				if(!_in.error()) {
+					publish(addr);
+					return true;
+				}
+			}
+			break;
+		}
+		break;
 	case 0xc7428d8c: 
 		switch(_num_args) {
 			case 2: {

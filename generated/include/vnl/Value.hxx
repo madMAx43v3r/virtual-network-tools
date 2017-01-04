@@ -45,10 +45,16 @@ public:
 
 } // namespace
 
+namespace vnl { class Address; }
 namespace vnl { class Hash32; }
 namespace vnl { class Hash64; }
 
 namespace vnl {
+
+void read(vnl::io::TypeInput& in, vnl::Address& obj);
+void write(vnl::io::TypeOutput& out, const vnl::Address& obj);
+void from_string(const vnl::String& str, vnl::Address& obj);
+void to_string(vnl::String& str, const vnl::Address& obj);
 
 void read(vnl::io::TypeInput& in, vnl::Hash32& obj);
 void write(vnl::io::TypeOutput& out, const vnl::Hash32& obj);

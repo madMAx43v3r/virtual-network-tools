@@ -1396,6 +1396,14 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		info.super.name = "vnl.Object";
 		{
 			vnl::info::Method& method = *info.methods.push_back();
+			method.hash = 0x983c173d;
+			method.name = "publish";
+			method.is_const = false;
+			method.type.hash = 0x53f0e52c;
+			method.type.name = "void";
+		}
+		{
+			vnl::info::Method& method = *info.methods.push_back();
 			method.hash = 0xed7dfb37;
 			method.name = "unsubscribe";
 			method.is_const = false;
@@ -1435,6 +1443,14 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		info.is_object = true;
 		info.super.hash = 0x430e9bb0;
 		info.super.name = "vnl.Object";
+		{
+			vnl::info::Method& method = *info.methods.push_back();
+			method.hash = 0x983c173d;
+			method.name = "publish";
+			method.is_const = false;
+			method.type.hash = 0x53f0e52c;
+			method.type.name = "void";
+		}
 		{
 			vnl::info::Method& method = *info.methods.push_back();
 			method.hash = 0x22a11269;
@@ -1510,6 +1526,14 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		info.super.name = "vnl.Object";
 		{
 			vnl::info::Method& method = *info.methods.push_back();
+			method.hash = 0x983c173d;
+			method.name = "publish";
+			method.is_const = false;
+			method.type.hash = 0x53f0e52c;
+			method.type.name = "void";
+		}
+		{
+			vnl::info::Method& method = *info.methods.push_back();
 			method.hash = 0xed7dfb37;
 			method.name = "unsubscribe";
 			method.is_const = false;
@@ -1548,6 +1572,14 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		info.is_interface = true;
 		info.super.hash = 0x95ac584b;
 		info.super.name = "vnl.Interface";
+		{
+			vnl::info::Method& method = *info.methods.push_back();
+			method.hash = 0x983c173d;
+			method.name = "publish";
+			method.is_const = false;
+			method.type.hash = 0x53f0e52c;
+			method.type.name = "void";
+		}
 		{
 			vnl::info::Method& method = *info.methods.push_back();
 			method.hash = 0xed7dfb37;

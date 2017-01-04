@@ -589,7 +589,7 @@ private slots:
 				module_config_stack->update();
 				
 				if(module->is_running && module->instance.is_alive) {
-					object_client.set_address(module->instance.domain, module->instance.topic);
+					object_client.set_address(module->instance.domain, module->instance.src_mac);
 					vnl::Map<vnl::String, vnl::String> config_map;
 					try {
 						config_map = object_client.get_config_map();
@@ -715,7 +715,7 @@ private:
 			module = &modules.push_back();
 			module->instance = inst;
 			
-			tcp_client.publish(inst.domain, inst.topic);
+			tcp_client.publish(Address(inst.domain, inst.src_mac));
 			
 			module->log_view = new QTextEdit();
 			setup_text_edit(module->log_view);
