@@ -340,6 +340,16 @@ protected:
 					out << "  \"" << source->instance.domain << "." << source->instance.topic << "\" -> \"" << module.instance.domain << "." << module.instance.topic << "\" [color=green3]" << std::endl;
 				}
 			}
+			for(auto& entry : module.info.input_nodes) {
+				module_t* source = find_module(entry.first);
+				if(source) {
+					vnl::String* pin = source->info.output_pins.find(entry.first);
+					if(pin) {
+						out << "  \"" << module.instance.domain << "." << module.instance.topic << "\" -> \"" << source->instance.domain << "." << source->instance.topic
+								<< "\" [color=cyan3, label=\"" << pin->to_string() << "\"" << "]" << std::endl;
+					}
+				}
+			}
 		}
 		out << std::endl;
 		
