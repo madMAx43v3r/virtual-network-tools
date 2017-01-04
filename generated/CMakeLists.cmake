@@ -33,11 +33,14 @@ ADD_LIBRARY(vni STATIC
 	src/vnl/UdpServerSupport.cxx
 	src/vnl/UplinkSupport.cxx
 	src/vnl/Value.cxx
+	src/vnl/info/ClientInfo.cxx
 	src/vnl/info/Field.cxx
+	src/vnl/info/MemoryInfo.cxx
 	src/vnl/info/Method.cxx
 	src/vnl/info/ObjectInfo.cxx
 	src/vnl/info/Parameter.cxx
 	src/vnl/info/PlayerStatus.cxx
+	src/vnl/info/ProcessInfo.cxx
 	src/vnl/info/RemoteInfo.cxx
 	src/vnl/info/TopicInfo.cxx
 	src/vnl/info/TopicInfoList.cxx

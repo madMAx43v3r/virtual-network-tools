@@ -19,10 +19,10 @@ public:
 	static const uint32_t NUM_FIELDS = 7;
 	
 	
+	vnl::Hash64 src_mac;
 	vnl::String type;
 	vnl::String domain;
 	vnl::String topic;
-	vnl::Hash64 src_mac;
 	int32_t heartbeat_interval;
 	int64_t last_heartbeat;
 	bool is_alive;

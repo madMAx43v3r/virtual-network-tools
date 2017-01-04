@@ -8,6 +8,7 @@
 #include <vnl/Map.h>
 #include <vnl/String.h>
 #include <vnl/Value.hxx>
+#include <vnl/info/ClientInfo.hxx>
 
 #include <vnl/Type.hxx>
 
@@ -18,7 +19,7 @@ namespace info {
 class ObjectInfo : public vnl::Value {
 public:
 	static const uint32_t VNI_HASH = 0x6400b0b3;
-	static const uint32_t NUM_FIELDS = 9;
+	static const uint32_t NUM_FIELDS = 13;
 	
 	
 	int64_t time;
@@ -27,9 +28,13 @@ public:
 	int64_t num_msg_sent;
 	int64_t num_msg_received;
 	int64_t num_msg_dropped;
-	vnl::Hash64 engine;
-	vnl::Map<vnl::Hash64, vnl::String > input_channels;
+	vnl::Map<vnl::Hash64, int64_t > sources;
+	vnl::Map<vnl::Hash64, int64_t > input_nodes;
+	vnl::Map<vnl::Hash64, int64_t > input_channels;
 	vnl::Map<vnl::Hash64, vnl::String > output_channels;
+	vnl::Map<vnl::Hash64, vnl::String > input_pins;
+	vnl::Map<vnl::Hash64, vnl::String > output_pins;
+	vnl::Map<vnl::Hash64, vnl::info::ClientInfo > clients;
 	
 	ObjectInfo() {
 		time = 0;
