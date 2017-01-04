@@ -268,6 +268,12 @@ protected:
 		module_t* module = get_module(sample.src_mac);
 		if(module) {
 			module->info = sample.info;
+			for(auto& entry : sample.info.input_channels) {
+				input_channel_map[entry.first] = module;
+			}
+			for(auto& entry : sample.info.output_channels) {
+				output_channel_map[entry.first] = module;
+			}
 		}
 	}
 	
@@ -695,6 +701,8 @@ private slots:
 		}
 		modules.clear();
 		topics.clear();
+		input_channel_map.clear();
+		output_channel_map.clear();
 		terminal->clear();
 		module_tree->clear();
 		topic_tree->clear();
@@ -756,6 +764,14 @@ private:
 			if(module.instance.src_mac == src_mac) {
 				return &module;
 			}
+		}
+		module_t** p_module = input_channel_map.find(src_mac);
+		if(p_module) {
+			return *p_module;
+		}
+		p_module = output_channel_map.find(src_mac);
+		if(p_module) {
+			return *p_module;
 		}
 		return 0;
 	}
@@ -895,6 +911,8 @@ private:
 	Stream tunnel;
 	
 	vnl::Map<vnl::Hash32, vnl::info::Type> type_info;
+	vnl::Map<vnl::Hash64, module_t*> input_channel_map;
+	vnl::Map<vnl::Hash64, module_t*> output_channel_map;
 	
 	QTextEdit* terminal = 0;
 	QTreeWidget* module_tree = 0;
