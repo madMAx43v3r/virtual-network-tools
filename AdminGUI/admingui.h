@@ -42,6 +42,8 @@
 #include <QHeaderView>
 #include <QKeyEvent>
 #include <QTreeWidgetItemIterator>
+#include <QShortcut>
+#include <QKeySequence>
 
 
 namespace vnl {
@@ -116,6 +118,12 @@ protected:
 			QTimer* timer = new QTimer(this);
 			connect(timer, SIGNAL(timeout()), this, SLOT(update_view()));
 			timer->start(update_interval);
+		}
+		
+		{
+			QShortcut* shortcut = new QShortcut(QKeySequence(Qt::Key_F8), this);
+			connect(shortcut, SIGNAL(activated()), this, SLOT(show_graph()));
+			shortcut->setContext(Qt::ApplicationShortcut);
 		}
 		
 		QVBoxLayout* vbox = new QVBoxLayout();
@@ -712,6 +720,24 @@ private slots:
 		module_overview->sortByColumn(0, Qt::AscendingOrder);
 		resize_table(module_overview);
 		module_overview->update();
+	}
+	
+	void show_graph() {
+		if(remote.domain_name.empty()) {
+			return;
+		}
+		char cmd[2048];
+		(vnl::String() << "dot -Tsvg " << remote.domain_name << "_graph.dot > " << remote.domain_name << "_graph.svg").to_string(cmd, sizeof(cmd));
+		int res = ::system(cmd);
+		if(res != 0) {
+			log(ERROR).out << "dot rendering failed with " << res << vnl::endl;
+			return;
+		}
+		(vnl::String() << "inkview " << remote.domain_name << "_graph.svg &").to_string(cmd, sizeof(cmd));
+		res = ::system(cmd);
+		if(res != 0) {
+			log(ERROR).out << "inkview failed with " << res << vnl::endl;
+		}
 	}
 	
 	void poll_messages() {
