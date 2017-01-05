@@ -19,15 +19,18 @@ namespace info {
 class ObjectInfo : public vnl::Value {
 public:
 	static const uint32_t VNI_HASH = 0x6400b0b3;
-	static const uint32_t NUM_FIELDS = 13;
+	static const uint32_t NUM_FIELDS = 16;
 	
 	
 	int64_t time;
 	int64_t spawn_time;
+	int64_t idle_time;
 	int64_t num_cycles;
 	int64_t num_msg_sent;
 	int64_t num_msg_received;
 	int64_t num_msg_dropped;
+	int64_t send_latency_sum;
+	int64_t receive_latency_sum;
 	vnl::Map<vnl::Hash64, int64_t > sources;
 	vnl::Map<vnl::Hash64, int64_t > input_nodes;
 	vnl::Map<vnl::Hash64, int64_t > input_channels;
@@ -39,10 +42,13 @@ public:
 	ObjectInfo() {
 		time = 0;
 		spawn_time = 0;
+		idle_time = 0;
 		num_cycles = 0;
 		num_msg_sent = 0;
 		num_msg_received = 0;
 		num_msg_dropped = 0;
+		send_latency_sum = 0;
+		receive_latency_sum = 0;
 	}
 	
 	static ObjectInfo* create();

@@ -677,6 +677,13 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		}
 		{
 			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xb8fc78eb;
+			field.name = "idle_time";
+			field.type.hash = 0x19d39da3;
+			field.type.name = "long";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
 			field.hash = 0x7fd711c;
 			field.name = "num_cycles";
 			field.type.hash = 0x19d39da3;
@@ -700,6 +707,20 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 			vnl::info::Field& field = *info.fields.push_back();
 			field.hash = 0xa065ff2d;
 			field.name = "num_msg_dropped";
+			field.type.hash = 0x19d39da3;
+			field.type.name = "long";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x14714094;
+			field.name = "send_latency_sum";
+			field.type.hash = 0x19d39da3;
+			field.type.name = "long";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x7094a69f;
+			field.name = "receive_latency_sum";
 			field.type.hash = 0x19d39da3;
 			field.type.name = "long";
 		}
