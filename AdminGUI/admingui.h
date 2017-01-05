@@ -206,6 +206,7 @@ protected:
 			splitter->addWidget(topic_tree);
 			
 			QTabWidget* sub_pager = new QTabWidget();
+			connect(sub_pager, SIGNAL(currentChanged(int)), this, SLOT(topic_tab_changed(int)));
 			
 			topic_overview = new QTableWidget();
 			topic_overview->setColumnCount(6);
@@ -727,6 +728,17 @@ private slots:
 		module_overview->update();
 	}
 	
+	void topic_tab_changed(int index) {
+		if(!do_capture && index == 1) {
+			log(INFO).out << "Capture started." << vnl::endl;
+			do_capture = true;
+		}
+		if(do_capture && index != 1) {
+			log(INFO).out << "Capture paused." << vnl::endl;
+			do_capture = false;
+		}
+	}
+	
 	void show_graph() {
 		if(remote.domain_name.empty()) {
 			return;
@@ -986,7 +998,7 @@ private:
 	QStackedWidget* topic_pubsub_stack = 0;
 	QStackedWidget* topic_dump_stack = 0;
 	
-	bool do_capture = true;
+	bool do_capture = false;
 	topic_t* current_topic = 0;
 	int64_t current_sample_window = 0;
 	int current_sample_count = 0;
