@@ -171,7 +171,7 @@ protected:
 			module_overview->setColumnCount(8);
 			module_overview->verticalHeader()->hide();
 			module_overview->setSelectionMode(QAbstractItemView::NoSelection);
-			module_overview->setHorizontalHeaderLabels(QStringList() << "Domain" << "Topic" << "Sent" << "Received" << "Dropped" << "Latency" << "CPU Time" << "Cycle Time");
+			module_overview->setHorizontalHeaderLabels(QStringList() << "Domain" << "Topic" << "Sent" << "Received" << "Dropped" << "S/R Latency" << "CPU Time" << "Handle Time");
 			module_overview->horizontalHeaderItem(0)->setIcon(QIcon::fromTheme("folder"));
 			module_overview->horizontalHeaderItem(1)->setIcon(QIcon::fromTheme("text-x-generic"));
 			module_overview->horizontalHeaderItem(2)->setIcon(QIcon::fromTheme("go-up"));
@@ -719,7 +719,7 @@ private slots:
 			set_cell_data(module_overview, row, 5, QString::number(qlonglong(module.info.send_latency_sum/(module.info.num_msg_sent+1)/1000))
 				+ " / " + QString::number(qlonglong(module.info.receive_latency_sum/(module.info.num_msg_received+1)/1000)) + " ms");
 			set_cell_data(module_overview, row, 6, QString::number(100*(1-double(module.info.idle_time)/(module.info.time-module.info.spawn_time+1)), 103, 3) + " %");
-			set_cell_data(module_overview, row, 7, QString::number(double(module.info.time-module.info.spawn_time)/(module.info.num_cycles+1)/1e3, 103, 4) + " ms");
+			set_cell_data(module_overview, row, 7, QString::number(double(module.info.time-module.info.spawn_time-module.info.idle_time)/(module.info.num_msg_received+1)/1e3, 103, 4) + " ms");
 			row++;
 		}
 		module_overview->sortByColumn(1, Qt::AscendingOrder);
