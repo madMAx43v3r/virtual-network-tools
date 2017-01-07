@@ -3,6 +3,7 @@
 
 #include <vnl/info/PlayerStatus.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
 
 namespace vnl {
 namespace info {
@@ -21,6 +22,13 @@ PlayerStatus* PlayerStatus::clone() const {
 void PlayerStatus::destroy() {
 	this->PlayerStatus::~PlayerStatus();
 	return vnl::internal::global_pool_->push_back(this, sizeof(PlayerStatus));
+}
+
+bool PlayerStatus::assign(const vnl::Value& _value) {
+	switch(_value.get_vni_hash()) {
+		case 0xf9baa92e: *this = (const PlayerStatus&)_value; return true;
+		default: return false;
+	}
 }
 
 void PlayerStatus::serialize(vnl::io::TypeOutput& _out) const {
@@ -124,6 +132,31 @@ void PlayerStatus::set_field(int _index, vnl::io::TypeInput& _in) {
 		case 4: vnl::read(_in, end_time); break;
 		case 5: vnl::read(_in, current_time); break;
 		case 6: vnl::read(_in, time_offset); break;
+	}
+}
+
+void PlayerStatus::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		case 0: _var = filename; break;
+		case 1: _var = playing; break;
+		case 2: _var = error; break;
+		case 3: _var = begin_time; break;
+		case 4: _var = end_time; break;
+		case 5: _var = current_time; break;
+		case 6: _var = time_offset; break;
+		default: _var.clear();
+	}
+}
+
+void PlayerStatus::set_field(int _index, const vnl::Var& _var) {
+	switch(_index) {
+		case 0: _var.to(filename); break;
+		case 1: _var.to(playing); break;
+		case 2: _var.to(error); break;
+		case 3: _var.to(begin_time); break;
+		case 4: _var.to(end_time); break;
+		case 5: _var.to(current_time); break;
+		case 6: _var.to(time_offset); break;
 	}
 }
 

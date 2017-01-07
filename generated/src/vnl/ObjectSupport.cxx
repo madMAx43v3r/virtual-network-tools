@@ -3,6 +3,7 @@
 
 #include <vnl/ObjectSupport.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
 
 namespace vnl {
 
@@ -61,6 +62,23 @@ void ObjectBase::set_field(int _index, vnl::io::TypeInput& _in) {
 		case 0: vnl::read(_in, vnl_log_level); break;
 		case 1: vnl::read(_in, vnl_msg_timeout); break;
 		case 2: vnl::read(_in, vnl_heartbeat_interval); break;
+	}
+}
+
+void ObjectBase::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		case 0: _var = vnl_log_level; break;
+		case 1: _var = vnl_msg_timeout; break;
+		case 2: _var = vnl_heartbeat_interval; break;
+		default: _var.clear();
+	}
+}
+
+void ObjectBase::set_field(int _index, const vnl::Var& _var) {
+	switch(_index) {
+		case 0: _var.to(vnl_log_level); break;
+		case 1: _var.to(vnl_msg_timeout); break;
+		case 2: _var.to(vnl_heartbeat_interval); break;
 	}
 }
 

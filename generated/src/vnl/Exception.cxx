@@ -3,6 +3,18 @@
 
 #include <vnl/Exception.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
+#include <vnl/DuplicateKeyException.hxx>
+#include <vnl/IOException.hxx>
+#include <vnl/IllegalInstruction.hxx>
+#include <vnl/MemoryException.hxx>
+#include <vnl/NoSuchFieldException.hxx>
+#include <vnl/NoSuchKeyException.hxx>
+#include <vnl/NoSuchMethodException.hxx>
+#include <vnl/SegmentationFault.hxx>
+#include <vnl/StackOverflow.hxx>
+#include <vnl/TimeoutException.hxx>
+#include <vnl/TypeMismatchException.hxx>
 
 namespace vnl {
 
@@ -20,6 +32,24 @@ Exception* Exception::clone() const {
 void Exception::destroy() {
 	this->Exception::~Exception();
 	return vnl::internal::global_pool_->push_back(this, sizeof(Exception));
+}
+
+bool Exception::assign(const vnl::Value& _value) {
+	switch(_value.get_vni_hash()) {
+		case 0xbe87903d: *this = (const Exception&)_value; return true;
+		case 0x7e6aa525: *this = (const vnl::DuplicateKeyException&)_value; return true;
+		case 0xabd5ff87: *this = (const vnl::IOException&)_value; return true;
+		case 0xf8fa6b14: *this = (const vnl::IllegalInstruction&)_value; return true;
+		case 0x4643b1ad: *this = (const vnl::MemoryException&)_value; return true;
+		case 0xd7988e27: *this = (const vnl::NoSuchFieldException&)_value; return true;
+		case 0xd8d131ca: *this = (const vnl::NoSuchKeyException&)_value; return true;
+		case 0x69a97186: *this = (const vnl::NoSuchMethodException&)_value; return true;
+		case 0x57c2463c: *this = (const vnl::SegmentationFault&)_value; return true;
+		case 0x2cd1d77c: *this = (const vnl::StackOverflow&)_value; return true;
+		case 0x8c528f1: *this = (const vnl::TimeoutException&)_value; return true;
+		case 0x493cc6db: *this = (const vnl::TypeMismatchException&)_value; return true;
+		default: return false;
+	}
 }
 
 void Exception::serialize(vnl::io::TypeOutput& _out) const {
@@ -66,6 +96,17 @@ void Exception::get_field(int _index, vnl::io::TypeOutput& _out) const {
 }
 
 void Exception::set_field(int _index, vnl::io::TypeInput& _in) {
+	switch(_index) {
+	}
+}
+
+void Exception::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		default: _var.clear();
+	}
+}
+
+void Exception::set_field(int _index, const vnl::Var& _var) {
 	switch(_index) {
 	}
 }

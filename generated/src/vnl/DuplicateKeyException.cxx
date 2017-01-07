@@ -3,6 +3,7 @@
 
 #include <vnl/DuplicateKeyException.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
 
 namespace vnl {
 
@@ -20,6 +21,13 @@ DuplicateKeyException* DuplicateKeyException::clone() const {
 void DuplicateKeyException::destroy() {
 	this->DuplicateKeyException::~DuplicateKeyException();
 	return vnl::internal::global_pool_->push_back(this, sizeof(DuplicateKeyException));
+}
+
+bool DuplicateKeyException::assign(const vnl::Value& _value) {
+	switch(_value.get_vni_hash()) {
+		case 0x7e6aa525: *this = (const DuplicateKeyException&)_value; return true;
+		default: return false;
+	}
 }
 
 void DuplicateKeyException::serialize(vnl::io::TypeOutput& _out) const {
@@ -66,6 +74,17 @@ void DuplicateKeyException::get_field(int _index, vnl::io::TypeOutput& _out) con
 }
 
 void DuplicateKeyException::set_field(int _index, vnl::io::TypeInput& _in) {
+	switch(_index) {
+	}
+}
+
+void DuplicateKeyException::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		default: _var.clear();
+	}
+}
+
+void DuplicateKeyException::set_field(int _index, const vnl::Var& _var) {
 	switch(_index) {
 	}
 }

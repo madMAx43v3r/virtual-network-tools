@@ -3,6 +3,7 @@
 
 #include <vnl/Header.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
 
 namespace vnl {
 
@@ -20,6 +21,13 @@ Header* Header::clone() const {
 void Header::destroy() {
 	this->Header::~Header();
 	return vnl::internal::global_pool_->push_back(this, sizeof(Header));
+}
+
+bool Header::assign(const vnl::Value& _value) {
+	switch(_value.get_vni_hash()) {
+		case 0x52740af4: *this = (const Header&)_value; return true;
+		default: return false;
+	}
 }
 
 void Header::serialize(vnl::io::TypeOutput& _out) const {
@@ -99,6 +107,25 @@ void Header::set_field(int _index, vnl::io::TypeInput& _in) {
 		case 1: vnl::read(_in, dst_topic); break;
 		case 2: vnl::read(_in, src_mac); break;
 		case 3: vnl::read(_in, send_time); break;
+	}
+}
+
+void Header::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		case 0: _var = src_topic; break;
+		case 1: _var = dst_topic; break;
+		case 2: _var = src_mac; break;
+		case 3: _var = send_time; break;
+		default: _var.clear();
+	}
+}
+
+void Header::set_field(int _index, const vnl::Var& _var) {
+	switch(_index) {
+		case 0: _var.to(src_topic); break;
+		case 1: _var.to(dst_topic); break;
+		case 2: _var.to(src_mac); break;
+		case 3: _var.to(send_time); break;
 	}
 }
 

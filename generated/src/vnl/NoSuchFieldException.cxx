@@ -3,6 +3,7 @@
 
 #include <vnl/NoSuchFieldException.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
 
 namespace vnl {
 
@@ -20,6 +21,13 @@ NoSuchFieldException* NoSuchFieldException::clone() const {
 void NoSuchFieldException::destroy() {
 	this->NoSuchFieldException::~NoSuchFieldException();
 	return vnl::internal::global_pool_->push_back(this, sizeof(NoSuchFieldException));
+}
+
+bool NoSuchFieldException::assign(const vnl::Value& _value) {
+	switch(_value.get_vni_hash()) {
+		case 0xd7988e27: *this = (const NoSuchFieldException&)_value; return true;
+		default: return false;
+	}
 }
 
 void NoSuchFieldException::serialize(vnl::io::TypeOutput& _out) const {
@@ -66,6 +74,17 @@ void NoSuchFieldException::get_field(int _index, vnl::io::TypeOutput& _out) cons
 }
 
 void NoSuchFieldException::set_field(int _index, vnl::io::TypeInput& _in) {
+	switch(_index) {
+	}
+}
+
+void NoSuchFieldException::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		default: _var.clear();
+	}
+}
+
+void NoSuchFieldException::set_field(int _index, const vnl::Var& _var) {
 	switch(_index) {
 	}
 }

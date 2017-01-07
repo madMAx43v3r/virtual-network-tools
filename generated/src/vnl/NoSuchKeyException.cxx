@@ -3,6 +3,7 @@
 
 #include <vnl/NoSuchKeyException.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
 
 namespace vnl {
 
@@ -20,6 +21,13 @@ NoSuchKeyException* NoSuchKeyException::clone() const {
 void NoSuchKeyException::destroy() {
 	this->NoSuchKeyException::~NoSuchKeyException();
 	return vnl::internal::global_pool_->push_back(this, sizeof(NoSuchKeyException));
+}
+
+bool NoSuchKeyException::assign(const vnl::Value& _value) {
+	switch(_value.get_vni_hash()) {
+		case 0xd8d131ca: *this = (const NoSuchKeyException&)_value; return true;
+		default: return false;
+	}
 }
 
 void NoSuchKeyException::serialize(vnl::io::TypeOutput& _out) const {
@@ -66,6 +74,17 @@ void NoSuchKeyException::get_field(int _index, vnl::io::TypeOutput& _out) const 
 }
 
 void NoSuchKeyException::set_field(int _index, vnl::io::TypeInput& _in) {
+	switch(_index) {
+	}
+}
+
+void NoSuchKeyException::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		default: _var.clear();
+	}
+}
+
+void NoSuchKeyException::set_field(int _index, const vnl::Var& _var) {
 	switch(_index) {
 	}
 }

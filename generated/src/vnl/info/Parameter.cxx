@@ -3,6 +3,7 @@
 
 #include <vnl/info/Parameter.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
 
 namespace vnl {
 namespace info {
@@ -21,6 +22,13 @@ Parameter* Parameter::clone() const {
 void Parameter::destroy() {
 	this->Parameter::~Parameter();
 	return vnl::internal::global_pool_->push_back(this, sizeof(Parameter));
+}
+
+bool Parameter::assign(const vnl::Value& _value) {
+	switch(_value.get_vni_hash()) {
+		case 0xf5e3f3b6: *this = (const Parameter&)_value; return true;
+		default: return false;
+	}
 }
 
 void Parameter::serialize(vnl::io::TypeOutput& _out) const {
@@ -84,6 +92,21 @@ void Parameter::set_field(int _index, vnl::io::TypeInput& _in) {
 	switch(_index) {
 		case 0: vnl::read(_in, name); break;
 		case 1: vnl::read(_in, type); break;
+	}
+}
+
+void Parameter::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		case 0: _var = name; break;
+		case 1: _var = type; break;
+		default: _var.clear();
+	}
+}
+
+void Parameter::set_field(int _index, const vnl::Var& _var) {
+	switch(_index) {
+		case 0: _var.to(name); break;
+		case 1: _var.to(type); break;
 	}
 }
 

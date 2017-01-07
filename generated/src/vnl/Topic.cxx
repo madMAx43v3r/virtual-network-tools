@@ -3,6 +3,7 @@
 
 #include <vnl/Topic.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
 
 namespace vnl {
 
@@ -20,6 +21,13 @@ Topic* Topic::clone() const {
 void Topic::destroy() {
 	this->Topic::~Topic();
 	return vnl::internal::global_pool_->push_back(this, sizeof(Topic));
+}
+
+bool Topic::assign(const vnl::Value& _value) {
+	switch(_value.get_vni_hash()) {
+		case 0xddc3d187: *this = (const Topic&)_value; return true;
+		default: return false;
+	}
 }
 
 void Topic::serialize(vnl::io::TypeOutput& _out) const {
@@ -83,6 +91,21 @@ void Topic::set_field(int _index, vnl::io::TypeInput& _in) {
 	switch(_index) {
 		case 0: vnl::read(_in, domain); break;
 		case 1: vnl::read(_in, name); break;
+	}
+}
+
+void Topic::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		case 0: _var = domain; break;
+		case 1: _var = name; break;
+		default: _var.clear();
+	}
+}
+
+void Topic::set_field(int _index, const vnl::Var& _var) {
+	switch(_index) {
+		case 0: _var.to(domain); break;
+		case 1: _var.to(name); break;
 	}
 }
 

@@ -3,6 +3,7 @@
 
 #include <vnl/info/Type.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
 
 namespace vnl {
 namespace info {
@@ -21,6 +22,13 @@ Type* Type::clone() const {
 void Type::destroy() {
 	this->Type::~Type();
 	return vnl::internal::global_pool_->push_back(this, sizeof(Type));
+}
+
+bool Type::assign(const vnl::Value& _value) {
+	switch(_value.get_vni_hash()) {
+		case 0xbde99c40: *this = (const Type&)_value; return true;
+		default: return false;
+	}
 }
 
 void Type::serialize(vnl::io::TypeOutput& _out) const {
@@ -156,6 +164,39 @@ void Type::set_field(int _index, vnl::io::TypeInput& _in) {
 		case 8: vnl::read(_in, fields); break;
 		case 9: vnl::read(_in, methods); break;
 		case 10: vnl::read(_in, symbols); break;
+	}
+}
+
+void Type::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		case 0: _var = hash; break;
+		case 1: _var = name; break;
+		case 2: _var = super; break;
+		case 3: _var = is_struct; break;
+		case 4: _var = is_class; break;
+		case 5: _var = is_enum; break;
+		case 6: _var = is_interface; break;
+		case 7: _var = is_object; break;
+		case 8: _var = fields; break;
+		case 9: _var = methods; break;
+		case 10: _var = symbols; break;
+		default: _var.clear();
+	}
+}
+
+void Type::set_field(int _index, const vnl::Var& _var) {
+	switch(_index) {
+		case 0: _var.to(hash); break;
+		case 1: _var.to(name); break;
+		case 2: _var.to(super); break;
+		case 3: _var.to(is_struct); break;
+		case 4: _var.to(is_class); break;
+		case 5: _var.to(is_enum); break;
+		case 6: _var.to(is_interface); break;
+		case 7: _var.to(is_object); break;
+		case 8: _var.to(fields); break;
+		case 9: _var.to(methods); break;
+		case 10: _var.to(symbols); break;
 	}
 }
 

@@ -3,6 +3,7 @@
 
 #include <vnl/Instance.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
 
 namespace vnl {
 
@@ -20,6 +21,13 @@ Instance* Instance::clone() const {
 void Instance::destroy() {
 	this->Instance::~Instance();
 	return vnl::internal::global_pool_->push_back(this, sizeof(Instance));
+}
+
+bool Instance::assign(const vnl::Value& _value) {
+	switch(_value.get_vni_hash()) {
+		case 0x67d48190: *this = (const Instance&)_value; return true;
+		default: return false;
+	}
 }
 
 void Instance::serialize(vnl::io::TypeOutput& _out) const {
@@ -123,6 +131,31 @@ void Instance::set_field(int _index, vnl::io::TypeInput& _in) {
 		case 4: vnl::read(_in, heartbeat_interval); break;
 		case 5: vnl::read(_in, last_heartbeat); break;
 		case 6: vnl::read(_in, is_alive); break;
+	}
+}
+
+void Instance::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		case 0: _var = src_mac; break;
+		case 1: _var = type; break;
+		case 2: _var = domain; break;
+		case 3: _var = topic; break;
+		case 4: _var = heartbeat_interval; break;
+		case 5: _var = last_heartbeat; break;
+		case 6: _var = is_alive; break;
+		default: _var.clear();
+	}
+}
+
+void Instance::set_field(int _index, const vnl::Var& _var) {
+	switch(_index) {
+		case 0: _var.to(src_mac); break;
+		case 1: _var.to(type); break;
+		case 2: _var.to(domain); break;
+		case 3: _var.to(topic); break;
+		case 4: _var.to(heartbeat_interval); break;
+		case 5: _var.to(last_heartbeat); break;
+		case 6: _var.to(is_alive); break;
 	}
 }
 

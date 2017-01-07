@@ -3,6 +3,7 @@
 
 #include <vnl/info/ObjectInfo.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
 
 namespace vnl {
 namespace info {
@@ -21,6 +22,13 @@ ObjectInfo* ObjectInfo::clone() const {
 void ObjectInfo::destroy() {
 	this->ObjectInfo::~ObjectInfo();
 	return vnl::internal::global_pool_->push_back(this, sizeof(ObjectInfo));
+}
+
+bool ObjectInfo::assign(const vnl::Value& _value) {
+	switch(_value.get_vni_hash()) {
+		case 0x6400b0b3: *this = (const ObjectInfo&)_value; return true;
+		default: return false;
+	}
 }
 
 void ObjectInfo::serialize(vnl::io::TypeOutput& _out) const {
@@ -196,6 +204,49 @@ void ObjectInfo::set_field(int _index, vnl::io::TypeInput& _in) {
 		case 13: vnl::read(_in, input_pins); break;
 		case 14: vnl::read(_in, output_pins); break;
 		case 15: vnl::read(_in, clients); break;
+	}
+}
+
+void ObjectInfo::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		case 0: _var = time; break;
+		case 1: _var = spawn_time; break;
+		case 2: _var = idle_time; break;
+		case 3: _var = num_cycles; break;
+		case 4: _var = num_msg_sent; break;
+		case 5: _var = num_msg_received; break;
+		case 6: _var = num_msg_dropped; break;
+		case 7: _var = send_latency_sum; break;
+		case 8: _var = receive_latency_sum; break;
+		case 9: _var = sources; break;
+		case 10: _var = input_nodes; break;
+		case 11: _var = input_channels; break;
+		case 12: _var = output_channels; break;
+		case 13: _var = input_pins; break;
+		case 14: _var = output_pins; break;
+		case 15: _var = clients; break;
+		default: _var.clear();
+	}
+}
+
+void ObjectInfo::set_field(int _index, const vnl::Var& _var) {
+	switch(_index) {
+		case 0: _var.to(time); break;
+		case 1: _var.to(spawn_time); break;
+		case 2: _var.to(idle_time); break;
+		case 3: _var.to(num_cycles); break;
+		case 4: _var.to(num_msg_sent); break;
+		case 5: _var.to(num_msg_received); break;
+		case 6: _var.to(num_msg_dropped); break;
+		case 7: _var.to(send_latency_sum); break;
+		case 8: _var.to(receive_latency_sum); break;
+		case 9: _var.to(sources); break;
+		case 10: _var.to(input_nodes); break;
+		case 11: _var.to(input_channels); break;
+		case 12: _var.to(output_channels); break;
+		case 13: _var.to(input_pins); break;
+		case 14: _var.to(output_pins); break;
+		case 15: _var.to(clients); break;
 	}
 }
 

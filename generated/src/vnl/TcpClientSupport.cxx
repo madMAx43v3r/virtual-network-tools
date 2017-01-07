@@ -3,6 +3,7 @@
 
 #include <vnl/TcpClientSupport.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
 
 namespace vnl {
 
@@ -135,6 +136,49 @@ void TcpClientBase::set_field(int _index, vnl::io::TypeInput& _in) {
 		case 13: vnl::read(_in, tcp_nodelay); break;
 		case 14: vnl::read(_in, send_buffer_size); break;
 		case 15: vnl::read(_in, receive_buffer_size); break;
+	}
+}
+
+void TcpClientBase::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		case 0: _var = vnl_log_level; break;
+		case 1: _var = vnl_msg_timeout; break;
+		case 2: _var = vnl_heartbeat_interval; break;
+		case 3: _var = error_interval; break;
+		case 4: _var = are_connected; break;
+		case 5: _var = num_read; break;
+		case 6: _var = num_write; break;
+		case 7: _var = num_flush; break;
+		case 8: _var = num_bytes_read; break;
+		case 9: _var = num_bytes_write; break;
+		case 10: _var = endpoint; break;
+		case 11: _var = port; break;
+		case 12: _var = autoclose; break;
+		case 13: _var = tcp_nodelay; break;
+		case 14: _var = send_buffer_size; break;
+		case 15: _var = receive_buffer_size; break;
+		default: _var.clear();
+	}
+}
+
+void TcpClientBase::set_field(int _index, const vnl::Var& _var) {
+	switch(_index) {
+		case 0: _var.to(vnl_log_level); break;
+		case 1: _var.to(vnl_msg_timeout); break;
+		case 2: _var.to(vnl_heartbeat_interval); break;
+		case 3: _var.to(error_interval); break;
+		case 4: _var.to(are_connected); break;
+		case 5: _var.to(num_read); break;
+		case 6: _var.to(num_write); break;
+		case 7: _var.to(num_flush); break;
+		case 8: _var.to(num_bytes_read); break;
+		case 9: _var.to(num_bytes_write); break;
+		case 10: _var.to(endpoint); break;
+		case 11: _var.to(port); break;
+		case 12: _var.to(autoclose); break;
+		case 13: _var.to(tcp_nodelay); break;
+		case 14: _var.to(send_buffer_size); break;
+		case 15: _var.to(receive_buffer_size); break;
 	}
 }
 

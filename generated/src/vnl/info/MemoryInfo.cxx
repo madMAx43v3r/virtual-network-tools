@@ -3,6 +3,7 @@
 
 #include <vnl/info/MemoryInfo.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
 
 namespace vnl {
 namespace info {
@@ -21,6 +22,13 @@ MemoryInfo* MemoryInfo::clone() const {
 void MemoryInfo::destroy() {
 	this->MemoryInfo::~MemoryInfo();
 	return vnl::internal::global_pool_->push_back(this, sizeof(MemoryInfo));
+}
+
+bool MemoryInfo::assign(const vnl::Value& _value) {
+	switch(_value.get_vni_hash()) {
+		case 0x734ed4bc: *this = (const MemoryInfo&)_value; return true;
+		default: return false;
+	}
 }
 
 void MemoryInfo::serialize(vnl::io::TypeOutput& _out) const {
@@ -92,6 +100,23 @@ void MemoryInfo::set_field(int _index, vnl::io::TypeInput& _in) {
 		case 0: vnl::read(_in, size); break;
 		case 1: vnl::read(_in, num_alloc); break;
 		case 2: vnl::read(_in, num_used); break;
+	}
+}
+
+void MemoryInfo::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		case 0: _var = size; break;
+		case 1: _var = num_alloc; break;
+		case 2: _var = num_used; break;
+		default: _var.clear();
+	}
+}
+
+void MemoryInfo::set_field(int _index, const vnl::Var& _var) {
+	switch(_index) {
+		case 0: _var.to(size); break;
+		case 1: _var.to(num_alloc); break;
+		case 2: _var.to(num_used); break;
 	}
 }
 

@@ -3,6 +3,7 @@
 
 #include <vnl/RecordHeader.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
 
 namespace vnl {
 
@@ -20,6 +21,13 @@ RecordHeader* RecordHeader::clone() const {
 void RecordHeader::destroy() {
 	this->RecordHeader::~RecordHeader();
 	return vnl::internal::global_pool_->push_back(this, sizeof(RecordHeader));
+}
+
+bool RecordHeader::assign(const vnl::Value& _value) {
+	switch(_value.get_vni_hash()) {
+		case 0xc10cd56c: *this = (const RecordHeader&)_value; return true;
+		default: return false;
+	}
 }
 
 void RecordHeader::serialize(vnl::io::TypeOutput& _out) const {
@@ -115,6 +123,29 @@ void RecordHeader::set_field(int _index, vnl::io::TypeInput& _in) {
 		case 3: vnl::read(_in, begin_time); break;
 		case 4: vnl::read(_in, end_time); break;
 		case 5: vnl::read(_in, topics); break;
+	}
+}
+
+void RecordHeader::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		case 0: _var = version; break;
+		case 1: _var = header_size; break;
+		case 2: _var = num_samples; break;
+		case 3: _var = begin_time; break;
+		case 4: _var = end_time; break;
+		case 5: _var = topics; break;
+		default: _var.clear();
+	}
+}
+
+void RecordHeader::set_field(int _index, const vnl::Var& _var) {
+	switch(_index) {
+		case 0: _var.to(version); break;
+		case 1: _var.to(header_size); break;
+		case 2: _var.to(num_samples); break;
+		case 3: _var.to(begin_time); break;
+		case 4: _var.to(end_time); break;
+		case 5: _var.to(topics); break;
 	}
 }
 

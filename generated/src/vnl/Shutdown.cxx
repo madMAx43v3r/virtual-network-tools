@@ -3,6 +3,7 @@
 
 #include <vnl/Shutdown.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
 
 namespace vnl {
 
@@ -20,6 +21,13 @@ Shutdown* Shutdown::clone() const {
 void Shutdown::destroy() {
 	this->Shutdown::~Shutdown();
 	return vnl::internal::global_pool_->push_back(this, sizeof(Shutdown));
+}
+
+bool Shutdown::assign(const vnl::Value& _value) {
+	switch(_value.get_vni_hash()) {
+		case 0xcdc22e1f: *this = (const Shutdown&)_value; return true;
+		default: return false;
+	}
 }
 
 void Shutdown::serialize(vnl::io::TypeOutput& _out) const {
@@ -66,6 +74,17 @@ void Shutdown::get_field(int _index, vnl::io::TypeOutput& _out) const {
 }
 
 void Shutdown::set_field(int _index, vnl::io::TypeInput& _in) {
+	switch(_index) {
+	}
+}
+
+void Shutdown::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		default: _var.clear();
+	}
+}
+
+void Shutdown::set_field(int _index, const vnl::Var& _var) {
 	switch(_index) {
 	}
 }

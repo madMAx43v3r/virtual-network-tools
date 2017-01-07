@@ -3,6 +3,7 @@
 
 #include <vnl/RecorderSupport.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
 
 namespace vnl {
 
@@ -87,6 +88,33 @@ void RecorderBase::set_field(int _index, vnl::io::TypeInput& _in) {
 		case 5: vnl::read(_in, do_write_header); break;
 		case 6: vnl::read(_in, header_size); break;
 		case 7: vnl::read(_in, domains); break;
+	}
+}
+
+void RecorderBase::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		case 0: _var = vnl_log_level; break;
+		case 1: _var = vnl_msg_timeout; break;
+		case 2: _var = vnl_heartbeat_interval; break;
+		case 3: _var = filename; break;
+		case 4: _var = interval; break;
+		case 5: _var = do_write_header; break;
+		case 6: _var = header_size; break;
+		case 7: _var = domains; break;
+		default: _var.clear();
+	}
+}
+
+void RecorderBase::set_field(int _index, const vnl::Var& _var) {
+	switch(_index) {
+		case 0: _var.to(vnl_log_level); break;
+		case 1: _var.to(vnl_msg_timeout); break;
+		case 2: _var.to(vnl_heartbeat_interval); break;
+		case 3: _var.to(filename); break;
+		case 4: _var.to(interval); break;
+		case 5: _var.to(do_write_header); break;
+		case 6: _var.to(header_size); break;
+		case 7: _var.to(domains); break;
 	}
 }
 

@@ -3,6 +3,7 @@
 
 #include <vnl/info/RemoteInfo.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
 
 namespace vnl {
 namespace info {
@@ -21,6 +22,13 @@ RemoteInfo* RemoteInfo::clone() const {
 void RemoteInfo::destroy() {
 	this->RemoteInfo::~RemoteInfo();
 	return vnl::internal::global_pool_->push_back(this, sizeof(RemoteInfo));
+}
+
+bool RemoteInfo::assign(const vnl::Value& _value) {
+	switch(_value.get_vni_hash()) {
+		case 0x7aa64297: *this = (const RemoteInfo&)_value; return true;
+		default: return false;
+	}
 }
 
 void RemoteInfo::serialize(vnl::io::TypeOutput& _out) const {
@@ -84,6 +92,21 @@ void RemoteInfo::set_field(int _index, vnl::io::TypeInput& _in) {
 	switch(_index) {
 		case 0: vnl::read(_in, domain_name); break;
 		case 1: vnl::read(_in, config_name); break;
+	}
+}
+
+void RemoteInfo::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		case 0: _var = domain_name; break;
+		case 1: _var = config_name; break;
+		default: _var.clear();
+	}
+}
+
+void RemoteInfo::set_field(int _index, const vnl::Var& _var) {
+	switch(_index) {
+		case 0: _var.to(domain_name); break;
+		case 1: _var.to(config_name); break;
 	}
 }
 

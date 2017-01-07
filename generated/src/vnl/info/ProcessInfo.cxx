@@ -3,6 +3,7 @@
 
 #include <vnl/info/ProcessInfo.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
 
 namespace vnl {
 namespace info {
@@ -21,6 +22,13 @@ ProcessInfo* ProcessInfo::clone() const {
 void ProcessInfo::destroy() {
 	this->ProcessInfo::~ProcessInfo();
 	return vnl::internal::global_pool_->push_back(this, sizeof(ProcessInfo));
+}
+
+bool ProcessInfo::assign(const vnl::Value& _value) {
+	switch(_value.get_vni_hash()) {
+		case 0x61e5f15b: *this = (const ProcessInfo&)_value; return true;
+		default: return false;
+	}
 }
 
 void ProcessInfo::serialize(vnl::io::TypeOutput& _out) const {
@@ -100,6 +108,25 @@ void ProcessInfo::set_field(int _index, vnl::io::TypeInput& _in) {
 		case 1: vnl::read(_in, pages); break;
 		case 2: vnl::read(_in, blocks); break;
 		case 3: vnl::read(_in, objects); break;
+	}
+}
+
+void ProcessInfo::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		case 0: _var = name; break;
+		case 1: _var = pages; break;
+		case 2: _var = blocks; break;
+		case 3: _var = objects; break;
+		default: _var.clear();
+	}
+}
+
+void ProcessInfo::set_field(int _index, const vnl::Var& _var) {
+	switch(_index) {
+		case 0: _var.to(name); break;
+		case 1: _var.to(pages); break;
+		case 2: _var.to(blocks); break;
+		case 3: _var.to(objects); break;
 	}
 }
 

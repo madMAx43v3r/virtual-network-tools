@@ -3,6 +3,7 @@
 
 #include <vnl/ProcessSupport.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
 
 namespace vnl {
 
@@ -87,6 +88,33 @@ void ProcessBase::set_field(int _index, vnl::io::TypeInput& _in) {
 		case 5: vnl::read(_in, update_interval); break;
 		case 6: vnl::read(_in, stats_interval); break;
 		case 7: vnl::read(_in, do_print_stats); break;
+	}
+}
+
+void ProcessBase::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		case 0: _var = vnl_log_level; break;
+		case 1: _var = vnl_msg_timeout; break;
+		case 2: _var = vnl_heartbeat_interval; break;
+		case 3: _var = name; break;
+		case 4: _var = watchdog_interval; break;
+		case 5: _var = update_interval; break;
+		case 6: _var = stats_interval; break;
+		case 7: _var = do_print_stats; break;
+		default: _var.clear();
+	}
+}
+
+void ProcessBase::set_field(int _index, const vnl::Var& _var) {
+	switch(_index) {
+		case 0: _var.to(vnl_log_level); break;
+		case 1: _var.to(vnl_msg_timeout); break;
+		case 2: _var.to(vnl_heartbeat_interval); break;
+		case 3: _var.to(name); break;
+		case 4: _var.to(watchdog_interval); break;
+		case 5: _var.to(update_interval); break;
+		case 6: _var.to(stats_interval); break;
+		case 7: _var.to(do_print_stats); break;
 	}
 }
 

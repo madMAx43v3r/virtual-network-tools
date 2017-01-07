@@ -3,6 +3,7 @@
 
 #include <vnl/tools/AdminGUISupport.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
 
 namespace vnl {
 namespace tools {
@@ -100,6 +101,37 @@ void AdminGUIBase::set_field(int _index, vnl::io::TypeInput& _in) {
 		case 7: vnl::read(_in, max_sample_rate); break;
 		case 8: vnl::read(_in, max_array_size); break;
 		case 9: vnl::read(_in, topic_timeout); break;
+	}
+}
+
+void AdminGUIBase::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		case 0: _var = vnl_log_level; break;
+		case 1: _var = vnl_msg_timeout; break;
+		case 2: _var = vnl_heartbeat_interval; break;
+		case 3: _var = target_host; break;
+		case 4: _var = target_port; break;
+		case 5: _var = update_interval; break;
+		case 6: _var = sample_window; break;
+		case 7: _var = max_sample_rate; break;
+		case 8: _var = max_array_size; break;
+		case 9: _var = topic_timeout; break;
+		default: _var.clear();
+	}
+}
+
+void AdminGUIBase::set_field(int _index, const vnl::Var& _var) {
+	switch(_index) {
+		case 0: _var.to(vnl_log_level); break;
+		case 1: _var.to(vnl_msg_timeout); break;
+		case 2: _var.to(vnl_heartbeat_interval); break;
+		case 3: _var.to(target_host); break;
+		case 4: _var.to(target_port); break;
+		case 5: _var.to(update_interval); break;
+		case 6: _var.to(sample_window); break;
+		case 7: _var.to(max_sample_rate); break;
+		case 8: _var.to(max_array_size); break;
+		case 9: _var.to(topic_timeout); break;
 	}
 }
 

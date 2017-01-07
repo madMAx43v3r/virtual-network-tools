@@ -3,6 +3,7 @@
 
 #include <vnl/TimeoutException.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
 
 namespace vnl {
 
@@ -20,6 +21,13 @@ TimeoutException* TimeoutException::clone() const {
 void TimeoutException::destroy() {
 	this->TimeoutException::~TimeoutException();
 	return vnl::internal::global_pool_->push_back(this, sizeof(TimeoutException));
+}
+
+bool TimeoutException::assign(const vnl::Value& _value) {
+	switch(_value.get_vni_hash()) {
+		case 0x8c528f1: *this = (const TimeoutException&)_value; return true;
+		default: return false;
+	}
 }
 
 void TimeoutException::serialize(vnl::io::TypeOutput& _out) const {
@@ -66,6 +74,17 @@ void TimeoutException::get_field(int _index, vnl::io::TypeOutput& _out) const {
 }
 
 void TimeoutException::set_field(int _index, vnl::io::TypeInput& _in) {
+	switch(_index) {
+	}
+}
+
+void TimeoutException::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		default: _var.clear();
+	}
+}
+
+void TimeoutException::set_field(int _index, const vnl::Var& _var) {
 	switch(_index) {
 	}
 }

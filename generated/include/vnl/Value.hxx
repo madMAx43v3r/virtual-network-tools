@@ -22,6 +22,7 @@ public:
 	
 	static Value* create();
 	virtual Value* clone() const;
+	virtual bool assign(const vnl::Value& _value);
 	virtual void raise() const { throw *this; }
 	virtual void destroy();
 	
@@ -39,6 +40,8 @@ public:
 	virtual void set_field(int _index, const vnl::String& _str);
 	virtual void get_field(int _index, vnl::io::TypeOutput& _out) const;
 	virtual void set_field(int _index, vnl::io::TypeInput& _in);
+	virtual void get_field(int _index, vnl::Var& _var) const;
+	virtual void set_field(int _index, const vnl::Var& _var);
 	
 	
 };
@@ -48,6 +51,7 @@ public:
 namespace vnl { class Address; }
 namespace vnl { class Hash32; }
 namespace vnl { class Hash64; }
+namespace vnl { class Var; }
 
 namespace vnl {
 
@@ -65,6 +69,11 @@ void read(vnl::io::TypeInput& in, vnl::Hash64& obj);
 void write(vnl::io::TypeOutput& out, const vnl::Hash64& obj);
 void from_string(const vnl::String& str, vnl::Hash64& obj);
 void to_string(vnl::String& str, const vnl::Hash64& obj);
+
+void read(vnl::io::TypeInput& in, vnl::Var& obj);
+void write(vnl::io::TypeOutput& out, const vnl::Var& obj);
+void from_string(const vnl::String& str, vnl::Var& obj);
+void to_string(vnl::String& str, const vnl::Var& obj);
 
 } // vnl
 

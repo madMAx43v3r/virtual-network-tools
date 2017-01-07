@@ -3,6 +3,7 @@
 
 #include <vnl/PlayerSupport.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
 
 namespace vnl {
 
@@ -99,6 +100,37 @@ void PlayerBase::set_field(int _index, vnl::io::TypeInput& _in) {
 		case 7: vnl::read(_in, autoloop); break;
 		case 8: vnl::read(_in, autoshutdown); break;
 		case 9: vnl::read(_in, interval); break;
+	}
+}
+
+void PlayerBase::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		case 0: _var = vnl_log_level; break;
+		case 1: _var = vnl_msg_timeout; break;
+		case 2: _var = vnl_heartbeat_interval; break;
+		case 3: _var = filename; break;
+		case 4: _var = domain_blacklist; break;
+		case 5: _var = topic_blacklist; break;
+		case 6: _var = autostart; break;
+		case 7: _var = autoloop; break;
+		case 8: _var = autoshutdown; break;
+		case 9: _var = interval; break;
+		default: _var.clear();
+	}
+}
+
+void PlayerBase::set_field(int _index, const vnl::Var& _var) {
+	switch(_index) {
+		case 0: _var.to(vnl_log_level); break;
+		case 1: _var.to(vnl_msg_timeout); break;
+		case 2: _var.to(vnl_heartbeat_interval); break;
+		case 3: _var.to(filename); break;
+		case 4: _var.to(domain_blacklist); break;
+		case 5: _var.to(topic_blacklist); break;
+		case 6: _var.to(autostart); break;
+		case 7: _var.to(autoloop); break;
+		case 8: _var.to(autoshutdown); break;
+		case 9: _var.to(interval); break;
 	}
 }
 

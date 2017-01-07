@@ -3,6 +3,7 @@
 
 #include <vnl/RecordValue.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
 
 namespace vnl {
 
@@ -20,6 +21,13 @@ RecordValue* RecordValue::clone() const {
 void RecordValue::destroy() {
 	this->RecordValue::~RecordValue();
 	return vnl::internal::global_pool_->push_back(this, sizeof(RecordValue));
+}
+
+bool RecordValue::assign(const vnl::Value& _value) {
+	switch(_value.get_vni_hash()) {
+		case 0x1cdb1920: *this = (const RecordValue&)_value; return true;
+		default: return false;
+	}
 }
 
 void RecordValue::serialize(vnl::io::TypeOutput& _out) const {
@@ -107,6 +115,27 @@ void RecordValue::set_field(int _index, vnl::io::TypeInput& _in) {
 		case 2: vnl::read(_in, topic); break;
 		case 3: vnl::read(_in, header); break;
 		case 4: vnl::read(_in, value); break;
+	}
+}
+
+void RecordValue::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		case 0: _var = time; break;
+		case 1: _var = domain; break;
+		case 2: _var = topic; break;
+		case 3: _var = header; break;
+		case 4: _var = value; break;
+		default: _var.clear();
+	}
+}
+
+void RecordValue::set_field(int _index, const vnl::Var& _var) {
+	switch(_index) {
+		case 0: _var.to(time); break;
+		case 1: _var.to(domain); break;
+		case 2: _var.to(topic); break;
+		case 3: _var.to(header); break;
+		case 4: _var.to(value); break;
 	}
 }
 

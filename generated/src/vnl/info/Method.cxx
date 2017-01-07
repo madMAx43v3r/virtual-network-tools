@@ -3,6 +3,7 @@
 
 #include <vnl/info/Method.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
 
 namespace vnl {
 namespace info {
@@ -21,6 +22,13 @@ Method* Method::clone() const {
 void Method::destroy() {
 	this->Method::~Method();
 	return vnl::internal::global_pool_->push_back(this, sizeof(Method));
+}
+
+bool Method::assign(const vnl::Value& _value) {
+	switch(_value.get_vni_hash()) {
+		case 0x1b510753: *this = (const Method&)_value; return true;
+		default: return false;
+	}
 }
 
 void Method::serialize(vnl::io::TypeOutput& _out) const {
@@ -108,6 +116,27 @@ void Method::set_field(int _index, vnl::io::TypeInput& _in) {
 		case 2: vnl::read(_in, type); break;
 		case 3: vnl::read(_in, is_const); break;
 		case 4: vnl::read(_in, params); break;
+	}
+}
+
+void Method::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		case 0: _var = hash; break;
+		case 1: _var = name; break;
+		case 2: _var = type; break;
+		case 3: _var = is_const; break;
+		case 4: _var = params; break;
+		default: _var.clear();
+	}
+}
+
+void Method::set_field(int _index, const vnl::Var& _var) {
+	switch(_index) {
+		case 0: _var.to(hash); break;
+		case 1: _var.to(name); break;
+		case 2: _var.to(type); break;
+		case 3: _var.to(is_const); break;
+		case 4: _var.to(params); break;
 	}
 }
 

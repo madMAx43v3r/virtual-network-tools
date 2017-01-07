@@ -23,6 +23,7 @@ public:
 	
 	static NoSuchKeyException* create();
 	virtual NoSuchKeyException* clone() const;
+	virtual bool assign(const vnl::Value& _value);
 	virtual void raise() const { throw *this; }
 	virtual void destroy();
 	
@@ -40,6 +41,8 @@ public:
 	virtual void set_field(int _index, const vnl::String& _str);
 	virtual void get_field(int _index, vnl::io::TypeOutput& _out) const;
 	virtual void set_field(int _index, vnl::io::TypeInput& _in);
+	virtual void get_field(int _index, vnl::Var& _var) const;
+	virtual void set_field(int _index, const vnl::Var& _var);
 	
 	
 };

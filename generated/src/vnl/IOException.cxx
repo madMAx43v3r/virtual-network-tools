@@ -3,6 +3,13 @@
 
 #include <vnl/IOException.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
+#include <vnl/DuplicateKeyException.hxx>
+#include <vnl/NoSuchFieldException.hxx>
+#include <vnl/NoSuchKeyException.hxx>
+#include <vnl/NoSuchMethodException.hxx>
+#include <vnl/TimeoutException.hxx>
+#include <vnl/TypeMismatchException.hxx>
 
 namespace vnl {
 
@@ -20,6 +27,19 @@ IOException* IOException::clone() const {
 void IOException::destroy() {
 	this->IOException::~IOException();
 	return vnl::internal::global_pool_->push_back(this, sizeof(IOException));
+}
+
+bool IOException::assign(const vnl::Value& _value) {
+	switch(_value.get_vni_hash()) {
+		case 0xabd5ff87: *this = (const IOException&)_value; return true;
+		case 0x7e6aa525: *this = (const vnl::DuplicateKeyException&)_value; return true;
+		case 0xd7988e27: *this = (const vnl::NoSuchFieldException&)_value; return true;
+		case 0xd8d131ca: *this = (const vnl::NoSuchKeyException&)_value; return true;
+		case 0x69a97186: *this = (const vnl::NoSuchMethodException&)_value; return true;
+		case 0x8c528f1: *this = (const vnl::TimeoutException&)_value; return true;
+		case 0x493cc6db: *this = (const vnl::TypeMismatchException&)_value; return true;
+		default: return false;
+	}
 }
 
 void IOException::serialize(vnl::io::TypeOutput& _out) const {
@@ -66,6 +86,17 @@ void IOException::get_field(int _index, vnl::io::TypeOutput& _out) const {
 }
 
 void IOException::set_field(int _index, vnl::io::TypeInput& _in) {
+	switch(_index) {
+	}
+}
+
+void IOException::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		default: _var.clear();
+	}
+}
+
+void IOException::set_field(int _index, const vnl::Var& _var) {
 	switch(_index) {
 	}
 }

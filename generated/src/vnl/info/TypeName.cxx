@@ -3,6 +3,7 @@
 
 #include <vnl/info/TypeName.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
 
 namespace vnl {
 namespace info {
@@ -21,6 +22,13 @@ TypeName* TypeName::clone() const {
 void TypeName::destroy() {
 	this->TypeName::~TypeName();
 	return vnl::internal::global_pool_->push_back(this, sizeof(TypeName));
+}
+
+bool TypeName::assign(const vnl::Value& _value) {
+	switch(_value.get_vni_hash()) {
+		case 0x7450a5b3: *this = (const TypeName&)_value; return true;
+		default: return false;
+	}
 }
 
 void TypeName::serialize(vnl::io::TypeOutput& _out) const {
@@ -92,6 +100,23 @@ void TypeName::set_field(int _index, vnl::io::TypeInput& _in) {
 		case 0: vnl::read(_in, hash); break;
 		case 1: vnl::read(_in, name); break;
 		case 2: vnl::read(_in, generics); break;
+	}
+}
+
+void TypeName::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		case 0: _var = hash; break;
+		case 1: _var = name; break;
+		case 2: _var = generics; break;
+		default: _var.clear();
+	}
+}
+
+void TypeName::set_field(int _index, const vnl::Var& _var) {
+	switch(_index) {
+		case 0: _var.to(hash); break;
+		case 1: _var.to(name); break;
+		case 2: _var.to(generics); break;
 	}
 }
 

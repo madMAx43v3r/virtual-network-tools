@@ -3,6 +3,7 @@
 
 #include <vnl/LogMsg.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
 
 namespace vnl {
 
@@ -20,6 +21,13 @@ LogMsg* LogMsg::clone() const {
 void LogMsg::destroy() {
 	this->LogMsg::~LogMsg();
 	return vnl::internal::global_pool_->push_back(this, sizeof(LogMsg));
+}
+
+bool LogMsg::assign(const vnl::Value& _value) {
+	switch(_value.get_vni_hash()) {
+		case 0x9df3e6f5: *this = (const LogMsg&)_value; return true;
+		default: return false;
+	}
 }
 
 void LogMsg::serialize(vnl::io::TypeOutput& _out) const {
@@ -91,6 +99,23 @@ void LogMsg::set_field(int _index, vnl::io::TypeInput& _in) {
 		case 0: vnl::read(_in, level); break;
 		case 1: vnl::read(_in, src_mac); break;
 		case 2: vnl::read(_in, msg); break;
+	}
+}
+
+void LogMsg::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		case 0: _var = level; break;
+		case 1: _var = src_mac; break;
+		case 2: _var = msg; break;
+		default: _var.clear();
+	}
+}
+
+void LogMsg::set_field(int _index, const vnl::Var& _var) {
+	switch(_index) {
+		case 0: _var.to(level); break;
+		case 1: _var.to(src_mac); break;
+		case 2: _var.to(msg); break;
 	}
 }
 

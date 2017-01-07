@@ -3,6 +3,7 @@
 
 #include <vnl/UplinkSupport.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
 
 namespace vnl {
 
@@ -38,6 +39,17 @@ void UplinkBase::get_field(int _index, vnl::io::TypeOutput& _out) const {
 }
 
 void UplinkBase::set_field(int _index, vnl::io::TypeInput& _in) {
+	switch(_index) {
+	}
+}
+
+void UplinkBase::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		default: _var.clear();
+	}
+}
+
+void UplinkBase::set_field(int _index, const vnl::Var& _var) {
 	switch(_index) {
 	}
 }

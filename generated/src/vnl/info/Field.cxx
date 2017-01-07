@@ -3,6 +3,7 @@
 
 #include <vnl/info/Field.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
 
 namespace vnl {
 namespace info {
@@ -21,6 +22,13 @@ Field* Field::clone() const {
 void Field::destroy() {
 	this->Field::~Field();
 	return vnl::internal::global_pool_->push_back(this, sizeof(Field));
+}
+
+bool Field::assign(const vnl::Value& _value) {
+	switch(_value.get_vni_hash()) {
+		case 0xd52524d4: *this = (const Field&)_value; return true;
+		default: return false;
+	}
 }
 
 void Field::serialize(vnl::io::TypeOutput& _out) const {
@@ -100,6 +108,25 @@ void Field::set_field(int _index, vnl::io::TypeInput& _in) {
 		case 1: vnl::read(_in, name); break;
 		case 2: vnl::read(_in, value); break;
 		case 3: vnl::read(_in, type); break;
+	}
+}
+
+void Field::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		case 0: _var = hash; break;
+		case 1: _var = name; break;
+		case 2: _var = value; break;
+		case 3: _var = type; break;
+		default: _var.clear();
+	}
+}
+
+void Field::set_field(int _index, const vnl::Var& _var) {
+	switch(_index) {
+		case 0: _var.to(hash); break;
+		case 1: _var.to(name); break;
+		case 2: _var.to(value); break;
+		case 3: _var.to(type); break;
 	}
 }
 

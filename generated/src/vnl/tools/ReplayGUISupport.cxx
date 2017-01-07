@@ -3,6 +3,7 @@
 
 #include <vnl/tools/ReplayGUISupport.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
 
 namespace vnl {
 namespace tools {
@@ -70,6 +71,27 @@ void ReplayGUIBase::set_field(int _index, vnl::io::TypeInput& _in) {
 		case 2: vnl::read(_in, vnl_heartbeat_interval); break;
 		case 3: vnl::read(_in, target_host); break;
 		case 4: vnl::read(_in, target_port); break;
+	}
+}
+
+void ReplayGUIBase::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		case 0: _var = vnl_log_level; break;
+		case 1: _var = vnl_msg_timeout; break;
+		case 2: _var = vnl_heartbeat_interval; break;
+		case 3: _var = target_host; break;
+		case 4: _var = target_port; break;
+		default: _var.clear();
+	}
+}
+
+void ReplayGUIBase::set_field(int _index, const vnl::Var& _var) {
+	switch(_index) {
+		case 0: _var.to(vnl_log_level); break;
+		case 1: _var.to(vnl_msg_timeout); break;
+		case 2: _var.to(vnl_heartbeat_interval); break;
+		case 3: _var.to(target_host); break;
+		case 4: _var.to(target_port); break;
 	}
 }
 

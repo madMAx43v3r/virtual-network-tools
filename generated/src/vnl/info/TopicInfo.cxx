@@ -3,6 +3,7 @@
 
 #include <vnl/info/TopicInfo.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
 
 namespace vnl {
 namespace info {
@@ -21,6 +22,13 @@ TopicInfo* TopicInfo::clone() const {
 void TopicInfo::destroy() {
 	this->TopicInfo::~TopicInfo();
 	return vnl::internal::global_pool_->push_back(this, sizeof(TopicInfo));
+}
+
+bool TopicInfo::assign(const vnl::Value& _value) {
+	switch(_value.get_vni_hash()) {
+		case 0x1e3eb783: *this = (const TopicInfo&)_value; return true;
+		default: return false;
+	}
 }
 
 void TopicInfo::serialize(vnl::io::TypeOutput& _out) const {
@@ -124,6 +132,31 @@ void TopicInfo::set_field(int _index, vnl::io::TypeInput& _in) {
 		case 4: vnl::read(_in, receive_counter); break;
 		case 5: vnl::read(_in, first_time); break;
 		case 6: vnl::read(_in, last_time); break;
+	}
+}
+
+void TopicInfo::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		case 0: _var = topic; break;
+		case 1: _var = publishers; break;
+		case 2: _var = subscribers; break;
+		case 3: _var = send_counter; break;
+		case 4: _var = receive_counter; break;
+		case 5: _var = first_time; break;
+		case 6: _var = last_time; break;
+		default: _var.clear();
+	}
+}
+
+void TopicInfo::set_field(int _index, const vnl::Var& _var) {
+	switch(_index) {
+		case 0: _var.to(topic); break;
+		case 1: _var.to(publishers); break;
+		case 2: _var.to(subscribers); break;
+		case 3: _var.to(send_counter); break;
+		case 4: _var.to(receive_counter); break;
+		case 5: _var.to(first_time); break;
+		case 6: _var.to(last_time); break;
 	}
 }
 

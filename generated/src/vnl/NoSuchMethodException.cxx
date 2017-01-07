@@ -3,6 +3,7 @@
 
 #include <vnl/NoSuchMethodException.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
 
 namespace vnl {
 
@@ -20,6 +21,13 @@ NoSuchMethodException* NoSuchMethodException::clone() const {
 void NoSuchMethodException::destroy() {
 	this->NoSuchMethodException::~NoSuchMethodException();
 	return vnl::internal::global_pool_->push_back(this, sizeof(NoSuchMethodException));
+}
+
+bool NoSuchMethodException::assign(const vnl::Value& _value) {
+	switch(_value.get_vni_hash()) {
+		case 0x69a97186: *this = (const NoSuchMethodException&)_value; return true;
+		default: return false;
+	}
 }
 
 void NoSuchMethodException::serialize(vnl::io::TypeOutput& _out) const {
@@ -66,6 +74,17 @@ void NoSuchMethodException::get_field(int _index, vnl::io::TypeOutput& _out) con
 }
 
 void NoSuchMethodException::set_field(int _index, vnl::io::TypeInput& _in) {
+	switch(_index) {
+	}
+}
+
+void NoSuchMethodException::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		default: _var.clear();
+	}
+}
+
+void NoSuchMethodException::set_field(int _index, const vnl::Var& _var) {
 	switch(_index) {
 	}
 }

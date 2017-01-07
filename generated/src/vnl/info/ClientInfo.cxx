@@ -3,6 +3,7 @@
 
 #include <vnl/info/ClientInfo.hxx>
 #include <vnl/Type.hxx>
+#include <vnl/Var.h>
 
 namespace vnl {
 namespace info {
@@ -21,6 +22,13 @@ ClientInfo* ClientInfo::clone() const {
 void ClientInfo::destroy() {
 	this->ClientInfo::~ClientInfo();
 	return vnl::internal::global_pool_->push_back(this, sizeof(ClientInfo));
+}
+
+bool ClientInfo::assign(const vnl::Value& _value) {
+	switch(_value.get_vni_hash()) {
+		case 0x6959008e: *this = (const ClientInfo&)_value; return true;
+		default: return false;
+	}
 }
 
 void ClientInfo::serialize(vnl::io::TypeOutput& _out) const {
@@ -92,6 +100,23 @@ void ClientInfo::set_field(int _index, vnl::io::TypeInput& _in) {
 		case 0: vnl::read(_in, proxy); break;
 		case 1: vnl::read(_in, num_requests); break;
 		case 2: vnl::read(_in, num_errors); break;
+	}
+}
+
+void ClientInfo::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		case 0: _var = proxy; break;
+		case 1: _var = num_requests; break;
+		case 2: _var = num_errors; break;
+		default: _var.clear();
+	}
+}
+
+void ClientInfo::set_field(int _index, const vnl::Var& _var) {
+	switch(_index) {
+		case 0: _var.to(proxy); break;
+		case 1: _var.to(num_requests); break;
+		case 2: _var.to(num_errors); break;
 	}
 }
 

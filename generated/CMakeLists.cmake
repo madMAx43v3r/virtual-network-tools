@@ -8,11 +8,14 @@ ADD_LIBRARY(vni STATIC
 	src/vnl/DuplicateKeyException.cxx
 	src/vnl/Exception.cxx
 	src/vnl/Exit.cxx
+	src/vnl/Function.cxx
 	src/vnl/Header.cxx
 	src/vnl/Heartbeat.cxx
 	src/vnl/IOException.cxx
+	src/vnl/IllegalInstruction.cxx
 	src/vnl/Instance.cxx
 	src/vnl/LogMsg.cxx
+	src/vnl/MemoryException.cxx
 	src/vnl/NoSuchFieldException.cxx
 	src/vnl/NoSuchKeyException.cxx
 	src/vnl/NoSuchMethodException.cxx
@@ -22,17 +25,20 @@ ADD_LIBRARY(vni STATIC
 	src/vnl/RecordHeader.cxx
 	src/vnl/RecordValue.cxx
 	src/vnl/RecorderSupport.cxx
+	src/vnl/SegmentationFault.cxx
 	src/vnl/Shutdown.cxx
 	src/vnl/SpyToolSupport.cxx
+	src/vnl/StackOverflow.cxx
 	src/vnl/TcpClientSupport.cxx
 	src/vnl/TcpProxySupport.cxx
 	src/vnl/TcpServerSupport.cxx
 	src/vnl/TcpUplinkSupport.cxx
 	src/vnl/TimeoutException.cxx
 	src/vnl/Topic.cxx
-	src/vnl/UdpServerSupport.cxx
+	src/vnl/TypeMismatchException.cxx
 	src/vnl/UplinkSupport.cxx
 	src/vnl/Value.cxx
+	src/vnl/code_t.cxx
 	src/vnl/info/ClientInfo.cxx
 	src/vnl/info/Field.cxx
 	src/vnl/info/MemoryInfo.cxx
@@ -46,6 +52,7 @@ ADD_LIBRARY(vni STATIC
 	src/vnl/info/TopicInfoList.cxx
 	src/vnl/info/Type.cxx
 	src/vnl/info/TypeName.cxx
+	src/vnl/op_code_t.cxx
 	src/vnl/tools/AdminGUISupport.cxx
 	src/vnl/tools/ReplayGUISupport.cxx
 )
