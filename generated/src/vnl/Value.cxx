@@ -20,6 +20,7 @@
 #include <vnl/NoSuchKeyException.hxx>
 #include <vnl/NoSuchMethodException.hxx>
 #include <vnl/RecordHeader.hxx>
+#include <vnl/RecordTypeInfo.hxx>
 #include <vnl/RecordValue.hxx>
 #include <vnl/SegmentationFault.hxx>
 #include <vnl/Shutdown.hxx>
@@ -61,6 +62,7 @@ vnl::Value* create(vnl::Hash32 hash) {
 		case 0xd8d131ca: return vnl::create<vnl::NoSuchKeyException>();
 		case 0x69a97186: return vnl::create<vnl::NoSuchMethodException>();
 		case 0xc10cd56c: return vnl::create<vnl::RecordHeader>();
+		case 0x9a729ac6: return vnl::create<vnl::RecordTypeInfo>();
 		case 0x1cdb1920: return vnl::create<vnl::RecordValue>();
 		case 0x57c2463c: return vnl::create<vnl::SegmentationFault>();
 		case 0xcdc22e1f: return vnl::create<vnl::Shutdown>();
@@ -103,6 +105,7 @@ vnl::Array<vnl::String> get_class_names() {
 	res.push_back("vnl.NoSuchKeyException");
 	res.push_back("vnl.NoSuchMethodException");
 	res.push_back("vnl.RecordHeader");
+	res.push_back("vnl.RecordTypeInfo");
 	res.push_back("vnl.RecordValue");
 	res.push_back("vnl.SegmentationFault");
 	res.push_back("vnl.Shutdown");
@@ -466,6 +469,13 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		}
 		{
 			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xf3aac4d9;
+			field.name = "have_type_info";
+			field.type.hash = 0xcc74e5d4;
+			field.type.name = "bool";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
 			field.hash = 0x5ee0fae3;
 			field.name = "num_samples";
 			field.type.hash = 0x19d39da3;
@@ -492,6 +502,24 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 			field.type.hash = 0x556c0dd6;
 			field.type.name = "vnl.Array";
 			field.type.generics.push_back("vnl.Topic");
+		}
+	}
+	{
+		vnl::info::Type& info = res["vnl.RecordTypeInfo"];
+		info.hash = 0x9a729ac6;
+		info.name = "vnl.RecordTypeInfo";
+		info.is_struct = true;
+		info.is_class = true;
+		info.super.hash = 0xfdb7a5a8;
+		info.super.name = "vnl.Value";
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x316d3;
+			field.name = "type_map";
+			field.type.hash = 0xe5d1fc67;
+			field.type.name = "vnl.Map";
+			field.type.generics.push_back("vnl.Hash32");
+			field.type.generics.push_back("vnl.info.Type");
 		}
 	}
 	{
@@ -1411,6 +1439,16 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		info.super.name = "vnl.Object";
 		{
 			vnl::info::Method& method = *info.methods.push_back();
+			method.hash = 0xf73490b7;
+			method.name = "get_type_info";
+			method.is_const = true;
+			method.type.hash = 0xe5d1fc67;
+			method.type.name = "vnl.Map";
+			method.type.generics.push_back("vnl.Hash32");
+			method.type.generics.push_back("vnl.info.Type");
+		}
+		{
+			vnl::info::Method& method = *info.methods.push_back();
 			method.hash = 0xe745115d;
 			method.name = "pause";
 			method.is_const = false;
@@ -2008,6 +2046,7 @@ bool Value::assign(const vnl::Value& _value) {
 		case 0xd8d131ca: *this = (const vnl::NoSuchKeyException&)_value; return true;
 		case 0x69a97186: *this = (const vnl::NoSuchMethodException&)_value; return true;
 		case 0xc10cd56c: *this = (const vnl::RecordHeader&)_value; return true;
+		case 0x9a729ac6: *this = (const vnl::RecordTypeInfo&)_value; return true;
 		case 0x1cdb1920: *this = (const vnl::RecordValue&)_value; return true;
 		case 0x57c2463c: *this = (const vnl::SegmentationFault&)_value; return true;
 		case 0xcdc22e1f: *this = (const vnl::Shutdown&)_value; return true;

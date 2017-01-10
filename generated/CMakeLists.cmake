@@ -23,6 +23,7 @@ ADD_LIBRARY(vni STATIC
 	src/vnl/PlayerSupport.cxx
 	src/vnl/ProcessSupport.cxx
 	src/vnl/RecordHeader.cxx
+	src/vnl/RecordTypeInfo.cxx
 	src/vnl/RecordValue.cxx
 	src/vnl/RecorderSupport.cxx
 	src/vnl/SegmentationFault.cxx

@@ -35,6 +35,7 @@ void RecordHeader::serialize(vnl::io::TypeOutput& _out) const {
 	_out.putHash(VNI_HASH);
 	_out.putHash(0x55c30e99); vnl::write(_out, version);
 	_out.putHash(0xd7a7ecc4); vnl::write(_out, header_size);
+	_out.putHash(0xf3aac4d9); vnl::write(_out, have_type_info);
 	_out.putHash(0x5ee0fae3); vnl::write(_out, num_samples);
 	_out.putHash(0x9c1b758e); vnl::write(_out, begin_time);
 	_out.putHash(0x28517039); vnl::write(_out, end_time);
@@ -48,6 +49,7 @@ void RecordHeader::deserialize(vnl::io::TypeInput& _in, int _size) {
 		switch(_hash) {
 			case 0x55c30e99: vnl::read(_in, version); break;
 			case 0xd7a7ecc4: vnl::read(_in, header_size); break;
+			case 0xf3aac4d9: vnl::read(_in, have_type_info); break;
 			case 0x5ee0fae3: vnl::read(_in, num_samples); break;
 			case 0x9c1b758e: vnl::read(_in, begin_time); break;
 			case 0x28517039: vnl::read(_in, end_time); break;
@@ -61,10 +63,11 @@ int RecordHeader::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		case 0x55c30e99: return 0;
 		case 0xd7a7ecc4: return 1;
-		case 0x5ee0fae3: return 2;
-		case 0x9c1b758e: return 3;
-		case 0x28517039: return 4;
-		case 0x22dd6aa2: return 5;
+		case 0xf3aac4d9: return 2;
+		case 0x5ee0fae3: return 3;
+		case 0x9c1b758e: return 4;
+		case 0x28517039: return 5;
+		case 0x22dd6aa2: return 6;
 		default: return -1;
 	}
 }
@@ -73,10 +76,11 @@ const char* RecordHeader::get_field_name(int _index) const {
 	switch(_index) {
 		case 0: return "version";
 		case 1: return "header_size";
-		case 2: return "num_samples";
-		case 3: return "begin_time";
-		case 4: return "end_time";
-		case 5: return "topics";
+		case 2: return "have_type_info";
+		case 3: return "num_samples";
+		case 4: return "begin_time";
+		case 5: return "end_time";
+		case 6: return "topics";
 		default: return 0;
 	}
 }
@@ -85,10 +89,11 @@ void RecordHeader::get_field(int _index, vnl::String& _str) const {
 	switch(_index) {
 		case 0: vnl::to_string(_str, version); break;
 		case 1: vnl::to_string(_str, header_size); break;
-		case 2: vnl::to_string(_str, num_samples); break;
-		case 3: vnl::to_string(_str, begin_time); break;
-		case 4: vnl::to_string(_str, end_time); break;
-		case 5: vnl::to_string(_str, topics); break;
+		case 2: vnl::to_string(_str, have_type_info); break;
+		case 3: vnl::to_string(_str, num_samples); break;
+		case 4: vnl::to_string(_str, begin_time); break;
+		case 5: vnl::to_string(_str, end_time); break;
+		case 6: vnl::to_string(_str, topics); break;
 	}
 }
 
@@ -96,10 +101,11 @@ void RecordHeader::set_field(int _index, const vnl::String& _str) {
 	switch(_index) {
 		case 0: vnl::from_string(_str, version); break;
 		case 1: vnl::from_string(_str, header_size); break;
-		case 2: vnl::from_string(_str, num_samples); break;
-		case 3: vnl::from_string(_str, begin_time); break;
-		case 4: vnl::from_string(_str, end_time); break;
-		case 5: vnl::from_string(_str, topics); break;
+		case 2: vnl::from_string(_str, have_type_info); break;
+		case 3: vnl::from_string(_str, num_samples); break;
+		case 4: vnl::from_string(_str, begin_time); break;
+		case 5: vnl::from_string(_str, end_time); break;
+		case 6: vnl::from_string(_str, topics); break;
 	}
 }
 
@@ -107,10 +113,11 @@ void RecordHeader::get_field(int _index, vnl::io::TypeOutput& _out) const {
 	switch(_index) {
 		case 0: vnl::write(_out, version); break;
 		case 1: vnl::write(_out, header_size); break;
-		case 2: vnl::write(_out, num_samples); break;
-		case 3: vnl::write(_out, begin_time); break;
-		case 4: vnl::write(_out, end_time); break;
-		case 5: vnl::write(_out, topics); break;
+		case 2: vnl::write(_out, have_type_info); break;
+		case 3: vnl::write(_out, num_samples); break;
+		case 4: vnl::write(_out, begin_time); break;
+		case 5: vnl::write(_out, end_time); break;
+		case 6: vnl::write(_out, topics); break;
 		default: _out.putNull();
 	}
 }
@@ -119,10 +126,11 @@ void RecordHeader::set_field(int _index, vnl::io::TypeInput& _in) {
 	switch(_index) {
 		case 0: vnl::read(_in, version); break;
 		case 1: vnl::read(_in, header_size); break;
-		case 2: vnl::read(_in, num_samples); break;
-		case 3: vnl::read(_in, begin_time); break;
-		case 4: vnl::read(_in, end_time); break;
-		case 5: vnl::read(_in, topics); break;
+		case 2: vnl::read(_in, have_type_info); break;
+		case 3: vnl::read(_in, num_samples); break;
+		case 4: vnl::read(_in, begin_time); break;
+		case 5: vnl::read(_in, end_time); break;
+		case 6: vnl::read(_in, topics); break;
 	}
 }
 
@@ -130,10 +138,11 @@ void RecordHeader::get_field(int _index, vnl::Var& _var) const {
 	switch(_index) {
 		case 0: _var = version; break;
 		case 1: _var = header_size; break;
-		case 2: _var = num_samples; break;
-		case 3: _var = begin_time; break;
-		case 4: _var = end_time; break;
-		case 5: _var = topics; break;
+		case 2: _var = have_type_info; break;
+		case 3: _var = num_samples; break;
+		case 4: _var = begin_time; break;
+		case 5: _var = end_time; break;
+		case 6: _var = topics; break;
 		default: _var.clear();
 	}
 }
@@ -142,10 +151,11 @@ void RecordHeader::set_field(int _index, const vnl::Var& _var) {
 	switch(_index) {
 		case 0: _var.to(version); break;
 		case 1: _var.to(header_size); break;
-		case 2: _var.to(num_samples); break;
-		case 3: _var.to(begin_time); break;
-		case 4: _var.to(end_time); break;
-		case 5: _var.to(topics); break;
+		case 2: _var.to(have_type_info); break;
+		case 3: _var.to(num_samples); break;
+		case 4: _var.to(begin_time); break;
+		case 5: _var.to(end_time); break;
+		case 6: _var.to(topics); break;
 	}
 }
 

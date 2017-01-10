@@ -18,8 +18,9 @@ int RecorderBase::get_field_index(vnl::Hash32 _hash) const {
 		case 0xb60d3446: return 3;
 		case 0xd129c896: return 4;
 		case 0xf5bbbd65: return 5;
-		case 0xd7a7ecc4: return 6;
-		case 0xea5190a5: return 7;
+		case 0xe0a7be79: return 6;
+		case 0xd7a7ecc4: return 7;
+		case 0xea5190a5: return 8;
 		default: return -1;
 	}
 }
@@ -32,8 +33,9 @@ const char* RecorderBase::get_field_name(int _index) const {
 		case 3: return "filename";
 		case 4: return "interval";
 		case 5: return "do_write_header";
-		case 6: return "header_size";
-		case 7: return "domains";
+		case 6: return "do_write_type_info";
+		case 7: return "header_size";
+		case 8: return "domains";
 		default: return 0;
 	}
 }
@@ -46,8 +48,9 @@ void RecorderBase::get_field(int _index, vnl::String& _str) const {
 		case 3: vnl::to_string(_str, filename); break;
 		case 4: vnl::to_string(_str, interval); break;
 		case 5: vnl::to_string(_str, do_write_header); break;
-		case 6: vnl::to_string(_str, header_size); break;
-		case 7: vnl::to_string(_str, domains); break;
+		case 6: vnl::to_string(_str, do_write_type_info); break;
+		case 7: vnl::to_string(_str, header_size); break;
+		case 8: vnl::to_string(_str, domains); break;
 	}
 }
 
@@ -59,8 +62,9 @@ void RecorderBase::set_field(int _index, const vnl::String& _str) {
 		case 3: vnl::from_string(_str, filename); break;
 		case 4: vnl::from_string(_str, interval); break;
 		case 5: vnl::from_string(_str, do_write_header); break;
-		case 6: vnl::from_string(_str, header_size); break;
-		case 7: vnl::from_string(_str, domains); break;
+		case 6: vnl::from_string(_str, do_write_type_info); break;
+		case 7: vnl::from_string(_str, header_size); break;
+		case 8: vnl::from_string(_str, domains); break;
 	}
 }
 
@@ -72,8 +76,9 @@ void RecorderBase::get_field(int _index, vnl::io::TypeOutput& _out) const {
 		case 3: vnl::write(_out, filename); break;
 		case 4: vnl::write(_out, interval); break;
 		case 5: vnl::write(_out, do_write_header); break;
-		case 6: vnl::write(_out, header_size); break;
-		case 7: vnl::write(_out, domains); break;
+		case 6: vnl::write(_out, do_write_type_info); break;
+		case 7: vnl::write(_out, header_size); break;
+		case 8: vnl::write(_out, domains); break;
 		default: _out.putNull();
 	}
 }
@@ -86,8 +91,9 @@ void RecorderBase::set_field(int _index, vnl::io::TypeInput& _in) {
 		case 3: vnl::read(_in, filename); break;
 		case 4: vnl::read(_in, interval); break;
 		case 5: vnl::read(_in, do_write_header); break;
-		case 6: vnl::read(_in, header_size); break;
-		case 7: vnl::read(_in, domains); break;
+		case 6: vnl::read(_in, do_write_type_info); break;
+		case 7: vnl::read(_in, header_size); break;
+		case 8: vnl::read(_in, domains); break;
 	}
 }
 
@@ -99,8 +105,9 @@ void RecorderBase::get_field(int _index, vnl::Var& _var) const {
 		case 3: _var = filename; break;
 		case 4: _var = interval; break;
 		case 5: _var = do_write_header; break;
-		case 6: _var = header_size; break;
-		case 7: _var = domains; break;
+		case 6: _var = do_write_type_info; break;
+		case 7: _var = header_size; break;
+		case 8: _var = domains; break;
 		default: _var.clear();
 	}
 }
@@ -113,8 +120,9 @@ void RecorderBase::set_field(int _index, const vnl::Var& _var) {
 		case 3: _var.to(filename); break;
 		case 4: _var.to(interval); break;
 		case 5: _var.to(do_write_header); break;
-		case 6: _var.to(header_size); break;
-		case 7: _var.to(domains); break;
+		case 6: _var.to(do_write_type_info); break;
+		case 7: _var.to(header_size); break;
+		case 8: _var.to(domains); break;
 	}
 }
 
@@ -135,6 +143,12 @@ bool RecorderBase::vni_call(vnl::io::TypeInput& _in, uint32_t _hash, int _num_ar
 	case 0xf5bbbd65: 
 		if(_num_args == 1) {
 			vnl::read(_in, do_write_header);
+			return true;
+		}
+		break;
+	case 0xe0a7be79: 
+		if(_num_args == 1) {
+			vnl::read(_in, do_write_type_info);
 			return true;
 		}
 		break;
@@ -171,6 +185,12 @@ bool RecorderBase::vni_const_call(vnl::io::TypeInput& _in, uint32_t _hash, int _
 	case 0xf5bbbd65: 
 		if(_num_args == 0) {
 			vnl::write(_out, do_write_header);
+			return true;
+		}
+		break;
+	case 0xe0a7be79: 
+		if(_num_args == 0) {
+			vnl::write(_out, do_write_type_info);
 			return true;
 		}
 		break;

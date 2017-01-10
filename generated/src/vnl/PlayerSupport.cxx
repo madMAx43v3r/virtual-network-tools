@@ -344,6 +344,18 @@ bool PlayerBase::vni_const_call(vnl::io::TypeInput& _in, uint32_t _hash, int _nu
 			break;
 		}
 		break;
+	case 0xf73490b7: 
+		switch(_num_args) {
+			case 0: {
+				if(!_in.error()) {
+					vnl::Map<vnl::Hash32, vnl::info::Type > _res = get_type_info();
+					vnl::write(_out, _res);
+					return true;
+				}
+			}
+			break;
+		}
+		break;
 	}
 	return Super::vni_const_call(_in, _hash, _num_args, _out);
 }

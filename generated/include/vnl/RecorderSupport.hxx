@@ -16,7 +16,7 @@ namespace vnl {
 class RecorderBase : public vnl::Object {
 public:
 	static const uint32_t VNI_HASH = 0xf1cc425;
-	static const uint32_t NUM_FIELDS = 8;
+	static const uint32_t NUM_FIELDS = 9;
 	
 	typedef vnl::Object Super;
 	
@@ -24,6 +24,7 @@ public:
 	vnl::String filename;
 	int32_t interval;
 	bool do_write_header;
+	bool do_write_type_info;
 	int32_t header_size;
 	vnl::Array<vnl::String > domains;
 	
@@ -33,10 +34,12 @@ public:
 		filename = "rec-";
 		interval = 1000000;
 		do_write_header = true;
+		do_write_type_info = true;
 		header_size = 262144;
 		vnl::read_config(domain_, topic_, "filename", filename);
 		vnl::read_config(domain_, topic_, "interval", interval);
 		vnl::read_config(domain_, topic_, "do_write_header", do_write_header);
+		vnl::read_config(domain_, topic_, "do_write_type_info", do_write_type_info);
 		vnl::read_config(domain_, topic_, "header_size", header_size);
 		vnl::read_config(domain_, topic_, "domains", domains);
 	}
@@ -69,6 +72,7 @@ protected:
 		_writer.set_filename(filename);
 		_writer.set_interval(interval);
 		_writer.set_do_write_header(do_write_header);
+		_writer.set_do_write_type_info(do_write_type_info);
 		_writer.set_header_size(header_size);
 		_writer.set_domains(domains);
 	}
