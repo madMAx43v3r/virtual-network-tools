@@ -17,7 +17,10 @@ add_subdirectory(generated)
 add_subdirectory(lib/virtual-network-layers-cpp)
 
 add_executable(crc64 src/crc64)
-target_link_libraries(crc64 vnl vni)
+target_link_libraries(crc64 vnl)
+
+add_executable(vnlrec2json src/vnlrec2json.cpp)
+target_link_libraries(vnlrec2json vnl vni)
 
 add_executable(ReplayGUI ReplayGUI/replaygui.cpp)
 target_link_libraries(ReplayGUI vnl vni Qt4::QtGui)
