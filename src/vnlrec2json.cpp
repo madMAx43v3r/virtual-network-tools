@@ -57,7 +57,7 @@ void dump_sample(vnl::io::TypeInput& in, vnl::info::Type* type = 0, vnl::info::T
 	case VNL_IO_STRING: {
 		vnl::String value;
 		in.readString(value, size);
-		std::cout << "\"" << value.to_string() << "\"";
+		std::cout << vnl::to_string(value).to_string();
 		break;
 	}
 	case VNL_IO_ARRAY: {
@@ -75,16 +75,18 @@ void dump_sample(vnl::io::TypeInput& in, vnl::info::Type* type = 0, vnl::info::T
 	case VNL_IO_MAP: {
 		vnl::info::Type* type_A = (type_name && type_name->generics.size() >= 1) ? type_info->find(type_name->generics[0]) : 0;
 		vnl::info::Type* type_B = (type_name && type_name->generics.size() >= 2) ? type_info->find(type_name->generics[1]) : 0;
-		std::cout << "{";
+		std::cout << "[";
 		for(int i = 0; i < size; ++i) {
+			std::cout << "{\"key\": ";
 			dump_sample(in, type_A);
-			std::cout << " : ";
+			std::cout << ", \"value\": ";
 			dump_sample(in, type_B);
+			std::cout << "}";
 			if(i < size-1) {
 				std::cout << ", ";
 			}
 		}
-		std::cout << "}";
+		std::cout << "]";
 		break;
 	}
 	case VNL_IO_CLASS:
@@ -158,7 +160,7 @@ int main(int argc, char** argv) {
 	{
 		vnl::Pointer<vnl::Value> ptr;
 		vnl::read(in, ptr);
-		vnl::RecordHeader* p_header = dynamic_cast<vnl::RecordHeader*>(ptr.value());
+		vnl::RecordHeader* p_header = dynamic_cast<vnl::RecordHeader*>(ptr.get());
 		if(p_header) {
 			header = *p_header;
 			::fseek(file, header.header_size, SEEK_SET);
@@ -197,7 +199,7 @@ int main(int argc, char** argv) {
 		
 		buf.reset();
 		out.reset();
-		vnl::write(out, next.value.value());
+		vnl::write(out, next.value.get());
 		out.flush();
 		buf.flip();
 		
