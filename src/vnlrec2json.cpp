@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <fstream>
+#include <iomanip>
 
 #include <vnl/io.h>
 #include <vnl/Layer.h>
@@ -46,7 +47,7 @@ void dump_sample(vnl::io::TypeInput& in, vnl::info::Type* type = 0, vnl::info::T
 	case VNL_IO_REAL: {
 		double value;
 		in.readValue(value, id, size);
-		std::cout << value;
+		std::cout << std::setprecision(12) << value;
 		break;
 	}
 	case VNL_IO_BINARY: {
