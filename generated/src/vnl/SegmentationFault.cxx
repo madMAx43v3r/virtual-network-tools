@@ -10,8 +10,18 @@ namespace vnl {
 const uint32_t SegmentationFault::VNI_HASH;
 const uint32_t SegmentationFault::NUM_FIELDS;
 
+SegmentationFault::SegmentationFault() {
+}
+
 SegmentationFault* SegmentationFault::create() {
 	return vnl::create<SegmentationFault>();
+}
+
+SegmentationFault* SegmentationFault::create(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x57c2463c: return vnl::create<vnl::SegmentationFault>();
+		default: return 0;
+	}
 }
 
 SegmentationFault* SegmentationFault::clone() const {
@@ -23,9 +33,17 @@ void SegmentationFault::destroy() {
 	return vnl::internal::global_pool_->push_back(this, sizeof(SegmentationFault));
 }
 
+bool SegmentationFault::is_assignable(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x57c2463c: return true;
+		default: return false;
+	}
+}
+
 bool SegmentationFault::assign(const vnl::Value& _value) {
 	switch(_value.get_vni_hash()) {
-		case 0x57c2463c: *this = (const SegmentationFault&)_value; return true;
+		case 0x57c2463c:
+			*this = (const SegmentationFault&)_value; return true;
 		default: return false;
 	}
 }

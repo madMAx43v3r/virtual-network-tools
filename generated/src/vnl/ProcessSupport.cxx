@@ -10,6 +10,20 @@ namespace vnl {
 const uint32_t ProcessBase::VNI_HASH;
 const uint32_t ProcessBase::NUM_FIELDS;
 
+ProcessBase::ProcessBase(const vnl::String& domain_, const vnl::String& topic_)
+	:	vnl::Object::Object(domain_, topic_)
+{
+	watchdog_interval = 100000;
+	update_interval = 1000000;
+	stats_interval = 10000000;
+	do_print_stats = true;
+	vnl::read_config(domain_, topic_, "name", name);
+	vnl::read_config(domain_, topic_, "watchdog_interval", watchdog_interval);
+	vnl::read_config(domain_, topic_, "update_interval", update_interval);
+	vnl::read_config(domain_, topic_, "stats_interval", stats_interval);
+	vnl::read_config(domain_, topic_, "do_print_stats", do_print_stats);
+}
+
 int ProcessBase::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		case 0x482df535: return 0;

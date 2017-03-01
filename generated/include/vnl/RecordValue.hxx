@@ -7,6 +7,7 @@
 #include <vnl/Hash64.h>
 #include <vnl/Header.hxx>
 #include <vnl/Pointer.h>
+#include <vnl/RecordEntry.hxx>
 #include <vnl/Value.hxx>
 
 #include <vnl/Type.hxx>
@@ -14,7 +15,7 @@
 
 namespace vnl {
 
-class RecordValue : public vnl::Value {
+class RecordValue : public vnl::RecordEntry {
 public:
 	static const uint32_t VNI_HASH = 0x1cdb1920;
 	static const uint32_t NUM_FIELDS = 5;
@@ -26,12 +27,12 @@ public:
 	vnl::Pointer<vnl::Header > header;
 	vnl::Pointer<vnl::Value > value;
 	
-	RecordValue() {
-		time = 0;
-	}
+	RecordValue();
 	
 	static RecordValue* create();
+	static RecordValue* create(vnl::Hash32 hash);
 	virtual RecordValue* clone() const;
+	virtual bool is_assignable(vnl::Hash32 hash);
 	virtual bool assign(const vnl::Value& _value);
 	virtual void raise() const { throw *this; }
 	virtual void destroy();

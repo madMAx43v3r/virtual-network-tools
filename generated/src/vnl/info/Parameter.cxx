@@ -11,8 +11,18 @@ namespace info {
 const uint32_t Parameter::VNI_HASH;
 const uint32_t Parameter::NUM_FIELDS;
 
+Parameter::Parameter() {
+}
+
 Parameter* Parameter::create() {
 	return vnl::create<Parameter>();
+}
+
+Parameter* Parameter::create(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0xf5e3f3b6: return vnl::create<vnl::info::Parameter>();
+		default: return 0;
+	}
 }
 
 Parameter* Parameter::clone() const {
@@ -24,9 +34,17 @@ void Parameter::destroy() {
 	return vnl::internal::global_pool_->push_back(this, sizeof(Parameter));
 }
 
+bool Parameter::is_assignable(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0xf5e3f3b6: return true;
+		default: return false;
+	}
+}
+
 bool Parameter::assign(const vnl::Value& _value) {
 	switch(_value.get_vni_hash()) {
-		case 0xf5e3f3b6: *this = (const Parameter&)_value; return true;
+		case 0xf5e3f3b6:
+			*this = (const Parameter&)_value; return true;
 		default: return false;
 	}
 }

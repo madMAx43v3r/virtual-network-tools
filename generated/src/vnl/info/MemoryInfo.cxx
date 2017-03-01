@@ -11,8 +11,21 @@ namespace info {
 const uint32_t MemoryInfo::VNI_HASH;
 const uint32_t MemoryInfo::NUM_FIELDS;
 
+MemoryInfo::MemoryInfo() {
+	size = 0;
+	num_alloc = 0;
+	num_used = 0;
+}
+
 MemoryInfo* MemoryInfo::create() {
 	return vnl::create<MemoryInfo>();
+}
+
+MemoryInfo* MemoryInfo::create(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x734ed4bc: return vnl::create<vnl::info::MemoryInfo>();
+		default: return 0;
+	}
 }
 
 MemoryInfo* MemoryInfo::clone() const {
@@ -24,9 +37,17 @@ void MemoryInfo::destroy() {
 	return vnl::internal::global_pool_->push_back(this, sizeof(MemoryInfo));
 }
 
+bool MemoryInfo::is_assignable(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x734ed4bc: return true;
+		default: return false;
+	}
+}
+
 bool MemoryInfo::assign(const vnl::Value& _value) {
 	switch(_value.get_vni_hash()) {
-		case 0x734ed4bc: *this = (const MemoryInfo&)_value; return true;
+		case 0x734ed4bc:
+			*this = (const MemoryInfo&)_value; return true;
 		default: return false;
 	}
 }

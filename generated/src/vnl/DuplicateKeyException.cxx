@@ -10,8 +10,18 @@ namespace vnl {
 const uint32_t DuplicateKeyException::VNI_HASH;
 const uint32_t DuplicateKeyException::NUM_FIELDS;
 
+DuplicateKeyException::DuplicateKeyException() {
+}
+
 DuplicateKeyException* DuplicateKeyException::create() {
 	return vnl::create<DuplicateKeyException>();
+}
+
+DuplicateKeyException* DuplicateKeyException::create(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x7e6aa525: return vnl::create<vnl::DuplicateKeyException>();
+		default: return 0;
+	}
 }
 
 DuplicateKeyException* DuplicateKeyException::clone() const {
@@ -23,9 +33,17 @@ void DuplicateKeyException::destroy() {
 	return vnl::internal::global_pool_->push_back(this, sizeof(DuplicateKeyException));
 }
 
+bool DuplicateKeyException::is_assignable(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x7e6aa525: return true;
+		default: return false;
+	}
+}
+
 bool DuplicateKeyException::assign(const vnl::Value& _value) {
 	switch(_value.get_vni_hash()) {
-		case 0x7e6aa525: *this = (const DuplicateKeyException&)_value; return true;
+		case 0x7e6aa525:
+			*this = (const DuplicateKeyException&)_value; return true;
 		default: return false;
 	}
 }

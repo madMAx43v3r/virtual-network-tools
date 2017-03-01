@@ -39,20 +39,12 @@ public:
 	vnl::Map<vnl::Hash64, vnl::String > output_pins;
 	vnl::Map<vnl::Hash64, vnl::info::ClientInfo > clients;
 	
-	ObjectInfo() {
-		time = 0;
-		spawn_time = 0;
-		idle_time = 0;
-		num_cycles = 0;
-		num_msg_sent = 0;
-		num_msg_received = 0;
-		num_msg_dropped = 0;
-		send_latency_sum = 0;
-		receive_latency_sum = 0;
-	}
+	ObjectInfo();
 	
 	static ObjectInfo* create();
+	static ObjectInfo* create(vnl::Hash32 hash);
 	virtual ObjectInfo* clone() const;
+	virtual bool is_assignable(vnl::Hash32 hash);
 	virtual bool assign(const vnl::Value& _value);
 	virtual void raise() const { throw *this; }
 	virtual void destroy();

@@ -10,6 +10,23 @@ namespace vnl {
 const uint32_t PlayerBase::VNI_HASH;
 const uint32_t PlayerBase::NUM_FIELDS;
 
+PlayerBase::PlayerBase(const vnl::String& domain_, const vnl::String& topic_)
+	:	vnl::Object::Object(domain_, topic_)
+{
+	filename = "rec-???.dat";
+	autostart = false;
+	autoloop = false;
+	autoshutdown = false;
+	interval = 200000;
+	vnl::read_config(domain_, topic_, "filename", filename);
+	vnl::read_config(domain_, topic_, "domain_blacklist", domain_blacklist);
+	vnl::read_config(domain_, topic_, "topic_blacklist", topic_blacklist);
+	vnl::read_config(domain_, topic_, "autostart", autostart);
+	vnl::read_config(domain_, topic_, "autoloop", autoloop);
+	vnl::read_config(domain_, topic_, "autoshutdown", autoshutdown);
+	vnl::read_config(domain_, topic_, "interval", interval);
+}
+
 int PlayerBase::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		case 0x482df535: return 0;

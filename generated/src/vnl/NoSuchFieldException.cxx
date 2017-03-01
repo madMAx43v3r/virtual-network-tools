@@ -10,8 +10,18 @@ namespace vnl {
 const uint32_t NoSuchFieldException::VNI_HASH;
 const uint32_t NoSuchFieldException::NUM_FIELDS;
 
+NoSuchFieldException::NoSuchFieldException() {
+}
+
 NoSuchFieldException* NoSuchFieldException::create() {
 	return vnl::create<NoSuchFieldException>();
+}
+
+NoSuchFieldException* NoSuchFieldException::create(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0xd7988e27: return vnl::create<vnl::NoSuchFieldException>();
+		default: return 0;
+	}
 }
 
 NoSuchFieldException* NoSuchFieldException::clone() const {
@@ -23,9 +33,17 @@ void NoSuchFieldException::destroy() {
 	return vnl::internal::global_pool_->push_back(this, sizeof(NoSuchFieldException));
 }
 
+bool NoSuchFieldException::is_assignable(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0xd7988e27: return true;
+		default: return false;
+	}
+}
+
 bool NoSuchFieldException::assign(const vnl::Value& _value) {
 	switch(_value.get_vni_hash()) {
-		case 0xd7988e27: *this = (const NoSuchFieldException&)_value; return true;
+		case 0xd7988e27:
+			*this = (const NoSuchFieldException&)_value; return true;
 		default: return false;
 	}
 }

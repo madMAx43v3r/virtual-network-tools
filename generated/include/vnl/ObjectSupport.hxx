@@ -31,15 +31,7 @@ public:
 	int32_t vnl_msg_timeout;
 	int32_t vnl_heartbeat_interval;
 	
-	ObjectBase(const vnl::String& domain_, const vnl::String& topic_)
-	{
-		vnl_log_level = INFO;
-		vnl_msg_timeout = 1000000;
-		vnl_heartbeat_interval = 1000000;
-		vnl::read_config(domain_, topic_, "vnl_log_level", vnl_log_level);
-		vnl::read_config(domain_, topic_, "vnl_msg_timeout", vnl_msg_timeout);
-		vnl::read_config(domain_, topic_, "vnl_heartbeat_interval", vnl_heartbeat_interval);
-	}
+	ObjectBase(const vnl::String& domain_, const vnl::String& topic_);
 	
 	virtual uint32_t get_vni_hash() const { return VNI_HASH; }
 	virtual const char* get_type_name() const { return "vnl.Object"; }

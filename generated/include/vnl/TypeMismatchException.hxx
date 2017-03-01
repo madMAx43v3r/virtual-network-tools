@@ -18,11 +18,12 @@ public:
 	
 	
 	
-	TypeMismatchException() {
-	}
+	TypeMismatchException();
 	
 	static TypeMismatchException* create();
+	static TypeMismatchException* create(vnl::Hash32 hash);
 	virtual TypeMismatchException* clone() const;
+	virtual bool is_assignable(vnl::Hash32 hash);
 	virtual bool assign(const vnl::Value& _value);
 	virtual void raise() const { throw *this; }
 	virtual void destroy();

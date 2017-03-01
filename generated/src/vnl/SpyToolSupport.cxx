@@ -10,6 +10,13 @@ namespace vnl {
 const uint32_t SpyToolBase::VNI_HASH;
 const uint32_t SpyToolBase::NUM_FIELDS;
 
+SpyToolBase::SpyToolBase(const vnl::String& domain_, const vnl::String& topic_)
+	:	vnl::Object::Object(domain_, topic_)
+{
+	dump = false;
+	vnl::read_config(domain_, topic_, "dump", dump);
+}
+
 int SpyToolBase::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		case 0x482df535: return 0;

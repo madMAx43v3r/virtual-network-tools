@@ -10,8 +10,18 @@ namespace vnl {
 const uint32_t Topic::VNI_HASH;
 const uint32_t Topic::NUM_FIELDS;
 
+Topic::Topic() {
+}
+
 Topic* Topic::create() {
 	return vnl::create<Topic>();
+}
+
+Topic* Topic::create(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0xddc3d187: return vnl::create<vnl::Topic>();
+		default: return 0;
+	}
 }
 
 Topic* Topic::clone() const {
@@ -23,9 +33,17 @@ void Topic::destroy() {
 	return vnl::internal::global_pool_->push_back(this, sizeof(Topic));
 }
 
+bool Topic::is_assignable(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0xddc3d187: return true;
+		default: return false;
+	}
+}
+
 bool Topic::assign(const vnl::Value& _value) {
 	switch(_value.get_vni_hash()) {
-		case 0xddc3d187: *this = (const Topic&)_value; return true;
+		case 0xddc3d187:
+			*this = (const Topic&)_value; return true;
 		default: return false;
 	}
 }

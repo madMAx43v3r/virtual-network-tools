@@ -11,8 +11,18 @@ namespace info {
 const uint32_t RemoteInfo::VNI_HASH;
 const uint32_t RemoteInfo::NUM_FIELDS;
 
+RemoteInfo::RemoteInfo() {
+}
+
 RemoteInfo* RemoteInfo::create() {
 	return vnl::create<RemoteInfo>();
+}
+
+RemoteInfo* RemoteInfo::create(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x7aa64297: return vnl::create<vnl::info::RemoteInfo>();
+		default: return 0;
+	}
 }
 
 RemoteInfo* RemoteInfo::clone() const {
@@ -24,9 +34,17 @@ void RemoteInfo::destroy() {
 	return vnl::internal::global_pool_->push_back(this, sizeof(RemoteInfo));
 }
 
+bool RemoteInfo::is_assignable(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x7aa64297: return true;
+		default: return false;
+	}
+}
+
 bool RemoteInfo::assign(const vnl::Value& _value) {
 	switch(_value.get_vni_hash()) {
-		case 0x7aa64297: *this = (const RemoteInfo&)_value; return true;
+		case 0x7aa64297:
+			*this = (const RemoteInfo&)_value; return true;
 		default: return false;
 	}
 }

@@ -10,8 +10,18 @@ namespace vnl {
 const uint32_t Exit::VNI_HASH;
 const uint32_t Exit::NUM_FIELDS;
 
+Exit::Exit() {
+}
+
 Exit* Exit::create() {
 	return vnl::create<Exit>();
+}
+
+Exit* Exit::create(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x3bd088b0: return vnl::create<vnl::Exit>();
+		default: return 0;
+	}
 }
 
 Exit* Exit::clone() const {
@@ -23,9 +33,17 @@ void Exit::destroy() {
 	return vnl::internal::global_pool_->push_back(this, sizeof(Exit));
 }
 
+bool Exit::is_assignable(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x3bd088b0: return true;
+		default: return false;
+	}
+}
+
 bool Exit::assign(const vnl::Value& _value) {
 	switch(_value.get_vni_hash()) {
-		case 0x3bd088b0: *this = (const Exit&)_value; return true;
+		case 0x3bd088b0:
+			*this = (const Exit&)_value; return true;
 		default: return false;
 	}
 }

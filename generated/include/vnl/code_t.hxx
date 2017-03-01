@@ -19,13 +19,14 @@ public:
 	
 	
 	vnl::op_code_t op;
-	vnl::Vector<vnl::Var, 2 > arg;
+	vnl::Vector<vnl::Var, 3 > arg;
 	
-	code_t() {
-	}
+	code_t();
 	
 	static code_t* create();
+	static code_t* create(vnl::Hash32 hash);
 	virtual code_t* clone() const;
+	virtual bool is_assignable(vnl::Hash32 hash);
 	virtual bool assign(const vnl::Value& _value);
 	virtual void raise() const { throw *this; }
 	virtual void destroy();

@@ -18,11 +18,12 @@ public:
 	
 	
 	
-	Shutdown() {
-	}
+	Shutdown();
 	
 	static Shutdown* create();
+	static Shutdown* create(vnl::Hash32 hash);
 	virtual Shutdown* clone() const;
+	virtual bool is_assignable(vnl::Hash32 hash);
 	virtual bool assign(const vnl::Value& _value);
 	virtual void raise() const { throw *this; }
 	virtual void destroy();

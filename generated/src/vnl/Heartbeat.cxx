@@ -10,8 +10,19 @@ namespace vnl {
 const uint32_t Heartbeat::VNI_HASH;
 const uint32_t Heartbeat::NUM_FIELDS;
 
+Heartbeat::Heartbeat() {
+	interval = 0;
+}
+
 Heartbeat* Heartbeat::create() {
 	return vnl::create<Heartbeat>();
+}
+
+Heartbeat* Heartbeat::create(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0xa262a675: return vnl::create<vnl::Heartbeat>();
+		default: return 0;
+	}
 }
 
 Heartbeat* Heartbeat::clone() const {
@@ -23,9 +34,17 @@ void Heartbeat::destroy() {
 	return vnl::internal::global_pool_->push_back(this, sizeof(Heartbeat));
 }
 
+bool Heartbeat::is_assignable(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0xa262a675: return true;
+		default: return false;
+	}
+}
+
 bool Heartbeat::assign(const vnl::Value& _value) {
 	switch(_value.get_vni_hash()) {
-		case 0xa262a675: *this = (const Heartbeat&)_value; return true;
+		case 0xa262a675:
+			*this = (const Heartbeat&)_value; return true;
 		default: return false;
 	}
 }

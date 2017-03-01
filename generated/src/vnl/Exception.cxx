@@ -11,6 +11,8 @@
 #include <vnl/NoSuchFieldException.hxx>
 #include <vnl/NoSuchKeyException.hxx>
 #include <vnl/NoSuchMethodException.hxx>
+#include <vnl/NullPointerException.hxx>
+#include <vnl/OutOfMemoryException.hxx>
 #include <vnl/SegmentationFault.hxx>
 #include <vnl/StackOverflow.hxx>
 #include <vnl/TimeoutException.hxx>
@@ -21,8 +23,31 @@ namespace vnl {
 const uint32_t Exception::VNI_HASH;
 const uint32_t Exception::NUM_FIELDS;
 
+Exception::Exception() {
+}
+
 Exception* Exception::create() {
 	return vnl::create<Exception>();
+}
+
+Exception* Exception::create(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x7e6aa525: return vnl::create<vnl::DuplicateKeyException>();
+		case 0xabd5ff87: return vnl::create<vnl::IOException>();
+		case 0xf8fa6b14: return vnl::create<vnl::IllegalInstruction>();
+		case 0x4643b1ad: return vnl::create<vnl::MemoryException>();
+		case 0xd7988e27: return vnl::create<vnl::NoSuchFieldException>();
+		case 0xd8d131ca: return vnl::create<vnl::NoSuchKeyException>();
+		case 0x69a97186: return vnl::create<vnl::NoSuchMethodException>();
+		case 0x375698d0: return vnl::create<vnl::NullPointerException>();
+		case 0x61b281b0: return vnl::create<vnl::OutOfMemoryException>();
+		case 0x57c2463c: return vnl::create<vnl::SegmentationFault>();
+		case 0x2cd1d77c: return vnl::create<vnl::StackOverflow>();
+		case 0x8c528f1: return vnl::create<vnl::TimeoutException>();
+		case 0x493cc6db: return vnl::create<vnl::TypeMismatchException>();
+		case 0xbe87903d: return vnl::create<vnl::Exception>();
+		default: return 0;
+	}
 }
 
 Exception* Exception::clone() const {
@@ -34,20 +59,43 @@ void Exception::destroy() {
 	return vnl::internal::global_pool_->push_back(this, sizeof(Exception));
 }
 
+bool Exception::is_assignable(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x7e6aa525: return true;
+		case 0xabd5ff87: return true;
+		case 0xf8fa6b14: return true;
+		case 0x4643b1ad: return true;
+		case 0xd7988e27: return true;
+		case 0xd8d131ca: return true;
+		case 0x69a97186: return true;
+		case 0x375698d0: return true;
+		case 0x61b281b0: return true;
+		case 0x57c2463c: return true;
+		case 0x2cd1d77c: return true;
+		case 0x8c528f1: return true;
+		case 0x493cc6db: return true;
+		case 0xbe87903d: return true;
+		default: return false;
+	}
+}
+
 bool Exception::assign(const vnl::Value& _value) {
 	switch(_value.get_vni_hash()) {
-		case 0xbe87903d: *this = (const Exception&)_value; return true;
-		case 0x7e6aa525: *this = (const vnl::DuplicateKeyException&)_value; return true;
-		case 0xabd5ff87: *this = (const vnl::IOException&)_value; return true;
-		case 0xf8fa6b14: *this = (const vnl::IllegalInstruction&)_value; return true;
-		case 0x4643b1ad: *this = (const vnl::MemoryException&)_value; return true;
-		case 0xd7988e27: *this = (const vnl::NoSuchFieldException&)_value; return true;
-		case 0xd8d131ca: *this = (const vnl::NoSuchKeyException&)_value; return true;
-		case 0x69a97186: *this = (const vnl::NoSuchMethodException&)_value; return true;
-		case 0x57c2463c: *this = (const vnl::SegmentationFault&)_value; return true;
-		case 0x2cd1d77c: *this = (const vnl::StackOverflow&)_value; return true;
-		case 0x8c528f1: *this = (const vnl::TimeoutException&)_value; return true;
-		case 0x493cc6db: *this = (const vnl::TypeMismatchException&)_value; return true;
+		case 0x7e6aa525:
+		case 0xabd5ff87:
+		case 0xf8fa6b14:
+		case 0x4643b1ad:
+		case 0xd7988e27:
+		case 0xd8d131ca:
+		case 0x69a97186:
+		case 0x375698d0:
+		case 0x61b281b0:
+		case 0x57c2463c:
+		case 0x2cd1d77c:
+		case 0x8c528f1:
+		case 0x493cc6db:
+		case 0xbe87903d:
+			*this = (const Exception&)_value; return true;
 		default: return false;
 	}
 }

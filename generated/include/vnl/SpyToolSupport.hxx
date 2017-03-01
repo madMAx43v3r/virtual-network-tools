@@ -22,12 +22,7 @@ public:
 	
 	bool dump;
 	
-	SpyToolBase(const vnl::String& domain_, const vnl::String& topic_)
-		:	vnl::Object::Object(domain_, topic_)
-	{
-		dump = false;
-		vnl::read_config(domain_, topic_, "dump", dump);
-	}
+	SpyToolBase(const vnl::String& domain_, const vnl::String& topic_);
 	
 	virtual uint32_t get_vni_hash() const { return VNI_HASH; }
 	virtual const char* get_type_name() const { return "vnl.SpyTool"; }

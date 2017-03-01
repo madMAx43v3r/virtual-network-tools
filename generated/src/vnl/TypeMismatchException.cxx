@@ -10,8 +10,18 @@ namespace vnl {
 const uint32_t TypeMismatchException::VNI_HASH;
 const uint32_t TypeMismatchException::NUM_FIELDS;
 
+TypeMismatchException::TypeMismatchException() {
+}
+
 TypeMismatchException* TypeMismatchException::create() {
 	return vnl::create<TypeMismatchException>();
+}
+
+TypeMismatchException* TypeMismatchException::create(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x493cc6db: return vnl::create<vnl::TypeMismatchException>();
+		default: return 0;
+	}
 }
 
 TypeMismatchException* TypeMismatchException::clone() const {
@@ -23,9 +33,17 @@ void TypeMismatchException::destroy() {
 	return vnl::internal::global_pool_->push_back(this, sizeof(TypeMismatchException));
 }
 
+bool TypeMismatchException::is_assignable(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x493cc6db: return true;
+		default: return false;
+	}
+}
+
 bool TypeMismatchException::assign(const vnl::Value& _value) {
 	switch(_value.get_vni_hash()) {
-		case 0x493cc6db: *this = (const TypeMismatchException&)_value; return true;
+		case 0x493cc6db:
+			*this = (const TypeMismatchException&)_value; return true;
 		default: return false;
 	}
 }

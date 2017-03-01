@@ -22,8 +22,7 @@ public:
 	
 	
 	
-	UplinkBase() {
-	}
+	UplinkBase();
 	
 	virtual uint32_t get_vni_hash() const { return VNI_HASH; }
 	virtual const char* get_type_name() const { return "vnl.Uplink"; }

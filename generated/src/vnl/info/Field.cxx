@@ -11,8 +11,18 @@ namespace info {
 const uint32_t Field::VNI_HASH;
 const uint32_t Field::NUM_FIELDS;
 
+Field::Field() {
+}
+
 Field* Field::create() {
 	return vnl::create<Field>();
+}
+
+Field* Field::create(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0xd52524d4: return vnl::create<vnl::info::Field>();
+		default: return 0;
+	}
 }
 
 Field* Field::clone() const {
@@ -24,9 +34,17 @@ void Field::destroy() {
 	return vnl::internal::global_pool_->push_back(this, sizeof(Field));
 }
 
+bool Field::is_assignable(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0xd52524d4: return true;
+		default: return false;
+	}
+}
+
 bool Field::assign(const vnl::Value& _value) {
 	switch(_value.get_vni_hash()) {
-		case 0xd52524d4: *this = (const Field&)_value; return true;
+		case 0xd52524d4:
+			*this = (const Field&)_value; return true;
 		default: return false;
 	}
 }

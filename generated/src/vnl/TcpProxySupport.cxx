@@ -10,6 +10,11 @@ namespace vnl {
 const uint32_t TcpProxyBase::VNI_HASH;
 const uint32_t TcpProxyBase::NUM_FIELDS;
 
+TcpProxyBase::TcpProxyBase(const vnl::String& domain_, const vnl::String& topic_)
+	:	vnl::TcpUplink::TcpUplink(domain_, topic_)
+{
+}
+
 int TcpProxyBase::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		case 0x482df535: return 0;

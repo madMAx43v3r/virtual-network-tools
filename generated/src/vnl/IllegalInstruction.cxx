@@ -10,8 +10,18 @@ namespace vnl {
 const uint32_t IllegalInstruction::VNI_HASH;
 const uint32_t IllegalInstruction::NUM_FIELDS;
 
+IllegalInstruction::IllegalInstruction() {
+}
+
 IllegalInstruction* IllegalInstruction::create() {
 	return vnl::create<IllegalInstruction>();
+}
+
+IllegalInstruction* IllegalInstruction::create(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0xf8fa6b14: return vnl::create<vnl::IllegalInstruction>();
+		default: return 0;
+	}
 }
 
 IllegalInstruction* IllegalInstruction::clone() const {
@@ -23,9 +33,17 @@ void IllegalInstruction::destroy() {
 	return vnl::internal::global_pool_->push_back(this, sizeof(IllegalInstruction));
 }
 
+bool IllegalInstruction::is_assignable(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0xf8fa6b14: return true;
+		default: return false;
+	}
+}
+
 bool IllegalInstruction::assign(const vnl::Value& _value) {
 	switch(_value.get_vni_hash()) {
-		case 0xf8fa6b14: *this = (const IllegalInstruction&)_value; return true;
+		case 0xf8fa6b14:
+			*this = (const IllegalInstruction&)_value; return true;
 		default: return false;
 	}
 }

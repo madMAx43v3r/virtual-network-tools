@@ -10,8 +10,17 @@ namespace vnl {
 const uint32_t code_t::VNI_HASH;
 const uint32_t code_t::NUM_FIELDS;
 
+code_t::code_t() {
+}
+
 code_t* code_t::create() {
 	return vnl::create<code_t>();
+}
+
+code_t* code_t::create(vnl::Hash32 hash) {
+	switch(hash) {
+		default: return 0;
+	}
 }
 
 code_t* code_t::clone() const {
@@ -23,9 +32,15 @@ void code_t::destroy() {
 	return vnl::internal::global_pool_->push_back(this, sizeof(code_t));
 }
 
+bool code_t::is_assignable(vnl::Hash32 hash) {
+	switch(hash) {
+		default: return false;
+	}
+}
+
 bool code_t::assign(const vnl::Value& _value) {
 	switch(_value.get_vni_hash()) {
-		case 0x8b38c80f: *this = (const code_t&)_value; return true;
+			*this = (const code_t&)_value; return true;
 		default: return false;
 	}
 }

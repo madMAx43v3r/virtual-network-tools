@@ -20,10 +20,7 @@ public:
 	
 	
 	
-	TcpProxyBase(const vnl::String& domain_, const vnl::String& topic_)
-		:	vnl::TcpUplink::TcpUplink(domain_, topic_)
-	{
-	}
+	TcpProxyBase(const vnl::String& domain_, const vnl::String& topic_);
 	
 	virtual uint32_t get_vni_hash() const { return VNI_HASH; }
 	virtual const char* get_type_name() const { return "vnl.TcpProxy"; }

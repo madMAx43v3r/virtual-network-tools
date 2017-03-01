@@ -33,24 +33,7 @@ public:
 	int32_t max_array_size;
 	int32_t topic_timeout;
 	
-	AdminGUIBase(const vnl::String& domain_, const vnl::String& topic_)
-		:	vnl::Object::Object(domain_, topic_)
-	{
-		target_host = "localhost";
-		target_port = 8916;
-		update_interval = 1000;
-		sample_window = 1000000;
-		max_sample_rate = 5;
-		max_array_size = 100;
-		topic_timeout = 3000000;
-		vnl::read_config(domain_, topic_, "target_host", target_host);
-		vnl::read_config(domain_, topic_, "target_port", target_port);
-		vnl::read_config(domain_, topic_, "update_interval", update_interval);
-		vnl::read_config(domain_, topic_, "sample_window", sample_window);
-		vnl::read_config(domain_, topic_, "max_sample_rate", max_sample_rate);
-		vnl::read_config(domain_, topic_, "max_array_size", max_array_size);
-		vnl::read_config(domain_, topic_, "topic_timeout", topic_timeout);
-	}
+	AdminGUIBase(const vnl::String& domain_, const vnl::String& topic_);
 	
 	virtual uint32_t get_vni_hash() const { return VNI_HASH; }
 	virtual const char* get_type_name() const { return "vnl.tools.AdminGUI"; }

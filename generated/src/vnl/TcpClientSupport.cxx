@@ -10,6 +10,23 @@ namespace vnl {
 const uint32_t TcpClientBase::VNI_HASH;
 const uint32_t TcpClientBase::NUM_FIELDS;
 
+TcpClientBase::TcpClientBase(const vnl::String& domain_, const vnl::String& topic_)
+	:	vnl::TcpUplink::TcpUplink(domain_, topic_)
+{
+	endpoint = "localhost";
+	port = 8916;
+	autoclose = false;
+	tcp_nodelay = true;
+	send_buffer_size = 1048576;
+	receive_buffer_size = 1048576;
+	vnl::read_config(domain_, topic_, "endpoint", endpoint);
+	vnl::read_config(domain_, topic_, "port", port);
+	vnl::read_config(domain_, topic_, "autoclose", autoclose);
+	vnl::read_config(domain_, topic_, "tcp_nodelay", tcp_nodelay);
+	vnl::read_config(domain_, topic_, "send_buffer_size", send_buffer_size);
+	vnl::read_config(domain_, topic_, "receive_buffer_size", receive_buffer_size);
+}
+
 int TcpClientBase::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		case 0x482df535: return 0;

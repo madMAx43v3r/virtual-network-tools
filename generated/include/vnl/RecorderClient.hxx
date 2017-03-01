@@ -40,16 +40,6 @@ public:
 			_out.putHash(0xd129c896);
 			vnl::write(_out, _value);
 		}
-		void set_do_write_header(bool _value) {
-			_out.putEntry(VNL_IO_CALL, 1);
-			_out.putHash(0xf5bbbd65);
-			vnl::write(_out, _value);
-		}
-		void set_do_write_type_info(bool _value) {
-			_out.putEntry(VNL_IO_CALL, 1);
-			_out.putHash(0xe0a7be79);
-			vnl::write(_out, _value);
-		}
 		void set_header_size(int32_t _value) {
 			_out.putEntry(VNL_IO_CALL, 1);
 			_out.putHash(0xd7a7ecc4);
@@ -67,14 +57,6 @@ public:
 		void get_interval() {
 			_out.putEntry(VNL_IO_CONST_CALL, 0);
 			_out.putHash(0xd129c896);
-		}
-		void get_do_write_header() {
-			_out.putEntry(VNL_IO_CONST_CALL, 0);
-			_out.putHash(0xf5bbbd65);
-		}
-		void get_do_write_type_info() {
-			_out.putEntry(VNL_IO_CONST_CALL, 0);
-			_out.putHash(0xe0a7be79);
 		}
 		void get_header_size() {
 			_out.putEntry(VNL_IO_CONST_CALL, 0);
@@ -123,34 +105,6 @@ public:
 		{
 			Writer _wr(_out);
 			_wr.set_interval(interval);
-		}
-		vnl::Packet* _pkt = _call(vnl::Frame::CALL);
-		if(_pkt) {
-			_pkt->ack();
-		} else {
-			throw vnl::IOException();
-		}
-	}
-	
-	void set_do_write_header(bool do_write_header) {
-		_buf.wrap(_data);
-		{
-			Writer _wr(_out);
-			_wr.set_do_write_header(do_write_header);
-		}
-		vnl::Packet* _pkt = _call(vnl::Frame::CALL);
-		if(_pkt) {
-			_pkt->ack();
-		} else {
-			throw vnl::IOException();
-		}
-	}
-	
-	void set_do_write_type_info(bool do_write_type_info) {
-		_buf.wrap(_data);
-		{
-			Writer _wr(_out);
-			_wr.set_do_write_type_info(do_write_type_info);
 		}
 		vnl::Packet* _pkt = _call(vnl::Frame::CALL);
 		if(_pkt) {
@@ -213,40 +167,6 @@ public:
 		}
 		vnl::Packet* _pkt = _call(vnl::Frame::CONST_CALL);
 		int32_t _result;
-		if(_pkt) {
-			vnl::read(_in, _result);
-			_pkt->ack();
-		} else {
-			throw vnl::IOException();
-		}
-		return _result;
-	}
-	
-	bool get_do_write_header() {
-		_buf.wrap(_data);
-		{
-			Writer _wr(_out);
-			_wr.get_do_write_header();
-		}
-		vnl::Packet* _pkt = _call(vnl::Frame::CONST_CALL);
-		bool _result;
-		if(_pkt) {
-			vnl::read(_in, _result);
-			_pkt->ack();
-		} else {
-			throw vnl::IOException();
-		}
-		return _result;
-	}
-	
-	bool get_do_write_type_info() {
-		_buf.wrap(_data);
-		{
-			Writer _wr(_out);
-			_wr.get_do_write_type_info();
-		}
-		vnl::Packet* _pkt = _call(vnl::Frame::CONST_CALL);
-		bool _result;
 		if(_pkt) {
 			vnl::read(_in, _result);
 			_pkt->ack();

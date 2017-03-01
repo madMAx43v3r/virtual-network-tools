@@ -37,19 +37,7 @@ public:
 	int32_t stats_interval;
 	bool do_print_stats;
 	
-	ProcessBase(const vnl::String& domain_, const vnl::String& topic_)
-		:	vnl::Object::Object(domain_, topic_)
-	{
-		watchdog_interval = 100000;
-		update_interval = 1000000;
-		stats_interval = 10000000;
-		do_print_stats = true;
-		vnl::read_config(domain_, topic_, "name", name);
-		vnl::read_config(domain_, topic_, "watchdog_interval", watchdog_interval);
-		vnl::read_config(domain_, topic_, "update_interval", update_interval);
-		vnl::read_config(domain_, topic_, "stats_interval", stats_interval);
-		vnl::read_config(domain_, topic_, "do_print_stats", do_print_stats);
-	}
+	ProcessBase(const vnl::String& domain_, const vnl::String& topic_);
 	
 	virtual uint32_t get_vni_hash() const { return VNI_HASH; }
 	virtual const char* get_type_name() const { return "vnl.Process"; }

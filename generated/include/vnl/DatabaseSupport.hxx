@@ -15,22 +15,18 @@ namespace vnl {
 class DatabaseBase : public vnl::Object {
 public:
 	static const uint32_t VNI_HASH = 0x1a20923;
-	static const uint32_t NUM_FIELDS = 5;
+	static const uint32_t NUM_FIELDS = 8;
 	
 	typedef vnl::Object Super;
 	
 	
 	vnl::String filename;
+	int32_t interval;
+	bool readonly;
 	bool ignore_errors;
+	bool truncate;
 	
-	DatabaseBase(const vnl::String& domain_, const vnl::String& topic_)
-		:	vnl::Object::Object(domain_, topic_)
-	{
-		filename = "database.dat";
-		ignore_errors = false;
-		vnl::read_config(domain_, topic_, "filename", filename);
-		vnl::read_config(domain_, topic_, "ignore_errors", ignore_errors);
-	}
+	DatabaseBase(const vnl::String& domain_, const vnl::String& topic_);
 	
 	virtual uint32_t get_vni_hash() const { return VNI_HASH; }
 	virtual const char* get_type_name() const { return "vnl.Database"; }
@@ -58,7 +54,10 @@ protected:
 		_writer.set_vnl_msg_timeout(vnl_msg_timeout);
 		_writer.set_vnl_heartbeat_interval(vnl_heartbeat_interval);
 		_writer.set_filename(filename);
+		_writer.set_interval(interval);
+		_writer.set_readonly(readonly);
 		_writer.set_ignore_errors(ignore_errors);
+		_writer.set_truncate(truncate);
 	}
 	
 };

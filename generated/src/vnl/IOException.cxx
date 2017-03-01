@@ -16,8 +16,24 @@ namespace vnl {
 const uint32_t IOException::VNI_HASH;
 const uint32_t IOException::NUM_FIELDS;
 
+IOException::IOException() {
+}
+
 IOException* IOException::create() {
 	return vnl::create<IOException>();
+}
+
+IOException* IOException::create(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x7e6aa525: return vnl::create<vnl::DuplicateKeyException>();
+		case 0xd7988e27: return vnl::create<vnl::NoSuchFieldException>();
+		case 0xd8d131ca: return vnl::create<vnl::NoSuchKeyException>();
+		case 0x69a97186: return vnl::create<vnl::NoSuchMethodException>();
+		case 0x8c528f1: return vnl::create<vnl::TimeoutException>();
+		case 0x493cc6db: return vnl::create<vnl::TypeMismatchException>();
+		case 0xabd5ff87: return vnl::create<vnl::IOException>();
+		default: return 0;
+	}
 }
 
 IOException* IOException::clone() const {
@@ -29,15 +45,29 @@ void IOException::destroy() {
 	return vnl::internal::global_pool_->push_back(this, sizeof(IOException));
 }
 
+bool IOException::is_assignable(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x7e6aa525: return true;
+		case 0xd7988e27: return true;
+		case 0xd8d131ca: return true;
+		case 0x69a97186: return true;
+		case 0x8c528f1: return true;
+		case 0x493cc6db: return true;
+		case 0xabd5ff87: return true;
+		default: return false;
+	}
+}
+
 bool IOException::assign(const vnl::Value& _value) {
 	switch(_value.get_vni_hash()) {
-		case 0xabd5ff87: *this = (const IOException&)_value; return true;
-		case 0x7e6aa525: *this = (const vnl::DuplicateKeyException&)_value; return true;
-		case 0xd7988e27: *this = (const vnl::NoSuchFieldException&)_value; return true;
-		case 0xd8d131ca: *this = (const vnl::NoSuchKeyException&)_value; return true;
-		case 0x69a97186: *this = (const vnl::NoSuchMethodException&)_value; return true;
-		case 0x8c528f1: *this = (const vnl::TimeoutException&)_value; return true;
-		case 0x493cc6db: *this = (const vnl::TypeMismatchException&)_value; return true;
+		case 0x7e6aa525:
+		case 0xd7988e27:
+		case 0xd8d131ca:
+		case 0x69a97186:
+		case 0x8c528f1:
+		case 0x493cc6db:
+		case 0xabd5ff87:
+			*this = (const IOException&)_value; return true;
 		default: return false;
 	}
 }

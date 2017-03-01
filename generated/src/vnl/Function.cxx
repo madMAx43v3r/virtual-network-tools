@@ -10,8 +10,18 @@ namespace vnl {
 const uint32_t Function::VNI_HASH;
 const uint32_t Function::NUM_FIELDS;
 
+Function::Function() {
+}
+
 Function* Function::create() {
 	return vnl::create<Function>();
+}
+
+Function* Function::create(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x49860f3d: return vnl::create<vnl::Function>();
+		default: return 0;
+	}
 }
 
 Function* Function::clone() const {
@@ -23,9 +33,17 @@ void Function::destroy() {
 	return vnl::internal::global_pool_->push_back(this, sizeof(Function));
 }
 
+bool Function::is_assignable(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x49860f3d: return true;
+		default: return false;
+	}
+}
+
 bool Function::assign(const vnl::Value& _value) {
 	switch(_value.get_vni_hash()) {
-		case 0x49860f3d: *this = (const Function&)_value; return true;
+		case 0x49860f3d:
+			*this = (const Function&)_value; return true;
 		default: return false;
 	}
 }

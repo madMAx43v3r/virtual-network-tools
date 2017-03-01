@@ -34,22 +34,7 @@ public:
 	bool autoshutdown;
 	int32_t interval;
 	
-	PlayerBase(const vnl::String& domain_, const vnl::String& topic_)
-		:	vnl::Object::Object(domain_, topic_)
-	{
-		filename = "rec-???.dat";
-		autostart = false;
-		autoloop = false;
-		autoshutdown = false;
-		interval = 200000;
-		vnl::read_config(domain_, topic_, "filename", filename);
-		vnl::read_config(domain_, topic_, "domain_blacklist", domain_blacklist);
-		vnl::read_config(domain_, topic_, "topic_blacklist", topic_blacklist);
-		vnl::read_config(domain_, topic_, "autostart", autostart);
-		vnl::read_config(domain_, topic_, "autoloop", autoloop);
-		vnl::read_config(domain_, topic_, "autoshutdown", autoshutdown);
-		vnl::read_config(domain_, topic_, "interval", interval);
-	}
+	PlayerBase(const vnl::String& domain_, const vnl::String& topic_);
 	
 	virtual uint32_t get_vni_hash() const { return VNI_HASH; }
 	virtual const char* get_type_name() const { return "vnl.Player"; }

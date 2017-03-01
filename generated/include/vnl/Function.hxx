@@ -26,11 +26,12 @@ public:
 	vnl::List<vnl::Var > defaults;
 	vnl::List<vnl::code_t > code;
 	
-	Function() {
-	}
+	Function();
 	
 	static Function* create();
+	static Function* create(vnl::Hash32 hash);
 	virtual Function* clone() const;
+	virtual bool is_assignable(vnl::Hash32 hash);
 	virtual bool assign(const vnl::Value& _value);
 	virtual void raise() const { throw *this; }
 	virtual void destroy();

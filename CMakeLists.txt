@@ -13,7 +13,9 @@ find_package(Qt4 REQUIRED QtGui)
 
 include_directories(include/ generated/include/ lib/virtual-network-layers-cpp/include/)
 
-add_subdirectory(generated)
+include(generated/vni_input_output.cmake)
+add_library(vni STATIC ${VNI_OUTPUT_FILES_SOURCE})
+
 add_subdirectory(lib/virtual-network-layers-cpp)
 
 add_executable(crc64 src/crc64)

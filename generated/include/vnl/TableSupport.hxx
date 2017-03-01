@@ -19,16 +19,13 @@ template<class T>
 class TableBase : public vnl::Database {
 public:
 	static const uint32_t VNI_HASH = 0xbd71f457;
-	static const uint32_t NUM_FIELDS = 5;
+	static const uint32_t NUM_FIELDS = 8;
 	
 	typedef vnl::Database Super;
 	
 	
 	
-	TableBase(const vnl::String& domain_, const vnl::String& topic_)
-		:	vnl::Database::Database(domain_, topic_)
-	{
-	}
+	TableBase(const vnl::String& domain_, const vnl::String& topic_);
 	
 	virtual uint32_t get_vni_hash() const { return VNI_HASH; }
 	virtual const char* get_type_name() const { return "vnl.Table"; }
@@ -61,7 +58,10 @@ protected:
 		_writer.set_vnl_msg_timeout(vnl_msg_timeout);
 		_writer.set_vnl_heartbeat_interval(vnl_heartbeat_interval);
 		_writer.set_filename(filename);
+		_writer.set_interval(interval);
+		_writer.set_readonly(readonly);
 		_writer.set_ignore_errors(ignore_errors);
+		_writer.set_truncate(truncate);
 	}
 	
 };
@@ -72,13 +72,22 @@ template<class T>
 const uint32_t TableBase<T>::NUM_FIELDS;
 
 template<class T>
+TableBase<T>::TableBase(const vnl::String& domain_, const vnl::String& topic_)
+	:	vnl::Database::Database(domain_, topic_)
+{
+}
+
+template<class T>
 int TableBase<T>::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		case 0x482df535: return 0;
 		case 0x604b2647: return 1;
 		case 0xd26001ae: return 2;
 		case 0xb60d3446: return 3;
-		case 0x2d7512a8: return 4;
+		case 0xd129c896: return 4;
+		case 0x972da0ea: return 5;
+		case 0x2d7512a8: return 6;
+		case 0x1725750d: return 7;
 		default: return -1;
 	}
 }
@@ -90,7 +99,10 @@ const char* TableBase<T>::get_field_name(int _index) const {
 		case 1: return "vnl_msg_timeout";
 		case 2: return "vnl_heartbeat_interval";
 		case 3: return "filename";
-		case 4: return "ignore_errors";
+		case 4: return "interval";
+		case 5: return "readonly";
+		case 6: return "ignore_errors";
+		case 7: return "truncate";
 		default: return 0;
 	}
 }
@@ -102,7 +114,10 @@ void TableBase<T>::get_field(int _index, vnl::String& _str) const {
 		case 1: vnl::to_string(_str, vnl_msg_timeout); break;
 		case 2: vnl::to_string(_str, vnl_heartbeat_interval); break;
 		case 3: vnl::to_string(_str, filename); break;
-		case 4: vnl::to_string(_str, ignore_errors); break;
+		case 4: vnl::to_string(_str, interval); break;
+		case 5: vnl::to_string(_str, readonly); break;
+		case 6: vnl::to_string(_str, ignore_errors); break;
+		case 7: vnl::to_string(_str, truncate); break;
 	}
 }
 
@@ -113,7 +128,10 @@ void TableBase<T>::set_field(int _index, const vnl::String& _str) {
 		case 1: vnl::from_string(_str, vnl_msg_timeout); break;
 		case 2: vnl::from_string(_str, vnl_heartbeat_interval); break;
 		case 3: vnl::from_string(_str, filename); break;
-		case 4: vnl::from_string(_str, ignore_errors); break;
+		case 4: vnl::from_string(_str, interval); break;
+		case 5: vnl::from_string(_str, readonly); break;
+		case 6: vnl::from_string(_str, ignore_errors); break;
+		case 7: vnl::from_string(_str, truncate); break;
 	}
 }
 
@@ -124,7 +142,10 @@ void TableBase<T>::get_field(int _index, vnl::io::TypeOutput& _out) const {
 		case 1: vnl::write(_out, vnl_msg_timeout); break;
 		case 2: vnl::write(_out, vnl_heartbeat_interval); break;
 		case 3: vnl::write(_out, filename); break;
-		case 4: vnl::write(_out, ignore_errors); break;
+		case 4: vnl::write(_out, interval); break;
+		case 5: vnl::write(_out, readonly); break;
+		case 6: vnl::write(_out, ignore_errors); break;
+		case 7: vnl::write(_out, truncate); break;
 		default: _out.putNull();
 	}
 }
@@ -136,7 +157,10 @@ void TableBase<T>::set_field(int _index, vnl::io::TypeInput& _in) {
 		case 1: vnl::read(_in, vnl_msg_timeout); break;
 		case 2: vnl::read(_in, vnl_heartbeat_interval); break;
 		case 3: vnl::read(_in, filename); break;
-		case 4: vnl::read(_in, ignore_errors); break;
+		case 4: vnl::read(_in, interval); break;
+		case 5: vnl::read(_in, readonly); break;
+		case 6: vnl::read(_in, ignore_errors); break;
+		case 7: vnl::read(_in, truncate); break;
 	}
 }
 
@@ -147,7 +171,10 @@ void TableBase<T>::get_field(int _index, vnl::Var& _var) const {
 		case 1: _var = vnl_msg_timeout; break;
 		case 2: _var = vnl_heartbeat_interval; break;
 		case 3: _var = filename; break;
-		case 4: _var = ignore_errors; break;
+		case 4: _var = interval; break;
+		case 5: _var = readonly; break;
+		case 6: _var = ignore_errors; break;
+		case 7: _var = truncate; break;
 		default: _var.clear();
 	}
 }
@@ -159,7 +186,10 @@ void TableBase<T>::set_field(int _index, const vnl::Var& _var) {
 		case 1: _var.to(vnl_msg_timeout); break;
 		case 2: _var.to(vnl_heartbeat_interval); break;
 		case 3: _var.to(filename); break;
-		case 4: _var.to(ignore_errors); break;
+		case 4: _var.to(interval); break;
+		case 5: _var.to(readonly); break;
+		case 6: _var.to(ignore_errors); break;
+		case 7: _var.to(truncate); break;
 	}
 }
 

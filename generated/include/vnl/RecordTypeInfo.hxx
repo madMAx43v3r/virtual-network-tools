@@ -22,11 +22,12 @@ public:
 	
 	vnl::Map<vnl::Hash32, vnl::info::Type > type_map;
 	
-	RecordTypeInfo() {
-	}
+	RecordTypeInfo();
 	
 	static RecordTypeInfo* create();
+	static RecordTypeInfo* create(vnl::Hash32 hash);
 	virtual RecordTypeInfo* clone() const;
+	virtual bool is_assignable(vnl::Hash32 hash);
 	virtual bool assign(const vnl::Value& _value);
 	virtual void raise() const { throw *this; }
 	virtual void destroy();

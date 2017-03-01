@@ -10,8 +10,18 @@ namespace vnl {
 const uint32_t Announce::VNI_HASH;
 const uint32_t Announce::NUM_FIELDS;
 
+Announce::Announce() {
+}
+
 Announce* Announce::create() {
 	return vnl::create<Announce>();
+}
+
+Announce* Announce::create(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x417d65c7: return vnl::create<vnl::Announce>();
+		default: return 0;
+	}
 }
 
 Announce* Announce::clone() const {
@@ -23,9 +33,17 @@ void Announce::destroy() {
 	return vnl::internal::global_pool_->push_back(this, sizeof(Announce));
 }
 
+bool Announce::is_assignable(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x417d65c7: return true;
+		default: return false;
+	}
+}
+
 bool Announce::assign(const vnl::Value& _value) {
 	switch(_value.get_vni_hash()) {
-		case 0x417d65c7: *this = (const Announce&)_value; return true;
+		case 0x417d65c7:
+			*this = (const Announce&)_value; return true;
 		default: return false;
 	}
 }

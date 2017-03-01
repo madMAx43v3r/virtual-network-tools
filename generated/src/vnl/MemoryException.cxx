@@ -10,8 +10,18 @@ namespace vnl {
 const uint32_t MemoryException::VNI_HASH;
 const uint32_t MemoryException::NUM_FIELDS;
 
+MemoryException::MemoryException() {
+}
+
 MemoryException* MemoryException::create() {
 	return vnl::create<MemoryException>();
+}
+
+MemoryException* MemoryException::create(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x4643b1ad: return vnl::create<vnl::MemoryException>();
+		default: return 0;
+	}
 }
 
 MemoryException* MemoryException::clone() const {
@@ -23,9 +33,17 @@ void MemoryException::destroy() {
 	return vnl::internal::global_pool_->push_back(this, sizeof(MemoryException));
 }
 
+bool MemoryException::is_assignable(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x4643b1ad: return true;
+		default: return false;
+	}
+}
+
 bool MemoryException::assign(const vnl::Value& _value) {
 	switch(_value.get_vni_hash()) {
-		case 0x4643b1ad: *this = (const MemoryException&)_value; return true;
+		case 0x4643b1ad:
+			*this = (const MemoryException&)_value; return true;
 		default: return false;
 	}
 }

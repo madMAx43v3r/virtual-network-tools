@@ -27,22 +27,7 @@ public:
 	int32_t send_buffer_size;
 	int32_t receive_buffer_size;
 	
-	TcpClientBase(const vnl::String& domain_, const vnl::String& topic_)
-		:	vnl::TcpUplink::TcpUplink(domain_, topic_)
-	{
-		endpoint = "localhost";
-		port = 8916;
-		autoclose = false;
-		tcp_nodelay = true;
-		send_buffer_size = 1048576;
-		receive_buffer_size = 1048576;
-		vnl::read_config(domain_, topic_, "endpoint", endpoint);
-		vnl::read_config(domain_, topic_, "port", port);
-		vnl::read_config(domain_, topic_, "autoclose", autoclose);
-		vnl::read_config(domain_, topic_, "tcp_nodelay", tcp_nodelay);
-		vnl::read_config(domain_, topic_, "send_buffer_size", send_buffer_size);
-		vnl::read_config(domain_, topic_, "receive_buffer_size", receive_buffer_size);
-	}
+	TcpClientBase(const vnl::String& domain_, const vnl::String& topic_);
 	
 	virtual uint32_t get_vni_hash() const { return VNI_HASH; }
 	virtual const char* get_type_name() const { return "vnl.TcpClient"; }

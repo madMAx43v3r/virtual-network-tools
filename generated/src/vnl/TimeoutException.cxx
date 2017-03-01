@@ -10,8 +10,18 @@ namespace vnl {
 const uint32_t TimeoutException::VNI_HASH;
 const uint32_t TimeoutException::NUM_FIELDS;
 
+TimeoutException::TimeoutException() {
+}
+
 TimeoutException* TimeoutException::create() {
 	return vnl::create<TimeoutException>();
+}
+
+TimeoutException* TimeoutException::create(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x8c528f1: return vnl::create<vnl::TimeoutException>();
+		default: return 0;
+	}
 }
 
 TimeoutException* TimeoutException::clone() const {
@@ -23,9 +33,17 @@ void TimeoutException::destroy() {
 	return vnl::internal::global_pool_->push_back(this, sizeof(TimeoutException));
 }
 
+bool TimeoutException::is_assignable(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x8c528f1: return true;
+		default: return false;
+	}
+}
+
 bool TimeoutException::assign(const vnl::Value& _value) {
 	switch(_value.get_vni_hash()) {
-		case 0x8c528f1: *this = (const TimeoutException&)_value; return true;
+		case 0x8c528f1:
+			*this = (const TimeoutException&)_value; return true;
 		default: return false;
 	}
 }

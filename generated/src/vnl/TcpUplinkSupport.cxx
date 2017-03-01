@@ -10,6 +10,25 @@ namespace vnl {
 const uint32_t TcpUplinkBase::VNI_HASH;
 const uint32_t TcpUplinkBase::NUM_FIELDS;
 
+TcpUplinkBase::TcpUplinkBase(const vnl::String& domain_, const vnl::String& topic_)
+	:	vnl::Object::Object(domain_, topic_)
+{
+	error_interval = 1000000;
+	are_connected = false;
+	num_read = 0;
+	num_write = 0;
+	num_flush = 0;
+	num_bytes_read = 0;
+	num_bytes_write = 0;
+	vnl::read_config(domain_, topic_, "error_interval", error_interval);
+	vnl::read_config(domain_, topic_, "are_connected", are_connected);
+	vnl::read_config(domain_, topic_, "num_read", num_read);
+	vnl::read_config(domain_, topic_, "num_write", num_write);
+	vnl::read_config(domain_, topic_, "num_flush", num_flush);
+	vnl::read_config(domain_, topic_, "num_bytes_read", num_bytes_read);
+	vnl::read_config(domain_, topic_, "num_bytes_write", num_bytes_write);
+}
+
 int TcpUplinkBase::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		case 0x482df535: return 0;

@@ -26,14 +26,7 @@ public:
 	vnl::String target_host;
 	int32_t target_port;
 	
-	ReplayGUIBase(const vnl::String& domain_, const vnl::String& topic_)
-		:	vnl::Object::Object(domain_, topic_)
-	{
-		target_host = "localhost";
-		target_port = 4444;
-		vnl::read_config(domain_, topic_, "target_host", target_host);
-		vnl::read_config(domain_, topic_, "target_port", target_port);
-	}
+	ReplayGUIBase(const vnl::String& domain_, const vnl::String& topic_);
 	
 	virtual uint32_t get_vni_hash() const { return VNI_HASH; }
 	virtual const char* get_type_name() const { return "vnl.tools.ReplayGUI"; }

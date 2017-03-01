@@ -11,6 +11,15 @@ namespace tools {
 const uint32_t ReplayGUIBase::VNI_HASH;
 const uint32_t ReplayGUIBase::NUM_FIELDS;
 
+ReplayGUIBase::ReplayGUIBase(const vnl::String& domain_, const vnl::String& topic_)
+	:	vnl::Object::Object(domain_, topic_)
+{
+	target_host = "localhost";
+	target_port = 4444;
+	vnl::read_config(domain_, topic_, "target_host", target_host);
+	vnl::read_config(domain_, topic_, "target_port", target_port);
+}
+
 int ReplayGUIBase::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		case 0x482df535: return 0;

@@ -11,8 +11,18 @@ namespace info {
 const uint32_t TypeName::VNI_HASH;
 const uint32_t TypeName::NUM_FIELDS;
 
+TypeName::TypeName() {
+}
+
 TypeName* TypeName::create() {
 	return vnl::create<TypeName>();
+}
+
+TypeName* TypeName::create(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x7450a5b3: return vnl::create<vnl::info::TypeName>();
+		default: return 0;
+	}
 }
 
 TypeName* TypeName::clone() const {
@@ -24,9 +34,17 @@ void TypeName::destroy() {
 	return vnl::internal::global_pool_->push_back(this, sizeof(TypeName));
 }
 
+bool TypeName::is_assignable(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x7450a5b3: return true;
+		default: return false;
+	}
+}
+
 bool TypeName::assign(const vnl::Value& _value) {
 	switch(_value.get_vni_hash()) {
-		case 0x7450a5b3: *this = (const TypeName&)_value; return true;
+		case 0x7450a5b3:
+			*this = (const TypeName&)_value; return true;
 		default: return false;
 	}
 }

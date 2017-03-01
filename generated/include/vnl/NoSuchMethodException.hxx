@@ -18,11 +18,12 @@ public:
 	
 	
 	
-	NoSuchMethodException() {
-	}
+	NoSuchMethodException();
 	
 	static NoSuchMethodException* create();
+	static NoSuchMethodException* create(vnl::Hash32 hash);
 	virtual NoSuchMethodException* clone() const;
+	virtual bool is_assignable(vnl::Hash32 hash);
 	virtual bool assign(const vnl::Value& _value);
 	virtual void raise() const { throw *this; }
 	virtual void destroy();

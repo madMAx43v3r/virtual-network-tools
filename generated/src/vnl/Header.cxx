@@ -10,8 +10,19 @@ namespace vnl {
 const uint32_t Header::VNI_HASH;
 const uint32_t Header::NUM_FIELDS;
 
+Header::Header() {
+	send_time = 0;
+}
+
 Header* Header::create() {
 	return vnl::create<Header>();
+}
+
+Header* Header::create(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x52740af4: return vnl::create<vnl::Header>();
+		default: return 0;
+	}
 }
 
 Header* Header::clone() const {
@@ -23,9 +34,17 @@ void Header::destroy() {
 	return vnl::internal::global_pool_->push_back(this, sizeof(Header));
 }
 
+bool Header::is_assignable(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x52740af4: return true;
+		default: return false;
+	}
+}
+
 bool Header::assign(const vnl::Value& _value) {
 	switch(_value.get_vni_hash()) {
-		case 0x52740af4: *this = (const Header&)_value; return true;
+		case 0x52740af4:
+			*this = (const Header&)_value; return true;
 		default: return false;
 	}
 }

@@ -11,8 +11,20 @@ namespace info {
 const uint32_t ClientInfo::VNI_HASH;
 const uint32_t ClientInfo::NUM_FIELDS;
 
+ClientInfo::ClientInfo() {
+	num_requests = 0;
+	num_errors = 0;
+}
+
 ClientInfo* ClientInfo::create() {
 	return vnl::create<ClientInfo>();
+}
+
+ClientInfo* ClientInfo::create(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x6959008e: return vnl::create<vnl::info::ClientInfo>();
+		default: return 0;
+	}
 }
 
 ClientInfo* ClientInfo::clone() const {
@@ -24,9 +36,17 @@ void ClientInfo::destroy() {
 	return vnl::internal::global_pool_->push_back(this, sizeof(ClientInfo));
 }
 
+bool ClientInfo::is_assignable(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x6959008e: return true;
+		default: return false;
+	}
+}
+
 bool ClientInfo::assign(const vnl::Value& _value) {
 	switch(_value.get_vni_hash()) {
-		case 0x6959008e: *this = (const ClientInfo&)_value; return true;
+		case 0x6959008e:
+			*this = (const ClientInfo&)_value; return true;
 		default: return false;
 	}
 }

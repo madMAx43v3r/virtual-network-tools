@@ -10,8 +10,18 @@ namespace vnl {
 const uint32_t RecordTypeInfo::VNI_HASH;
 const uint32_t RecordTypeInfo::NUM_FIELDS;
 
+RecordTypeInfo::RecordTypeInfo() {
+}
+
 RecordTypeInfo* RecordTypeInfo::create() {
 	return vnl::create<RecordTypeInfo>();
+}
+
+RecordTypeInfo* RecordTypeInfo::create(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x9a729ac6: return vnl::create<vnl::RecordTypeInfo>();
+		default: return 0;
+	}
 }
 
 RecordTypeInfo* RecordTypeInfo::clone() const {
@@ -23,9 +33,17 @@ void RecordTypeInfo::destroy() {
 	return vnl::internal::global_pool_->push_back(this, sizeof(RecordTypeInfo));
 }
 
+bool RecordTypeInfo::is_assignable(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x9a729ac6: return true;
+		default: return false;
+	}
+}
+
 bool RecordTypeInfo::assign(const vnl::Value& _value) {
 	switch(_value.get_vni_hash()) {
-		case 0x9a729ac6: *this = (const RecordTypeInfo&)_value; return true;
+		case 0x9a729ac6:
+			*this = (const RecordTypeInfo&)_value; return true;
 		default: return false;
 	}
 }

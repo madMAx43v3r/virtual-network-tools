@@ -6,6 +6,7 @@
 #include <vnl/Var.h>
 #include <vnl/Announce.hxx>
 #include <vnl/DuplicateKeyException.hxx>
+#include <vnl/Entry.hxx>
 #include <vnl/Exception.hxx>
 #include <vnl/Exit.hxx>
 #include <vnl/Function.hxx>
@@ -19,9 +20,13 @@
 #include <vnl/NoSuchFieldException.hxx>
 #include <vnl/NoSuchKeyException.hxx>
 #include <vnl/NoSuchMethodException.hxx>
+#include <vnl/NullPointerException.hxx>
+#include <vnl/OutOfMemoryException.hxx>
+#include <vnl/RecordEntry.hxx>
 #include <vnl/RecordHeader.hxx>
 #include <vnl/RecordTypeInfo.hxx>
 #include <vnl/RecordValue.hxx>
+#include <vnl/RecorderStatus.hxx>
 #include <vnl/SegmentationFault.hxx>
 #include <vnl/Shutdown.hxx>
 #include <vnl/StackOverflow.hxx>
@@ -44,10 +49,21 @@
 
 namespace vnl {
 
-vnl::Value* create(vnl::Hash32 hash) {
+const uint32_t Value::VNI_HASH;
+const uint32_t Value::NUM_FIELDS;
+
+Value::Value() {
+}
+
+Value* Value::create() {
+	return vnl::create<Value>();
+}
+
+Value* Value::create(vnl::Hash32 hash) {
 	switch(hash) {
 		case 0x417d65c7: return vnl::create<vnl::Announce>();
 		case 0x7e6aa525: return vnl::create<vnl::DuplicateKeyException>();
+		case 0x8c46309d: return vnl::create<vnl::Entry>();
 		case 0xbe87903d: return vnl::create<vnl::Exception>();
 		case 0x3bd088b0: return vnl::create<vnl::Exit>();
 		case 0x49860f3d: return vnl::create<vnl::Function>();
@@ -61,9 +77,13 @@ vnl::Value* create(vnl::Hash32 hash) {
 		case 0xd7988e27: return vnl::create<vnl::NoSuchFieldException>();
 		case 0xd8d131ca: return vnl::create<vnl::NoSuchKeyException>();
 		case 0x69a97186: return vnl::create<vnl::NoSuchMethodException>();
+		case 0x375698d0: return vnl::create<vnl::NullPointerException>();
+		case 0x61b281b0: return vnl::create<vnl::OutOfMemoryException>();
+		case 0x6d2a8c15: return vnl::create<vnl::RecordEntry>();
 		case 0xc10cd56c: return vnl::create<vnl::RecordHeader>();
 		case 0x9a729ac6: return vnl::create<vnl::RecordTypeInfo>();
 		case 0x1cdb1920: return vnl::create<vnl::RecordValue>();
+		case 0xc8a62879: return vnl::create<vnl::RecorderStatus>();
 		case 0x57c2463c: return vnl::create<vnl::SegmentationFault>();
 		case 0xcdc22e1f: return vnl::create<vnl::Shutdown>();
 		case 0x2cd1d77c: return vnl::create<vnl::StackOverflow>();
@@ -83,7 +103,175 @@ vnl::Value* create(vnl::Hash32 hash) {
 		case 0xdc558ad: return vnl::create<vnl::info::TopicInfoList>();
 		case 0xbde99c40: return vnl::create<vnl::info::Type>();
 		case 0x7450a5b3: return vnl::create<vnl::info::TypeName>();
+		case 0xfdb7a5a8: return vnl::create<vnl::Value>();
 		default: return 0;
+	}
+}
+
+Value* Value::clone() const {
+	return vnl::clone<Value>(*this);
+}
+
+void Value::destroy() {
+	this->Value::~Value();
+	return vnl::internal::global_pool_->push_back(this, sizeof(Value));
+}
+
+bool Value::is_assignable(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x417d65c7: return true;
+		case 0x7e6aa525: return true;
+		case 0x8c46309d: return true;
+		case 0xbe87903d: return true;
+		case 0x3bd088b0: return true;
+		case 0x49860f3d: return true;
+		case 0x52740af4: return true;
+		case 0xa262a675: return true;
+		case 0xabd5ff87: return true;
+		case 0xf8fa6b14: return true;
+		case 0x67d48190: return true;
+		case 0x9df3e6f5: return true;
+		case 0x4643b1ad: return true;
+		case 0xd7988e27: return true;
+		case 0xd8d131ca: return true;
+		case 0x69a97186: return true;
+		case 0x375698d0: return true;
+		case 0x61b281b0: return true;
+		case 0x6d2a8c15: return true;
+		case 0xc10cd56c: return true;
+		case 0x9a729ac6: return true;
+		case 0x1cdb1920: return true;
+		case 0xc8a62879: return true;
+		case 0x57c2463c: return true;
+		case 0xcdc22e1f: return true;
+		case 0x2cd1d77c: return true;
+		case 0x8c528f1: return true;
+		case 0xddc3d187: return true;
+		case 0x493cc6db: return true;
+		case 0x6959008e: return true;
+		case 0xd52524d4: return true;
+		case 0x734ed4bc: return true;
+		case 0x1b510753: return true;
+		case 0x6400b0b3: return true;
+		case 0xf5e3f3b6: return true;
+		case 0xf9baa92e: return true;
+		case 0x61e5f15b: return true;
+		case 0x7aa64297: return true;
+		case 0x1e3eb783: return true;
+		case 0xdc558ad: return true;
+		case 0xbde99c40: return true;
+		case 0x7450a5b3: return true;
+		case 0xfdb7a5a8: return true;
+		default: return false;
+	}
+}
+
+bool Value::assign(const vnl::Value& _value) {
+	switch(_value.get_vni_hash()) {
+		case 0x417d65c7:
+		case 0x7e6aa525:
+		case 0x8c46309d:
+		case 0xbe87903d:
+		case 0x3bd088b0:
+		case 0x49860f3d:
+		case 0x52740af4:
+		case 0xa262a675:
+		case 0xabd5ff87:
+		case 0xf8fa6b14:
+		case 0x67d48190:
+		case 0x9df3e6f5:
+		case 0x4643b1ad:
+		case 0xd7988e27:
+		case 0xd8d131ca:
+		case 0x69a97186:
+		case 0x375698d0:
+		case 0x61b281b0:
+		case 0x6d2a8c15:
+		case 0xc10cd56c:
+		case 0x9a729ac6:
+		case 0x1cdb1920:
+		case 0xc8a62879:
+		case 0x57c2463c:
+		case 0xcdc22e1f:
+		case 0x2cd1d77c:
+		case 0x8c528f1:
+		case 0xddc3d187:
+		case 0x493cc6db:
+		case 0x6959008e:
+		case 0xd52524d4:
+		case 0x734ed4bc:
+		case 0x1b510753:
+		case 0x6400b0b3:
+		case 0xf5e3f3b6:
+		case 0xf9baa92e:
+		case 0x61e5f15b:
+		case 0x7aa64297:
+		case 0x1e3eb783:
+		case 0xdc558ad:
+		case 0xbde99c40:
+		case 0x7450a5b3:
+		case 0xfdb7a5a8:
+			*this = (const Value&)_value; return true;
+		default: return false;
+	}
+}
+
+void Value::serialize(vnl::io::TypeOutput& _out) const {
+	_out.putEntry(VNL_IO_CLASS, NUM_FIELDS);
+	_out.putHash(VNI_HASH);
+}
+
+void Value::deserialize(vnl::io::TypeInput& _in, int _size) {
+	for(int i = 0; i < _size && !_in.error(); ++i) {
+		uint32_t _hash = 0;
+		_in.getHash(_hash);
+		switch(_hash) {
+			default: _in.skip();
+		}
+	}
+}
+
+int Value::get_field_index(vnl::Hash32 _hash) const {
+	switch(_hash) {
+		default: return -1;
+	}
+}
+
+const char* Value::get_field_name(int _index) const {
+	switch(_index) {
+		default: return 0;
+	}
+}
+
+void Value::get_field(int _index, vnl::String& _str) const {
+	switch(_index) {
+	}
+}
+
+void Value::set_field(int _index, const vnl::String& _str) {
+	switch(_index) {
+	}
+}
+
+void Value::get_field(int _index, vnl::io::TypeOutput& _out) const {
+	switch(_index) {
+		default: _out.putNull();
+	}
+}
+
+void Value::set_field(int _index, vnl::io::TypeInput& _in) {
+	switch(_index) {
+	}
+}
+
+void Value::get_field(int _index, vnl::Var& _var) const {
+	switch(_index) {
+		default: _var.clear();
+	}
+}
+
+void Value::set_field(int _index, const vnl::Var& _var) {
+	switch(_index) {
 	}
 }
 
@@ -91,6 +279,7 @@ vnl::Array<vnl::String> get_class_names() {
 	vnl::Array<vnl::String> res;
 	res.push_back("vnl.Announce");
 	res.push_back("vnl.DuplicateKeyException");
+	res.push_back("vnl.Entry");
 	res.push_back("vnl.Exception");
 	res.push_back("vnl.Exit");
 	res.push_back("vnl.Function");
@@ -104,9 +293,13 @@ vnl::Array<vnl::String> get_class_names() {
 	res.push_back("vnl.NoSuchFieldException");
 	res.push_back("vnl.NoSuchKeyException");
 	res.push_back("vnl.NoSuchMethodException");
+	res.push_back("vnl.NullPointerException");
+	res.push_back("vnl.OutOfMemoryException");
+	res.push_back("vnl.RecordEntry");
 	res.push_back("vnl.RecordHeader");
 	res.push_back("vnl.RecordTypeInfo");
 	res.push_back("vnl.RecordValue");
+	res.push_back("vnl.RecorderStatus");
 	res.push_back("vnl.SegmentationFault");
 	res.push_back("vnl.Shutdown");
 	res.push_back("vnl.StackOverflow");
@@ -126,6 +319,7 @@ vnl::Array<vnl::String> get_class_names() {
 	res.push_back("vnl.info.TopicInfoList");
 	res.push_back("vnl.info.Type");
 	res.push_back("vnl.info.TypeName");
+	res.push_back("vnl.Value");
 	return res;
 }
 
@@ -155,6 +349,29 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		info.is_class = true;
 		info.super.hash = 0xabd5ff87;
 		info.super.name = "vnl.IOException";
+	}
+	{
+		vnl::info::Type& info = res["vnl.Entry"];
+		info.hash = 0x8c46309d;
+		info.name = "vnl.Entry";
+		info.is_struct = true;
+		info.is_class = true;
+		info.super.hash = 0xfdb7a5a8;
+		info.super.name = "vnl.Value";
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x23ff6ebe;
+			field.name = "key";
+			field.type.hash = 0x50f8702d;
+			field.type.name = "vnl.Hash64";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x55c30e99;
+			field.name = "version";
+			field.type.hash = 0x19d39da3;
+			field.type.name = "long";
+		}
 	}
 	{
 		vnl::info::Type& info = res["vnl.Exception"];
@@ -445,6 +662,33 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		info.super.name = "vnl.IOException";
 	}
 	{
+		vnl::info::Type& info = res["vnl.NullPointerException"];
+		info.hash = 0x375698d0;
+		info.name = "vnl.NullPointerException";
+		info.is_struct = true;
+		info.is_class = true;
+		info.super.hash = 0xbe87903d;
+		info.super.name = "vnl.Exception";
+	}
+	{
+		vnl::info::Type& info = res["vnl.OutOfMemoryException"];
+		info.hash = 0x61b281b0;
+		info.name = "vnl.OutOfMemoryException";
+		info.is_struct = true;
+		info.is_class = true;
+		info.super.hash = 0xbe87903d;
+		info.super.name = "vnl.Exception";
+	}
+	{
+		vnl::info::Type& info = res["vnl.RecordEntry"];
+		info.hash = 0x6d2a8c15;
+		info.name = "vnl.RecordEntry";
+		info.is_struct = true;
+		info.is_class = true;
+		info.super.hash = 0xfdb7a5a8;
+		info.super.name = "vnl.Value";
+	}
+	{
 		vnl::info::Type& info = res["vnl.RecordHeader"];
 		info.hash = 0xc10cd56c;
 		info.name = "vnl.RecordHeader";
@@ -528,8 +772,8 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		info.name = "vnl.RecordValue";
 		info.is_struct = true;
 		info.is_class = true;
-		info.super.hash = 0xfdb7a5a8;
-		info.super.name = "vnl.Value";
+		info.super.hash = 0x6d2a8c15;
+		info.super.name = "vnl.RecordEntry";
 		{
 			vnl::info::Field& field = *info.fields.push_back();
 			field.hash = 0xaf3e4ff0;
@@ -566,6 +810,43 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 			field.type.hash = 0x6a5f5c5b;
 			field.type.name = "vnl.Pointer";
 			field.type.generics.push_back("vnl.Value");
+		}
+	}
+	{
+		vnl::info::Type& info = res["vnl.RecorderStatus"];
+		info.hash = 0xc8a62879;
+		info.name = "vnl.RecorderStatus";
+		info.is_struct = true;
+		info.is_class = true;
+		info.super.hash = 0xfdb7a5a8;
+		info.super.name = "vnl.Value";
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xaf3e4ff0;
+			field.name = "time";
+			field.type.hash = 0x19d39da3;
+			field.type.name = "long";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xb60d3446;
+			field.name = "filename";
+			field.type.hash = 0x3ea151ae;
+			field.type.name = "vnl.String";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x52d8636d;
+			field.name = "is_recording";
+			field.type.hash = 0xcc74e5d4;
+			field.type.name = "bool";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x2cc3ccdf;
+			field.name = "is_error";
+			field.type.hash = 0xcc74e5d4;
+			field.type.name = "bool";
 		}
 	}
 	{
@@ -664,7 +945,7 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 			field.type.hash = 0x2051aa54;
 			field.type.name = "vnl.Vector";
 			field.type.generics.push_back("vnl.Var");
-			field.type.generics.push_back("2");
+			field.type.generics.push_back("3");
 		}
 	}
 	{
@@ -804,8 +1085,8 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 			vnl::info::Field& field = *info.fields.push_back();
 			field.hash = 0x3f42b528;
 			field.name = "params";
-			field.type.hash = 0x5056b5ce;
-			field.type.name = "vnl.List";
+			field.type.hash = 0xeda5efa7;
+			field.type.name = "vnl.SList";
 			field.type.generics.push_back("vnl.info.Parameter");
 		}
 	}
@@ -1240,24 +1521,24 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 			vnl::info::Field& field = *info.fields.push_back();
 			field.hash = 0x96d44ab3;
 			field.name = "fields";
-			field.type.hash = 0x5056b5ce;
-			field.type.name = "vnl.List";
+			field.type.hash = 0xeda5efa7;
+			field.type.name = "vnl.SList";
 			field.type.generics.push_back("vnl.info.Field");
 		}
 		{
 			vnl::info::Field& field = *info.fields.push_back();
 			field.hash = 0x8457c8be;
 			field.name = "methods";
-			field.type.hash = 0x5056b5ce;
-			field.type.name = "vnl.List";
+			field.type.hash = 0xeda5efa7;
+			field.type.name = "vnl.SList";
 			field.type.generics.push_back("vnl.info.Method");
 		}
 		{
 			vnl::info::Field& field = *info.fields.push_back();
 			field.hash = 0x7cefe7cf;
 			field.name = "symbols";
-			field.type.hash = 0x5056b5ce;
-			field.type.name = "vnl.List";
+			field.type.hash = 0xeda5efa7;
+			field.type.name = "vnl.SList";
 			field.type.generics.push_back("vnl.String");
 		}
 	}
@@ -1287,8 +1568,8 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 			vnl::info::Field& field = *info.fields.push_back();
 			field.hash = 0xa45ffba;
 			field.name = "generics";
-			field.type.hash = 0x5056b5ce;
-			field.type.name = "vnl.List";
+			field.type.hash = 0xeda5efa7;
+			field.type.name = "vnl.SList";
 			field.type.generics.push_back("vnl.String");
 		}
 	}
@@ -1305,6 +1586,7 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		info.is_enum = true;
 		info.symbols.push_back("NOOP");
 		info.symbols.push_back("MOV");
+		info.symbols.push_back("REF");
 		info.symbols.push_back("CMP");
 		info.symbols.push_back("ADD");
 		info.symbols.push_back("SUB");
@@ -1315,8 +1597,13 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		info.symbols.push_back("POP");
 		info.symbols.push_back("LOAD");
 		info.symbols.push_back("STORE");
-		info.symbols.push_back("SHIFT_L");
-		info.symbols.push_back("SHIFT_R");
+		info.symbols.push_back("PUSH_BACK");
+		info.symbols.push_back("PUSH_FRONT");
+		info.symbols.push_back("POP_BACK");
+		info.symbols.push_back("POP_FRONT");
+		info.symbols.push_back("SET");
+		info.symbols.push_back("GET");
+		info.symbols.push_back("ERASE");
 		info.symbols.push_back("JMP");
 		info.symbols.push_back("CALL");
 		info.symbols.push_back("RET");
@@ -1664,6 +1951,22 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		info.super.name = "vnl.Object";
 	}
 	{
+		vnl::info::Type& info = res["vnl.SArray"];
+		info.hash = 0xa8cd56b6;
+		info.name = "vnl.SArray";
+		info.is_interface = true;
+		info.super.hash = 0x95ac584b;
+		info.super.name = "vnl.Interface";
+	}
+	{
+		vnl::info::Type& info = res["vnl.SList"];
+		info.hash = 0xeda5efa7;
+		info.name = "vnl.SList";
+		info.is_interface = true;
+		info.super.hash = 0x95ac584b;
+		info.super.name = "vnl.Interface";
+	}
+	{
 		vnl::info::Type& info = res["vnl.SpyTool"];
 		info.hash = 0x2d9d1f;
 		info.name = "vnl.SpyTool";
@@ -1683,6 +1986,97 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 			vnl::info::Method& method = *info.methods.push_back();
 			method.hash = 0xf2cbfddb;
 			method.name = "stop";
+			method.is_const = false;
+			method.type.hash = 0x53f0e52c;
+			method.type.name = "void";
+		}
+	}
+	{
+		vnl::info::Type& info = res["vnl.Storage"];
+		info.hash = 0xc1f517f6;
+		info.name = "vnl.Storage";
+		info.is_interface = true;
+		info.super.hash = 0x95ac584b;
+		info.super.name = "vnl.Interface";
+		{
+			vnl::info::Method& method = *info.methods.push_back();
+			method.hash = 0x6be27404;
+			method.name = "delete_entry";
+			method.is_const = false;
+			method.type.hash = 0x53f0e52c;
+			method.type.name = "void";
+		}
+		{
+			vnl::info::Method& method = *info.methods.push_back();
+			method.hash = 0x53e783cb;
+			method.name = "put_entry";
+			method.is_const = false;
+			method.type.hash = 0x53f0e52c;
+			method.type.name = "void";
+		}
+		{
+			vnl::info::Method& method = *info.methods.push_back();
+			method.hash = 0xdc37fd46;
+			method.name = "get_entries";
+			method.is_const = true;
+			method.type.hash = 0x556c0dd6;
+			method.type.name = "vnl.Array";
+			method.type.generics.push_back("Pointer");
+		}
+		{
+			vnl::info::Method& method = *info.methods.push_back();
+			method.hash = 0x2d43064b;
+			method.name = "get_entry";
+			method.is_const = true;
+			method.type.hash = 0x83edf257;
+			method.type.name = "Pointer";
+		}
+	}
+	{
+		vnl::info::Type& info = res["vnl.StorageServer"];
+		info.hash = 0x2362f4c1;
+		info.name = "vnl.StorageServer";
+		info.is_interface = true;
+		info.is_object = true;
+		info.super.hash = 0x430e9bb0;
+		info.super.name = "vnl.Object";
+		{
+			vnl::info::Method& method = *info.methods.push_back();
+			method.hash = 0x6be27404;
+			method.name = "delete_entry";
+			method.is_const = false;
+			method.type.hash = 0x53f0e52c;
+			method.type.name = "void";
+		}
+		{
+			vnl::info::Method& method = *info.methods.push_back();
+			method.hash = 0x53e783cb;
+			method.name = "put_entry";
+			method.is_const = false;
+			method.type.hash = 0x53f0e52c;
+			method.type.name = "void";
+		}
+		{
+			vnl::info::Method& method = *info.methods.push_back();
+			method.hash = 0xdc37fd46;
+			method.name = "get_entries";
+			method.is_const = true;
+			method.type.hash = 0x556c0dd6;
+			method.type.name = "vnl.Array";
+			method.type.generics.push_back("Pointer");
+		}
+		{
+			vnl::info::Method& method = *info.methods.push_back();
+			method.hash = 0x2d43064b;
+			method.name = "get_entry";
+			method.is_const = true;
+			method.type.hash = 0x83edf257;
+			method.type.name = "Pointer";
+		}
+		{
+			vnl::info::Method& method = *info.methods.push_back();
+			method.hash = 0x22a11269;
+			method.name = "handle";
 			method.is_const = false;
 			method.type.hash = 0x53f0e52c;
 			method.type.name = "void";
@@ -2009,125 +2403,6 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		}
 	}
 	return res;
-}
-
-const uint32_t Value::VNI_HASH;
-const uint32_t Value::NUM_FIELDS;
-
-Value* Value::create() {
-	return vnl::create<Value>();
-}
-
-Value* Value::clone() const {
-	return vnl::clone<Value>(*this);
-}
-
-void Value::destroy() {
-	this->Value::~Value();
-	return vnl::internal::global_pool_->push_back(this, sizeof(Value));
-}
-
-bool Value::assign(const vnl::Value& _value) {
-	switch(_value.get_vni_hash()) {
-		case 0xfdb7a5a8: *this = (const Value&)_value; return true;
-		case 0x417d65c7: *this = (const vnl::Announce&)_value; return true;
-		case 0x7e6aa525: *this = (const vnl::DuplicateKeyException&)_value; return true;
-		case 0xbe87903d: *this = (const vnl::Exception&)_value; return true;
-		case 0x3bd088b0: *this = (const vnl::Exit&)_value; return true;
-		case 0x49860f3d: *this = (const vnl::Function&)_value; return true;
-		case 0x52740af4: *this = (const vnl::Header&)_value; return true;
-		case 0xa262a675: *this = (const vnl::Heartbeat&)_value; return true;
-		case 0xabd5ff87: *this = (const vnl::IOException&)_value; return true;
-		case 0xf8fa6b14: *this = (const vnl::IllegalInstruction&)_value; return true;
-		case 0x67d48190: *this = (const vnl::Instance&)_value; return true;
-		case 0x9df3e6f5: *this = (const vnl::LogMsg&)_value; return true;
-		case 0x4643b1ad: *this = (const vnl::MemoryException&)_value; return true;
-		case 0xd7988e27: *this = (const vnl::NoSuchFieldException&)_value; return true;
-		case 0xd8d131ca: *this = (const vnl::NoSuchKeyException&)_value; return true;
-		case 0x69a97186: *this = (const vnl::NoSuchMethodException&)_value; return true;
-		case 0xc10cd56c: *this = (const vnl::RecordHeader&)_value; return true;
-		case 0x9a729ac6: *this = (const vnl::RecordTypeInfo&)_value; return true;
-		case 0x1cdb1920: *this = (const vnl::RecordValue&)_value; return true;
-		case 0x57c2463c: *this = (const vnl::SegmentationFault&)_value; return true;
-		case 0xcdc22e1f: *this = (const vnl::Shutdown&)_value; return true;
-		case 0x2cd1d77c: *this = (const vnl::StackOverflow&)_value; return true;
-		case 0x8c528f1: *this = (const vnl::TimeoutException&)_value; return true;
-		case 0xddc3d187: *this = (const vnl::Topic&)_value; return true;
-		case 0x493cc6db: *this = (const vnl::TypeMismatchException&)_value; return true;
-		case 0x6959008e: *this = (const vnl::info::ClientInfo&)_value; return true;
-		case 0xd52524d4: *this = (const vnl::info::Field&)_value; return true;
-		case 0x734ed4bc: *this = (const vnl::info::MemoryInfo&)_value; return true;
-		case 0x1b510753: *this = (const vnl::info::Method&)_value; return true;
-		case 0x6400b0b3: *this = (const vnl::info::ObjectInfo&)_value; return true;
-		case 0xf5e3f3b6: *this = (const vnl::info::Parameter&)_value; return true;
-		case 0xf9baa92e: *this = (const vnl::info::PlayerStatus&)_value; return true;
-		case 0x61e5f15b: *this = (const vnl::info::ProcessInfo&)_value; return true;
-		case 0x7aa64297: *this = (const vnl::info::RemoteInfo&)_value; return true;
-		case 0x1e3eb783: *this = (const vnl::info::TopicInfo&)_value; return true;
-		case 0xdc558ad: *this = (const vnl::info::TopicInfoList&)_value; return true;
-		case 0xbde99c40: *this = (const vnl::info::Type&)_value; return true;
-		case 0x7450a5b3: *this = (const vnl::info::TypeName&)_value; return true;
-		default: return false;
-	}
-}
-
-void Value::serialize(vnl::io::TypeOutput& _out) const {
-	_out.putEntry(VNL_IO_CLASS, NUM_FIELDS);
-	_out.putHash(VNI_HASH);
-}
-
-void Value::deserialize(vnl::io::TypeInput& _in, int _size) {
-	for(int i = 0; i < _size && !_in.error(); ++i) {
-		uint32_t _hash = 0;
-		_in.getHash(_hash);
-		switch(_hash) {
-			default: _in.skip();
-		}
-	}
-}
-
-int Value::get_field_index(vnl::Hash32 _hash) const {
-	switch(_hash) {
-		default: return -1;
-	}
-}
-
-const char* Value::get_field_name(int _index) const {
-	switch(_index) {
-		default: return 0;
-	}
-}
-
-void Value::get_field(int _index, vnl::String& _str) const {
-	switch(_index) {
-	}
-}
-
-void Value::set_field(int _index, const vnl::String& _str) {
-	switch(_index) {
-	}
-}
-
-void Value::get_field(int _index, vnl::io::TypeOutput& _out) const {
-	switch(_index) {
-		default: _out.putNull();
-	}
-}
-
-void Value::set_field(int _index, vnl::io::TypeInput& _in) {
-	switch(_index) {
-	}
-}
-
-void Value::get_field(int _index, vnl::Var& _var) const {
-	switch(_index) {
-		default: _var.clear();
-	}
-}
-
-void Value::set_field(int _index, const vnl::Var& _var) {
-	switch(_index) {
-	}
 }
 
 

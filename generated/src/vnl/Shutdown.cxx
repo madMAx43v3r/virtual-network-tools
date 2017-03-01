@@ -10,8 +10,18 @@ namespace vnl {
 const uint32_t Shutdown::VNI_HASH;
 const uint32_t Shutdown::NUM_FIELDS;
 
+Shutdown::Shutdown() {
+}
+
 Shutdown* Shutdown::create() {
 	return vnl::create<Shutdown>();
+}
+
+Shutdown* Shutdown::create(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0xcdc22e1f: return vnl::create<vnl::Shutdown>();
+		default: return 0;
+	}
 }
 
 Shutdown* Shutdown::clone() const {
@@ -23,9 +33,17 @@ void Shutdown::destroy() {
 	return vnl::internal::global_pool_->push_back(this, sizeof(Shutdown));
 }
 
+bool Shutdown::is_assignable(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0xcdc22e1f: return true;
+		default: return false;
+	}
+}
+
 bool Shutdown::assign(const vnl::Value& _value) {
 	switch(_value.get_vni_hash()) {
-		case 0xcdc22e1f: *this = (const Shutdown&)_value; return true;
+		case 0xcdc22e1f:
+			*this = (const Shutdown&)_value; return true;
 		default: return false;
 	}
 }

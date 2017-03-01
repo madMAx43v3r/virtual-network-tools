@@ -11,8 +11,18 @@ namespace info {
 const uint32_t ProcessInfo::VNI_HASH;
 const uint32_t ProcessInfo::NUM_FIELDS;
 
+ProcessInfo::ProcessInfo() {
+}
+
 ProcessInfo* ProcessInfo::create() {
 	return vnl::create<ProcessInfo>();
+}
+
+ProcessInfo* ProcessInfo::create(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x61e5f15b: return vnl::create<vnl::info::ProcessInfo>();
+		default: return 0;
+	}
 }
 
 ProcessInfo* ProcessInfo::clone() const {
@@ -24,9 +34,17 @@ void ProcessInfo::destroy() {
 	return vnl::internal::global_pool_->push_back(this, sizeof(ProcessInfo));
 }
 
+bool ProcessInfo::is_assignable(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x61e5f15b: return true;
+		default: return false;
+	}
+}
+
 bool ProcessInfo::assign(const vnl::Value& _value) {
 	switch(_value.get_vni_hash()) {
-		case 0x61e5f15b: *this = (const ProcessInfo&)_value; return true;
+		case 0x61e5f15b:
+			*this = (const ProcessInfo&)_value; return true;
 		default: return false;
 	}
 }

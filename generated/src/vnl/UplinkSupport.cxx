@@ -10,6 +10,9 @@ namespace vnl {
 const uint32_t UplinkBase::VNI_HASH;
 const uint32_t UplinkBase::NUM_FIELDS;
 
+UplinkBase::UplinkBase() {
+}
+
 int UplinkBase::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		default: return -1;

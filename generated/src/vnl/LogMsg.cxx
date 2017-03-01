@@ -10,8 +10,19 @@ namespace vnl {
 const uint32_t LogMsg::VNI_HASH;
 const uint32_t LogMsg::NUM_FIELDS;
 
+LogMsg::LogMsg() {
+	level = 0;
+}
+
 LogMsg* LogMsg::create() {
 	return vnl::create<LogMsg>();
+}
+
+LogMsg* LogMsg::create(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x9df3e6f5: return vnl::create<vnl::LogMsg>();
+		default: return 0;
+	}
 }
 
 LogMsg* LogMsg::clone() const {
@@ -23,9 +34,17 @@ void LogMsg::destroy() {
 	return vnl::internal::global_pool_->push_back(this, sizeof(LogMsg));
 }
 
+bool LogMsg::is_assignable(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x9df3e6f5: return true;
+		default: return false;
+	}
+}
+
 bool LogMsg::assign(const vnl::Value& _value) {
 	switch(_value.get_vni_hash()) {
-		case 0x9df3e6f5: *this = (const LogMsg&)_value; return true;
+		case 0x9df3e6f5:
+			*this = (const LogMsg&)_value; return true;
 		default: return false;
 	}
 }

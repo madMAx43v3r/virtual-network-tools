@@ -24,12 +24,12 @@ public:
 	vnl::Hash64 src_mac;
 	int64_t send_time;
 	
-	Header() {
-		send_time = 0;
-	}
+	Header();
 	
 	static Header* create();
+	static Header* create(vnl::Hash32 hash);
 	virtual Header* clone() const;
+	virtual bool is_assignable(vnl::Hash32 hash);
 	virtual bool assign(const vnl::Value& _value);
 	virtual void raise() const { throw *this; }
 	virtual void destroy();

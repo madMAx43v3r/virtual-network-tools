@@ -14,6 +14,16 @@ const int32_t ObjectBase::WARN;
 const int32_t ObjectBase::INFO;
 const int32_t ObjectBase::DEBUG;
 
+ObjectBase::ObjectBase(const vnl::String& domain_, const vnl::String& topic_)
+{
+	vnl_log_level = INFO;
+	vnl_msg_timeout = 1000000;
+	vnl_heartbeat_interval = 1000000;
+	vnl::read_config(domain_, topic_, "vnl_log_level", vnl_log_level);
+	vnl::read_config(domain_, topic_, "vnl_msg_timeout", vnl_msg_timeout);
+	vnl::read_config(domain_, topic_, "vnl_heartbeat_interval", vnl_heartbeat_interval);
+}
+
 int ObjectBase::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		case 0x482df535: return 0;

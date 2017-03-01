@@ -18,11 +18,12 @@ public:
 	
 	
 	
-	NoSuchKeyException() {
-	}
+	NoSuchKeyException();
 	
 	static NoSuchKeyException* create();
+	static NoSuchKeyException* create(vnl::Hash32 hash);
 	virtual NoSuchKeyException* clone() const;
+	virtual bool is_assignable(vnl::Hash32 hash);
 	virtual bool assign(const vnl::Value& _value);
 	virtual void raise() const { throw *this; }
 	virtual void destroy();

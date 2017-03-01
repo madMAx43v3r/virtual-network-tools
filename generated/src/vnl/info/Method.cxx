@@ -11,8 +11,19 @@ namespace info {
 const uint32_t Method::VNI_HASH;
 const uint32_t Method::NUM_FIELDS;
 
+Method::Method() {
+	is_const = 0;
+}
+
 Method* Method::create() {
 	return vnl::create<Method>();
+}
+
+Method* Method::create(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x1b510753: return vnl::create<vnl::info::Method>();
+		default: return 0;
+	}
 }
 
 Method* Method::clone() const {
@@ -24,9 +35,17 @@ void Method::destroy() {
 	return vnl::internal::global_pool_->push_back(this, sizeof(Method));
 }
 
+bool Method::is_assignable(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x1b510753: return true;
+		default: return false;
+	}
+}
+
 bool Method::assign(const vnl::Value& _value) {
 	switch(_value.get_vni_hash()) {
-		case 0x1b510753: *this = (const Method&)_value; return true;
+		case 0x1b510753:
+			*this = (const Method&)_value; return true;
 		default: return false;
 	}
 }

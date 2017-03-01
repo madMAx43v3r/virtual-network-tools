@@ -10,8 +10,21 @@ namespace vnl {
 const uint32_t Instance::VNI_HASH;
 const uint32_t Instance::NUM_FIELDS;
 
+Instance::Instance() {
+	heartbeat_interval = 0;
+	last_heartbeat = 0;
+	is_alive = 0;
+}
+
 Instance* Instance::create() {
 	return vnl::create<Instance>();
+}
+
+Instance* Instance::create(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x67d48190: return vnl::create<vnl::Instance>();
+		default: return 0;
+	}
 }
 
 Instance* Instance::clone() const {
@@ -23,9 +36,17 @@ void Instance::destroy() {
 	return vnl::internal::global_pool_->push_back(this, sizeof(Instance));
 }
 
+bool Instance::is_assignable(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x67d48190: return true;
+		default: return false;
+	}
+}
+
 bool Instance::assign(const vnl::Value& _value) {
 	switch(_value.get_vni_hash()) {
-		case 0x67d48190: *this = (const Instance&)_value; return true;
+		case 0x67d48190:
+			*this = (const Instance&)_value; return true;
 		default: return false;
 	}
 }

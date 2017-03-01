@@ -29,15 +29,12 @@ public:
 	int64_t first_time;
 	int64_t last_time;
 	
-	TopicInfo() {
-		send_counter = 0;
-		receive_counter = 0;
-		first_time = 0;
-		last_time = 0;
-	}
+	TopicInfo();
 	
 	static TopicInfo* create();
+	static TopicInfo* create(vnl::Hash32 hash);
 	virtual TopicInfo* clone() const;
+	virtual bool is_assignable(vnl::Hash32 hash);
 	virtual bool assign(const vnl::Value& _value);
 	virtual void raise() const { throw *this; }
 	virtual void destroy();

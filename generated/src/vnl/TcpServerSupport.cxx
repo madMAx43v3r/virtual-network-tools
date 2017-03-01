@@ -10,6 +10,26 @@ namespace vnl {
 const uint32_t TcpServerBase::VNI_HASH;
 const uint32_t TcpServerBase::NUM_FIELDS;
 
+TcpServerBase::TcpServerBase(const vnl::String& domain_, const vnl::String& topic_)
+	:	vnl::Object::Object(domain_, topic_)
+{
+	port = 8916;
+	error_interval = 1000000;
+	accept_queue = 10;
+	tcp_keepalive = true;
+	tcp_nodelay = true;
+	send_buffer_size = 1048576;
+	receive_buffer_size = 1048576;
+	vnl::read_config(domain_, topic_, "port", port);
+	vnl::read_config(domain_, topic_, "error_interval", error_interval);
+	vnl::read_config(domain_, topic_, "export_topics", export_topics);
+	vnl::read_config(domain_, topic_, "accept_queue", accept_queue);
+	vnl::read_config(domain_, topic_, "tcp_keepalive", tcp_keepalive);
+	vnl::read_config(domain_, topic_, "tcp_nodelay", tcp_nodelay);
+	vnl::read_config(domain_, topic_, "send_buffer_size", send_buffer_size);
+	vnl::read_config(domain_, topic_, "receive_buffer_size", receive_buffer_size);
+}
+
 int TcpServerBase::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
 		case 0x482df535: return 0;

@@ -16,33 +16,17 @@ namespace vnl {
 class RecorderBase : public vnl::Object {
 public:
 	static const uint32_t VNI_HASH = 0xf1cc425;
-	static const uint32_t NUM_FIELDS = 9;
+	static const uint32_t NUM_FIELDS = 7;
 	
 	typedef vnl::Object Super;
 	
 	
 	vnl::String filename;
 	int32_t interval;
-	bool do_write_header;
-	bool do_write_type_info;
 	int32_t header_size;
 	vnl::Array<vnl::String > domains;
 	
-	RecorderBase(const vnl::String& domain_, const vnl::String& topic_)
-		:	vnl::Object::Object(domain_, topic_)
-	{
-		filename = "rec-";
-		interval = 1000000;
-		do_write_header = true;
-		do_write_type_info = true;
-		header_size = 262144;
-		vnl::read_config(domain_, topic_, "filename", filename);
-		vnl::read_config(domain_, topic_, "interval", interval);
-		vnl::read_config(domain_, topic_, "do_write_header", do_write_header);
-		vnl::read_config(domain_, topic_, "do_write_type_info", do_write_type_info);
-		vnl::read_config(domain_, topic_, "header_size", header_size);
-		vnl::read_config(domain_, topic_, "domains", domains);
-	}
+	RecorderBase(const vnl::String& domain_, const vnl::String& topic_);
 	
 	virtual uint32_t get_vni_hash() const { return VNI_HASH; }
 	virtual const char* get_type_name() const { return "vnl.Recorder"; }
@@ -71,8 +55,6 @@ protected:
 		_writer.set_vnl_heartbeat_interval(vnl_heartbeat_interval);
 		_writer.set_filename(filename);
 		_writer.set_interval(interval);
-		_writer.set_do_write_header(do_write_header);
-		_writer.set_do_write_type_info(do_write_type_info);
 		_writer.set_header_size(header_size);
 		_writer.set_domains(domains);
 	}

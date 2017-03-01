@@ -21,11 +21,12 @@ public:
 	vnl::String domain;
 	vnl::String name;
 	
-	Topic() {
-	}
+	Topic();
 	
 	static Topic* create();
+	static Topic* create(vnl::Hash32 hash);
 	virtual Topic* clone() const;
+	virtual bool is_assignable(vnl::Hash32 hash);
 	virtual bool assign(const vnl::Value& _value);
 	virtual void raise() const { throw *this; }
 	virtual void destroy();

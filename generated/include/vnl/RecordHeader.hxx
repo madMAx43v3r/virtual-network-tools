@@ -27,17 +27,12 @@ public:
 	int64_t end_time;
 	vnl::Array<vnl::Topic > topics;
 	
-	RecordHeader() {
-		version = 1;
-		header_size = 0;
-		have_type_info = 0;
-		num_samples = 0;
-		begin_time = 0;
-		end_time = 0;
-	}
+	RecordHeader();
 	
 	static RecordHeader* create();
+	static RecordHeader* create(vnl::Hash32 hash);
 	virtual RecordHeader* clone() const;
+	virtual bool is_assignable(vnl::Hash32 hash);
 	virtual bool assign(const vnl::Value& _value);
 	virtual void raise() const { throw *this; }
 	virtual void destroy();

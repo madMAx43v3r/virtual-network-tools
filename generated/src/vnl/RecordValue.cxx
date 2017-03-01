@@ -10,8 +10,19 @@ namespace vnl {
 const uint32_t RecordValue::VNI_HASH;
 const uint32_t RecordValue::NUM_FIELDS;
 
+RecordValue::RecordValue() {
+	time = 0;
+}
+
 RecordValue* RecordValue::create() {
 	return vnl::create<RecordValue>();
+}
+
+RecordValue* RecordValue::create(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x1cdb1920: return vnl::create<vnl::RecordValue>();
+		default: return 0;
+	}
 }
 
 RecordValue* RecordValue::clone() const {
@@ -23,9 +34,17 @@ void RecordValue::destroy() {
 	return vnl::internal::global_pool_->push_back(this, sizeof(RecordValue));
 }
 
+bool RecordValue::is_assignable(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x1cdb1920: return true;
+		default: return false;
+	}
+}
+
 bool RecordValue::assign(const vnl::Value& _value) {
 	switch(_value.get_vni_hash()) {
-		case 0x1cdb1920: *this = (const RecordValue&)_value; return true;
+		case 0x1cdb1920:
+			*this = (const RecordValue&)_value; return true;
 		default: return false;
 	}
 }

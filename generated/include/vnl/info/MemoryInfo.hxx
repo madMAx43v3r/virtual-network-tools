@@ -22,14 +22,12 @@ public:
 	int64_t num_alloc;
 	int64_t num_used;
 	
-	MemoryInfo() {
-		size = 0;
-		num_alloc = 0;
-		num_used = 0;
-	}
+	MemoryInfo();
 	
 	static MemoryInfo* create();
+	static MemoryInfo* create(vnl::Hash32 hash);
 	virtual MemoryInfo* clone() const;
+	virtual bool is_assignable(vnl::Hash32 hash);
 	virtual bool assign(const vnl::Value& _value);
 	virtual void raise() const { throw *this; }
 	virtual void destroy();

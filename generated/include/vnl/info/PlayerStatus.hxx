@@ -27,17 +27,12 @@ public:
 	int64_t current_time;
 	int64_t time_offset;
 	
-	PlayerStatus() {
-		playing = 0;
-		error = 0;
-		begin_time = 0;
-		end_time = 0;
-		current_time = 0;
-		time_offset = 0;
-	}
+	PlayerStatus();
 	
 	static PlayerStatus* create();
+	static PlayerStatus* create(vnl::Hash32 hash);
 	virtual PlayerStatus* clone() const;
+	virtual bool is_assignable(vnl::Hash32 hash);
 	virtual bool assign(const vnl::Value& _value);
 	virtual void raise() const { throw *this; }
 	virtual void destroy();

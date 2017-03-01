@@ -11,8 +11,27 @@ namespace info {
 const uint32_t ObjectInfo::VNI_HASH;
 const uint32_t ObjectInfo::NUM_FIELDS;
 
+ObjectInfo::ObjectInfo() {
+	time = 0;
+	spawn_time = 0;
+	idle_time = 0;
+	num_cycles = 0;
+	num_msg_sent = 0;
+	num_msg_received = 0;
+	num_msg_dropped = 0;
+	send_latency_sum = 0;
+	receive_latency_sum = 0;
+}
+
 ObjectInfo* ObjectInfo::create() {
 	return vnl::create<ObjectInfo>();
+}
+
+ObjectInfo* ObjectInfo::create(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x6400b0b3: return vnl::create<vnl::info::ObjectInfo>();
+		default: return 0;
+	}
 }
 
 ObjectInfo* ObjectInfo::clone() const {
@@ -24,9 +43,17 @@ void ObjectInfo::destroy() {
 	return vnl::internal::global_pool_->push_back(this, sizeof(ObjectInfo));
 }
 
+bool ObjectInfo::is_assignable(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x6400b0b3: return true;
+		default: return false;
+	}
+}
+
 bool ObjectInfo::assign(const vnl::Value& _value) {
 	switch(_value.get_vni_hash()) {
-		case 0x6400b0b3: *this = (const ObjectInfo&)_value; return true;
+		case 0x6400b0b3:
+			*this = (const ObjectInfo&)_value; return true;
 		default: return false;
 	}
 }

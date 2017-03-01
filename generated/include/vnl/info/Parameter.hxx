@@ -23,11 +23,12 @@ public:
 	vnl::String name;
 	vnl::info::TypeName type;
 	
-	Parameter() {
-	}
+	Parameter();
 	
 	static Parameter* create();
+	static Parameter* create(vnl::Hash32 hash);
 	virtual Parameter* clone() const;
+	virtual bool is_assignable(vnl::Hash32 hash);
 	virtual bool assign(const vnl::Value& _value);
 	virtual void raise() const { throw *this; }
 	virtual void destroy();

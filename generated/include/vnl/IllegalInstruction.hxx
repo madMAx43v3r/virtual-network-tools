@@ -18,11 +18,12 @@ public:
 	
 	
 	
-	IllegalInstruction() {
-	}
+	IllegalInstruction();
 	
 	static IllegalInstruction* create();
+	static IllegalInstruction* create(vnl::Hash32 hash);
 	virtual IllegalInstruction* clone() const;
+	virtual bool is_assignable(vnl::Hash32 hash);
 	virtual bool assign(const vnl::Value& _value);
 	virtual void raise() const { throw *this; }
 	virtual void destroy();

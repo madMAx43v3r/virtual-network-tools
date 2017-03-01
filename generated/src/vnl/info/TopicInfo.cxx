@@ -11,8 +11,22 @@ namespace info {
 const uint32_t TopicInfo::VNI_HASH;
 const uint32_t TopicInfo::NUM_FIELDS;
 
+TopicInfo::TopicInfo() {
+	send_counter = 0;
+	receive_counter = 0;
+	first_time = 0;
+	last_time = 0;
+}
+
 TopicInfo* TopicInfo::create() {
 	return vnl::create<TopicInfo>();
+}
+
+TopicInfo* TopicInfo::create(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x1e3eb783: return vnl::create<vnl::info::TopicInfo>();
+		default: return 0;
+	}
 }
 
 TopicInfo* TopicInfo::clone() const {
@@ -24,9 +38,17 @@ void TopicInfo::destroy() {
 	return vnl::internal::global_pool_->push_back(this, sizeof(TopicInfo));
 }
 
+bool TopicInfo::is_assignable(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0x1e3eb783: return true;
+		default: return false;
+	}
+}
+
 bool TopicInfo::assign(const vnl::Value& _value) {
 	switch(_value.get_vni_hash()) {
-		case 0x1e3eb783: *this = (const TopicInfo&)_value; return true;
+		case 0x1e3eb783:
+			*this = (const TopicInfo&)_value; return true;
 		default: return false;
 	}
 }

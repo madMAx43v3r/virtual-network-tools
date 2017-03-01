@@ -11,8 +11,24 @@ namespace info {
 const uint32_t PlayerStatus::VNI_HASH;
 const uint32_t PlayerStatus::NUM_FIELDS;
 
+PlayerStatus::PlayerStatus() {
+	playing = 0;
+	error = 0;
+	begin_time = 0;
+	end_time = 0;
+	current_time = 0;
+	time_offset = 0;
+}
+
 PlayerStatus* PlayerStatus::create() {
 	return vnl::create<PlayerStatus>();
+}
+
+PlayerStatus* PlayerStatus::create(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0xf9baa92e: return vnl::create<vnl::info::PlayerStatus>();
+		default: return 0;
+	}
 }
 
 PlayerStatus* PlayerStatus::clone() const {
@@ -24,9 +40,17 @@ void PlayerStatus::destroy() {
 	return vnl::internal::global_pool_->push_back(this, sizeof(PlayerStatus));
 }
 
+bool PlayerStatus::is_assignable(vnl::Hash32 hash) {
+	switch(hash) {
+		case 0xf9baa92e: return true;
+		default: return false;
+	}
+}
+
 bool PlayerStatus::assign(const vnl::Value& _value) {
 	switch(_value.get_vni_hash()) {
-		case 0xf9baa92e: *this = (const PlayerStatus&)_value; return true;
+		case 0xf9baa92e:
+			*this = (const PlayerStatus&)_value; return true;
 		default: return false;
 	}
 }

@@ -16,6 +16,7 @@ public:
 	
 	static const uint32_t NOOP = 0xddc2502d;
 	static const uint32_t MOV = 0x838be867;
+	static const uint32_t REF = 0xe67c57c5;
 	static const uint32_t CMP = 0x2ec5e872;
 	static const uint32_t ADD = 0xe9e85174;
 	static const uint32_t SUB = 0xa7b233f3;
@@ -26,8 +27,13 @@ public:
 	static const uint32_t POP = 0x6c605d8f;
 	static const uint32_t LOAD = 0x455eb8a3;
 	static const uint32_t STORE = 0xe2fbdba5;
-	static const uint32_t SHIFT_L = 0xb6326dc4;
-	static const uint32_t SHIFT_R = 0x4fd04983;
+	static const uint32_t PUSH_BACK = 0x728e271a;
+	static const uint32_t PUSH_FRONT = 0x3dc1e640;
+	static const uint32_t POP_BACK = 0xb147a790;
+	static const uint32_t POP_FRONT = 0x6ddb3cbf;
+	static const uint32_t SET = 0x8e65fc1c;
+	static const uint32_t GET = 0x8376aa8a;
+	static const uint32_t ERASE = 0xe8106fb8;
 	static const uint32_t JMP = 0x9bf2f564;
 	static const uint32_t CALL = 0x91caf30d;
 	static const uint32_t RET = 0x1f0f91d7;
@@ -43,8 +49,7 @@ public:
 		return *this;
 	}
 	
-	op_code_t() {
-	}
+	op_code_t();
 	
 	virtual uint32_t get_vni_hash() const { return VNI_HASH; }
 	virtual const char* get_type_name() const { return "vnl.op_code_t"; }
