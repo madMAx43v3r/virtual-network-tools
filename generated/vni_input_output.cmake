@@ -59,6 +59,7 @@ set(VNI_OUTPUT_FILES_HEADER
 	generated/include/vnl/PlayerClient.hxx
 	generated/include/vnl/ProcessSupport.hxx
 	generated/include/vnl/ProcessClient.hxx
+	generated/include/vnl/RecordConfig.hxx
 	generated/include/vnl/RecordEntry.hxx
 	generated/include/vnl/RecordHeader.hxx
 	generated/include/vnl/RecordTypeInfo.hxx
@@ -73,6 +74,8 @@ set(VNI_OUTPUT_FILES_HEADER
 	generated/include/vnl/StackOverflow.hxx
 	generated/include/vnl/StorageSupport.hxx
 	generated/include/vnl/StorageClient.hxx
+	generated/include/vnl/StorageBufferSupport.hxx
+	generated/include/vnl/StorageBufferClient.hxx
 	generated/include/vnl/StorageServerSupport.hxx
 	generated/include/vnl/StorageServerClient.hxx
 	generated/include/vnl/TableSupport.hxx
@@ -135,6 +138,7 @@ set(VNI_OUTPUT_FILES_SOURCE
 	generated/src/vnl/OutOfMemoryException.cxx
 	generated/src/vnl/PlayerSupport.cxx
 	generated/src/vnl/ProcessSupport.cxx
+	generated/src/vnl/RecordConfig.cxx
 	generated/src/vnl/RecordEntry.cxx
 	generated/src/vnl/RecordHeader.cxx
 	generated/src/vnl/RecordTypeInfo.cxx
@@ -146,6 +150,7 @@ set(VNI_OUTPUT_FILES_SOURCE
 	generated/src/vnl/SpyToolSupport.cxx
 	generated/src/vnl/StackOverflow.cxx
 	generated/src/vnl/StorageSupport.cxx
+	generated/src/vnl/StorageBufferSupport.cxx
 	generated/src/vnl/StorageServerSupport.cxx
 	generated/src/vnl/TcpClientSupport.cxx
 	generated/src/vnl/TcpProxySupport.cxx

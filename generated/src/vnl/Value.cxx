@@ -22,6 +22,7 @@
 #include <vnl/NoSuchMethodException.hxx>
 #include <vnl/NullPointerException.hxx>
 #include <vnl/OutOfMemoryException.hxx>
+#include <vnl/RecordConfig.hxx>
 #include <vnl/RecordEntry.hxx>
 #include <vnl/RecordHeader.hxx>
 #include <vnl/RecordTypeInfo.hxx>
@@ -79,6 +80,7 @@ Value* Value::create(vnl::Hash32 hash) {
 		case 0x69a97186: return vnl::create<vnl::NoSuchMethodException>();
 		case 0x375698d0: return vnl::create<vnl::NullPointerException>();
 		case 0x61b281b0: return vnl::create<vnl::OutOfMemoryException>();
+		case 0x2abbb9fe: return vnl::create<vnl::RecordConfig>();
 		case 0x6d2a8c15: return vnl::create<vnl::RecordEntry>();
 		case 0xc10cd56c: return vnl::create<vnl::RecordHeader>();
 		case 0x9a729ac6: return vnl::create<vnl::RecordTypeInfo>();
@@ -137,6 +139,7 @@ bool Value::is_assignable(vnl::Hash32 hash) {
 		case 0x69a97186: return true;
 		case 0x375698d0: return true;
 		case 0x61b281b0: return true;
+		case 0x2abbb9fe: return true;
 		case 0x6d2a8c15: return true;
 		case 0xc10cd56c: return true;
 		case 0x9a729ac6: return true;
@@ -186,6 +189,7 @@ bool Value::assign(const vnl::Value& _value) {
 		case 0x69a97186:
 		case 0x375698d0:
 		case 0x61b281b0:
+		case 0x2abbb9fe:
 		case 0x6d2a8c15:
 		case 0xc10cd56c:
 		case 0x9a729ac6:
@@ -295,6 +299,7 @@ vnl::Array<vnl::String> get_class_names() {
 	res.push_back("vnl.NoSuchMethodException");
 	res.push_back("vnl.NullPointerException");
 	res.push_back("vnl.OutOfMemoryException");
+	res.push_back("vnl.RecordConfig");
 	res.push_back("vnl.RecordEntry");
 	res.push_back("vnl.RecordHeader");
 	res.push_back("vnl.RecordTypeInfo");
@@ -680,6 +685,24 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		info.super.name = "vnl.Exception";
 	}
 	{
+		vnl::info::Type& info = res["vnl.RecordConfig"];
+		info.hash = 0x2abbb9fe;
+		info.name = "vnl.RecordConfig";
+		info.is_struct = true;
+		info.is_class = true;
+		info.super.hash = 0xfdb7a5a8;
+		info.super.name = "vnl.Value";
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x8f1168c5;
+			field.name = "config_map";
+			field.type.hash = 0xe5d1fc67;
+			field.type.name = "vnl.Map";
+			field.type.generics.push_back("vnl.String");
+			field.type.generics.push_back("vnl.String");
+		}
+	}
+	{
 		vnl::info::Type& info = res["vnl.RecordEntry"];
 		info.hash = 0x6d2a8c15;
 		info.name = "vnl.RecordEntry";
@@ -702,7 +725,7 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 			field.name = "version";
 			field.type.hash = 0xf0f9b0e2;
 			field.type.name = "int";
-			vnl::to_string(field.value, 1);
+			vnl::to_string(field.value, 2);
 		}
 		{
 			vnl::info::Field& field = *info.fields.push_back();
@@ -715,6 +738,13 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 			vnl::info::Field& field = *info.fields.push_back();
 			field.hash = 0xf3aac4d9;
 			field.name = "have_type_info";
+			field.type.hash = 0xcc74e5d4;
+			field.type.name = "bool";
+		}
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0x7b270b29;
+			field.name = "have_config";
 			field.type.hash = 0xcc74e5d4;
 			field.type.name = "bool";
 		}
@@ -2030,6 +2060,56 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 			method.is_const = true;
 			method.type.hash = 0x83edf257;
 			method.type.name = "Pointer";
+		}
+	}
+	{
+		vnl::info::Type& info = res["vnl.StorageBuffer"];
+		info.hash = 0x5fc4b202;
+		info.name = "vnl.StorageBuffer";
+		info.is_interface = true;
+		info.is_object = true;
+		info.super.hash = 0x430e9bb0;
+		info.super.name = "vnl.Object";
+		{
+			vnl::info::Method& method = *info.methods.push_back();
+			method.hash = 0x6be27404;
+			method.name = "delete_entry";
+			method.is_const = false;
+			method.type.hash = 0x53f0e52c;
+			method.type.name = "void";
+		}
+		{
+			vnl::info::Method& method = *info.methods.push_back();
+			method.hash = 0x53e783cb;
+			method.name = "put_entry";
+			method.is_const = false;
+			method.type.hash = 0x53f0e52c;
+			method.type.name = "void";
+		}
+		{
+			vnl::info::Method& method = *info.methods.push_back();
+			method.hash = 0xdc37fd46;
+			method.name = "get_entries";
+			method.is_const = true;
+			method.type.hash = 0x556c0dd6;
+			method.type.name = "vnl.Array";
+			method.type.generics.push_back("Pointer");
+		}
+		{
+			vnl::info::Method& method = *info.methods.push_back();
+			method.hash = 0x2d43064b;
+			method.name = "get_entry";
+			method.is_const = true;
+			method.type.hash = 0x83edf257;
+			method.type.name = "Pointer";
+		}
+		{
+			vnl::info::Method& method = *info.methods.push_back();
+			method.hash = 0x22a11269;
+			method.name = "handle";
+			method.is_const = false;
+			method.type.hash = 0x53f0e52c;
+			method.type.name = "void";
 		}
 	}
 	{
