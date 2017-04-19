@@ -14,9 +14,11 @@
 #include <vnl/RecordValue.hxx>
 #include <vnl/RecordHeader.hxx>
 #include <vnl/RecordTypeInfo.hxx>
+#include <vnl/RecordConfig.hxx>
 
 
 vnl::Map<vnl::Hash32, vnl::info::Type>* type_info = 0;
+vnl::Map<vnl::String, vnl::String>* config = 0;
 
 void dump_sample(vnl::io::TypeInput& in, vnl::info::Type* type = 0, vnl::info::TypeName* type_name = 0) {
 	int size = 0;
@@ -157,7 +159,6 @@ int main(int argc, char** argv) {
 	}
 	
 	vnl::RecordHeader header;
-	vnl::RecordTypeInfo record_type_info;
 	{
 		vnl::Pointer<vnl::Value> ptr;
 		vnl::read(in, ptr);
@@ -173,10 +174,22 @@ int main(int argc, char** argv) {
 	
 	type_info = new vnl::Map<vnl::Hash32, vnl::info::Type>();
 	if(header.have_type_info) {
+		vnl::RecordTypeInfo record_type_info;
 		vnl::read(in, record_type_info);
 		*type_info = record_type_info.type_map;
+		std::cout << "{\"type_info\" : " << vnl::to_string(type_info->values()) << "}" << std::endl;
 	} else {
-		std::cerr << "WARNING: RecordTypeInfo missing!" << std::endl;
+		std::cerr << "INFO: RecordTypeInfo missing!" << std::endl;
+	}
+	
+	config = new vnl::Map<vnl::String, vnl::String>();
+	if(header.have_config) {
+		vnl::RecordConfig record_config;
+		vnl::read(in, record_config);
+		*config = record_config.config_map;
+		std::cout << "{\"config\" : " << vnl::to_string(*config) << "}" << std::endl;
+	} else {
+		std::cerr << "INFO: RecordConfig missing!" << std::endl;
 	}
 	
 	vnl::Page* data = vnl::Page::alloc();
