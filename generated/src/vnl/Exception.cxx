@@ -7,6 +7,7 @@
 #include <vnl/DuplicateKeyException.hxx>
 #include <vnl/IOException.hxx>
 #include <vnl/IllegalInstruction.hxx>
+#include <vnl/InvalidValueException.hxx>
 #include <vnl/MemoryException.hxx>
 #include <vnl/NoSuchFieldException.hxx>
 #include <vnl/NoSuchKeyException.hxx>
@@ -35,6 +36,7 @@ Exception* Exception::create(vnl::Hash32 hash) {
 		case 0x7e6aa525: return vnl::create<vnl::DuplicateKeyException>();
 		case 0xabd5ff87: return vnl::create<vnl::IOException>();
 		case 0xf8fa6b14: return vnl::create<vnl::IllegalInstruction>();
+		case 0x455aebea: return vnl::create<vnl::InvalidValueException>();
 		case 0x4643b1ad: return vnl::create<vnl::MemoryException>();
 		case 0xd7988e27: return vnl::create<vnl::NoSuchFieldException>();
 		case 0xd8d131ca: return vnl::create<vnl::NoSuchKeyException>();
@@ -64,6 +66,7 @@ bool Exception::is_assignable(vnl::Hash32 hash) {
 		case 0x7e6aa525: return true;
 		case 0xabd5ff87: return true;
 		case 0xf8fa6b14: return true;
+		case 0x455aebea: return true;
 		case 0x4643b1ad: return true;
 		case 0xd7988e27: return true;
 		case 0xd8d131ca: return true;
@@ -84,6 +87,7 @@ bool Exception::assign(const vnl::Value& _value) {
 		case 0x7e6aa525:
 		case 0xabd5ff87:
 		case 0xf8fa6b14:
+		case 0x455aebea:
 		case 0x4643b1ad:
 		case 0xd7988e27:
 		case 0xd8d131ca:
@@ -103,6 +107,7 @@ bool Exception::assign(const vnl::Value& _value) {
 void Exception::serialize(vnl::io::TypeOutput& _out) const {
 	_out.putEntry(VNL_IO_CLASS, NUM_FIELDS);
 	_out.putHash(VNI_HASH);
+	_out.putHash(0xc16d882f); vnl::write(_out, what);
 }
 
 void Exception::deserialize(vnl::io::TypeInput& _in, int _size) {
@@ -110,6 +115,7 @@ void Exception::deserialize(vnl::io::TypeInput& _in, int _size) {
 		uint32_t _hash = 0;
 		_in.getHash(_hash);
 		switch(_hash) {
+			case 0xc16d882f: vnl::read(_in, what); break;
 			default: _in.skip();
 		}
 	}
@@ -117,45 +123,53 @@ void Exception::deserialize(vnl::io::TypeInput& _in, int _size) {
 
 int Exception::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
+		case 0xc16d882f: return 0;
 		default: return -1;
 	}
 }
 
 const char* Exception::get_field_name(int _index) const {
 	switch(_index) {
+		case 0: return "what";
 		default: return 0;
 	}
 }
 
 void Exception::get_field(int _index, vnl::String& _str) const {
 	switch(_index) {
+		case 0: vnl::to_string(_str, what); break;
 	}
 }
 
 void Exception::set_field(int _index, const vnl::String& _str) {
 	switch(_index) {
+		case 0: vnl::from_string(_str, what); break;
 	}
 }
 
 void Exception::get_field(int _index, vnl::io::TypeOutput& _out) const {
 	switch(_index) {
+		case 0: vnl::write(_out, what); break;
 		default: _out.putNull();
 	}
 }
 
 void Exception::set_field(int _index, vnl::io::TypeInput& _in) {
 	switch(_index) {
+		case 0: vnl::read(_in, what); break;
 	}
 }
 
 void Exception::get_field(int _index, vnl::Var& _var) const {
 	switch(_index) {
+		case 0: _var = what; break;
 		default: _var.clear();
 	}
 }
 
 void Exception::set_field(int _index, const vnl::Var& _var) {
 	switch(_index) {
+		case 0: _var.to(what); break;
 	}
 }
 

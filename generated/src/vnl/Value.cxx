@@ -15,6 +15,7 @@
 #include <vnl/IOException.hxx>
 #include <vnl/IllegalInstruction.hxx>
 #include <vnl/Instance.hxx>
+#include <vnl/InvalidValueException.hxx>
 #include <vnl/LogMsg.hxx>
 #include <vnl/MemoryException.hxx>
 #include <vnl/NoSuchFieldException.hxx>
@@ -73,6 +74,7 @@ Value* Value::create(vnl::Hash32 hash) {
 		case 0xabd5ff87: return vnl::create<vnl::IOException>();
 		case 0xf8fa6b14: return vnl::create<vnl::IllegalInstruction>();
 		case 0x67d48190: return vnl::create<vnl::Instance>();
+		case 0x455aebea: return vnl::create<vnl::InvalidValueException>();
 		case 0x9df3e6f5: return vnl::create<vnl::LogMsg>();
 		case 0x4643b1ad: return vnl::create<vnl::MemoryException>();
 		case 0xd7988e27: return vnl::create<vnl::NoSuchFieldException>();
@@ -132,6 +134,7 @@ bool Value::is_assignable(vnl::Hash32 hash) {
 		case 0xabd5ff87: return true;
 		case 0xf8fa6b14: return true;
 		case 0x67d48190: return true;
+		case 0x455aebea: return true;
 		case 0x9df3e6f5: return true;
 		case 0x4643b1ad: return true;
 		case 0xd7988e27: return true;
@@ -182,6 +185,7 @@ bool Value::assign(const vnl::Value& _value) {
 		case 0xabd5ff87:
 		case 0xf8fa6b14:
 		case 0x67d48190:
+		case 0x455aebea:
 		case 0x9df3e6f5:
 		case 0x4643b1ad:
 		case 0xd7988e27:
@@ -292,6 +296,7 @@ vnl::Array<vnl::String> get_class_names() {
 	res.push_back("vnl.IOException");
 	res.push_back("vnl.IllegalInstruction");
 	res.push_back("vnl.Instance");
+	res.push_back("vnl.InvalidValueException");
 	res.push_back("vnl.LogMsg");
 	res.push_back("vnl.MemoryException");
 	res.push_back("vnl.NoSuchFieldException");
@@ -354,6 +359,13 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		info.is_class = true;
 		info.super.hash = 0xabd5ff87;
 		info.super.name = "vnl.IOException";
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xc16d882f;
+			field.name = "what";
+			field.type.hash = 0x3ea151ae;
+			field.type.name = "vnl.String";
+		}
 	}
 	{
 		vnl::info::Type& info = res["vnl.Entry"];
@@ -386,6 +398,13 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		info.is_class = true;
 		info.super.hash = 0xfdb7a5a8;
 		info.super.name = "vnl.Value";
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xc16d882f;
+			field.name = "what";
+			field.type.hash = 0x3ea151ae;
+			field.type.name = "vnl.String";
+		}
 	}
 	{
 		vnl::info::Type& info = res["vnl.Exit"];
@@ -532,6 +551,13 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		info.is_class = true;
 		info.super.hash = 0xbe87903d;
 		info.super.name = "vnl.Exception";
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xc16d882f;
+			field.name = "what";
+			field.type.hash = 0x3ea151ae;
+			field.type.name = "vnl.String";
+		}
 	}
 	{
 		vnl::info::Type& info = res["vnl.IllegalInstruction"];
@@ -541,6 +567,13 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		info.is_class = true;
 		info.super.hash = 0xbe87903d;
 		info.super.name = "vnl.Exception";
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xc16d882f;
+			field.name = "what";
+			field.type.hash = 0x3ea151ae;
+			field.type.name = "vnl.String";
+		}
 	}
 	{
 		vnl::info::Type& info = res["vnl.Instance"];
@@ -601,6 +634,22 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		}
 	}
 	{
+		vnl::info::Type& info = res["vnl.InvalidValueException"];
+		info.hash = 0x455aebea;
+		info.name = "vnl.InvalidValueException";
+		info.is_struct = true;
+		info.is_class = true;
+		info.super.hash = 0xbe87903d;
+		info.super.name = "vnl.Exception";
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xc16d882f;
+			field.name = "what";
+			field.type.hash = 0x3ea151ae;
+			field.type.name = "vnl.String";
+		}
+	}
+	{
 		vnl::info::Type& info = res["vnl.LogMsg"];
 		info.hash = 0x9df3e6f5;
 		info.name = "vnl.LogMsg";
@@ -638,6 +687,13 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		info.is_class = true;
 		info.super.hash = 0xbe87903d;
 		info.super.name = "vnl.Exception";
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xc16d882f;
+			field.name = "what";
+			field.type.hash = 0x3ea151ae;
+			field.type.name = "vnl.String";
+		}
 	}
 	{
 		vnl::info::Type& info = res["vnl.NoSuchFieldException"];
@@ -647,6 +703,13 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		info.is_class = true;
 		info.super.hash = 0xabd5ff87;
 		info.super.name = "vnl.IOException";
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xc16d882f;
+			field.name = "what";
+			field.type.hash = 0x3ea151ae;
+			field.type.name = "vnl.String";
+		}
 	}
 	{
 		vnl::info::Type& info = res["vnl.NoSuchKeyException"];
@@ -656,6 +719,13 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		info.is_class = true;
 		info.super.hash = 0xabd5ff87;
 		info.super.name = "vnl.IOException";
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xc16d882f;
+			field.name = "what";
+			field.type.hash = 0x3ea151ae;
+			field.type.name = "vnl.String";
+		}
 	}
 	{
 		vnl::info::Type& info = res["vnl.NoSuchMethodException"];
@@ -665,6 +735,13 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		info.is_class = true;
 		info.super.hash = 0xabd5ff87;
 		info.super.name = "vnl.IOException";
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xc16d882f;
+			field.name = "what";
+			field.type.hash = 0x3ea151ae;
+			field.type.name = "vnl.String";
+		}
 	}
 	{
 		vnl::info::Type& info = res["vnl.NullPointerException"];
@@ -674,6 +751,13 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		info.is_class = true;
 		info.super.hash = 0xbe87903d;
 		info.super.name = "vnl.Exception";
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xc16d882f;
+			field.name = "what";
+			field.type.hash = 0x3ea151ae;
+			field.type.name = "vnl.String";
+		}
 	}
 	{
 		vnl::info::Type& info = res["vnl.OutOfMemoryException"];
@@ -683,6 +767,13 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		info.is_class = true;
 		info.super.hash = 0xbe87903d;
 		info.super.name = "vnl.Exception";
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xc16d882f;
+			field.name = "what";
+			field.type.hash = 0x3ea151ae;
+			field.type.name = "vnl.String";
+		}
 	}
 	{
 		vnl::info::Type& info = res["vnl.RecordConfig"];
@@ -887,6 +978,13 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		info.is_class = true;
 		info.super.hash = 0xbe87903d;
 		info.super.name = "vnl.Exception";
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xc16d882f;
+			field.name = "what";
+			field.type.hash = 0x3ea151ae;
+			field.type.name = "vnl.String";
+		}
 	}
 	{
 		vnl::info::Type& info = res["vnl.Shutdown"];
@@ -905,6 +1003,13 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		info.is_class = true;
 		info.super.hash = 0xbe87903d;
 		info.super.name = "vnl.Exception";
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xc16d882f;
+			field.name = "what";
+			field.type.hash = 0x3ea151ae;
+			field.type.name = "vnl.String";
+		}
 	}
 	{
 		vnl::info::Type& info = res["vnl.TimeoutException"];
@@ -914,6 +1019,13 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		info.is_class = true;
 		info.super.hash = 0xabd5ff87;
 		info.super.name = "vnl.IOException";
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xc16d882f;
+			field.name = "what";
+			field.type.hash = 0x3ea151ae;
+			field.type.name = "vnl.String";
+		}
 	}
 	{
 		vnl::info::Type& info = res["vnl.Topic"];
@@ -946,6 +1058,13 @@ vnl::Map<vnl::Hash32, vnl::info::Type> get_type_info() {
 		info.is_class = true;
 		info.super.hash = 0xabd5ff87;
 		info.super.name = "vnl.IOException";
+		{
+			vnl::info::Field& field = *info.fields.push_back();
+			field.hash = 0xc16d882f;
+			field.name = "what";
+			field.type.hash = 0x3ea151ae;
+			field.type.name = "vnl.String";
+		}
 	}
 	{
 		vnl::info::Type& info = res["vnl.Value"];

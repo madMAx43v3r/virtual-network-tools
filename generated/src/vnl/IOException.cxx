@@ -75,6 +75,7 @@ bool IOException::assign(const vnl::Value& _value) {
 void IOException::serialize(vnl::io::TypeOutput& _out) const {
 	_out.putEntry(VNL_IO_CLASS, NUM_FIELDS);
 	_out.putHash(VNI_HASH);
+	_out.putHash(0xc16d882f); vnl::write(_out, what);
 }
 
 void IOException::deserialize(vnl::io::TypeInput& _in, int _size) {
@@ -82,6 +83,7 @@ void IOException::deserialize(vnl::io::TypeInput& _in, int _size) {
 		uint32_t _hash = 0;
 		_in.getHash(_hash);
 		switch(_hash) {
+			case 0xc16d882f: vnl::read(_in, what); break;
 			default: _in.skip();
 		}
 	}
@@ -89,45 +91,53 @@ void IOException::deserialize(vnl::io::TypeInput& _in, int _size) {
 
 int IOException::get_field_index(vnl::Hash32 _hash) const {
 	switch(_hash) {
+		case 0xc16d882f: return 0;
 		default: return -1;
 	}
 }
 
 const char* IOException::get_field_name(int _index) const {
 	switch(_index) {
+		case 0: return "what";
 		default: return 0;
 	}
 }
 
 void IOException::get_field(int _index, vnl::String& _str) const {
 	switch(_index) {
+		case 0: vnl::to_string(_str, what); break;
 	}
 }
 
 void IOException::set_field(int _index, const vnl::String& _str) {
 	switch(_index) {
+		case 0: vnl::from_string(_str, what); break;
 	}
 }
 
 void IOException::get_field(int _index, vnl::io::TypeOutput& _out) const {
 	switch(_index) {
+		case 0: vnl::write(_out, what); break;
 		default: _out.putNull();
 	}
 }
 
 void IOException::set_field(int _index, vnl::io::TypeInput& _in) {
 	switch(_index) {
+		case 0: vnl::read(_in, what); break;
 	}
 }
 
 void IOException::get_field(int _index, vnl::Var& _var) const {
 	switch(_index) {
+		case 0: _var = what; break;
 		default: _var.clear();
 	}
 }
 
 void IOException::set_field(int _index, const vnl::Var& _var) {
 	switch(_index) {
+		case 0: _var.to(what); break;
 	}
 }
 

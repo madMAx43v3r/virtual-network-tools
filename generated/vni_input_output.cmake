@@ -46,6 +46,7 @@ set(VNI_OUTPUT_FILES_HEADER
 	generated/include/vnl/IOException.hxx
 	generated/include/vnl/IllegalInstruction.hxx
 	generated/include/vnl/Instance.hxx
+	generated/include/vnl/InvalidValueException.hxx
 	generated/include/vnl/LogMsg.hxx
 	generated/include/vnl/MemoryException.hxx
 	generated/include/vnl/NoSuchFieldException.hxx
@@ -128,6 +129,7 @@ set(VNI_OUTPUT_FILES_SOURCE
 	generated/src/vnl/IOException.cxx
 	generated/src/vnl/IllegalInstruction.cxx
 	generated/src/vnl/Instance.cxx
+	generated/src/vnl/InvalidValueException.cxx
 	generated/src/vnl/LogMsg.cxx
 	generated/src/vnl/MemoryException.cxx
 	generated/src/vnl/NoSuchFieldException.cxx
